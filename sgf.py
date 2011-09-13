@@ -3,6 +3,7 @@ from string import lowercase
 from pprint import pprint
 #from pdb import set_trace
 import sys
+import board
 
 
 def is_meta(tag):
@@ -126,8 +127,24 @@ class Game(object):
 			print "%s %s [%s]" % (node.name, node.prop, node.get_comment())
 			node = node.children[0]
 
-game = Game(sys.argv[1])
+
+class GameGui(Game):
+	def __init__(self, name, board):
+		__super__(name)
+		self.goban = board
+
+	def navigate(self):
+		node = self.root
+		while node.has_child():
+			if node.name == "B" or node.name == "W":
+				self.goban.place_stone_pos(
+					node.prop, board.str2color(node.name) ) 
+
+			
+board = Board()
+game = GameGui(sys.argv[1], board)
 game.build_tree()
+board.clear()
 game.navigate()
 
 	
