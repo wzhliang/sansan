@@ -1,7 +1,7 @@
-from pyparsing import *
+from pyparsing import Word, Literal, QuotedString, OneOrMore
 from string import lowercase
 from pprint import pprint
-from pdb import set_trace
+#from pdb import set_trace
 import sys
 
 
@@ -40,7 +40,7 @@ class Node(object):
 		self.children.append(child)
 
 	def num_child(self):
-		return len(children)
+		return len(self.children)
 
 	def has_child(self):
 		return len(self.children) > 0
@@ -79,35 +79,15 @@ class SGF(object):
 		self.moves = self.game.parseString(_all)
 		fp.close()
 
-	def on_PB(self, current):
-		self.meta["black"] = self.next_token()
-
-	def on_PW(self, current):
-		self.meta["white"] = self.next_token()
-
-	def on_move(self, current):
-		print "%s: %s" % (current, self.next_token() )
-
 	def show(self):
 		print "All moves in %s" % self.sgf_file
-
-		while True:
-			try:
-				current = self.next_token()
-				if current == "PB":
-					self.on_PB(current)
-				if current == "PW":
-					self.on_PW(current)
-				if current == "B" or current == "W":
-					self.on_move(current)
-			except IndexError:
-				break
+		pprint(self.moves)
 
 class Game(object):
 	def __init__(self, sgf_file):
 		self.sgf = SGF(sgf_file)
 		self.root = Node('root')
-		self.current= self.root
+		self.current = self.root
 		self.info = {}
 
 	def on_move(self, propid):
@@ -136,7 +116,7 @@ class Game(object):
 				else:
 					pass
 			except IndexError:
-				break;
+				break
 
 	def navigate(self):
 		node = self.root
