@@ -9,27 +9,38 @@ def is_meta(tag):
 	metas = [ "PB", "PW", "WR", "BR", "FF", "DT", "RE", "SZ", "KM", "TM", "OT" ]
 	return tag in metas
 
+def is_stone(tag):
+	stones = [ "AB", "AW", "B", "W" ]
+	return tag in stones
+
+def is_extra(tag):
+	extra = [ "C" ]
+	return tag in extra
+
 class Node(object):
 	def __init__(self, name):
 		self.name = name
-		self.children = []
-		self.comment = ""
 		self.prop = ""
+		self.children = []
+		self.extra = {} # extra properties, including comment
 
 	def set_property(self, prop):
 		self.prop = prop
 
-	def set_comment(self, comment):
-		self.comment = comment
+	def add_extra(self, name, value):
+		self.extra[name] = value
 
 	def get_comment(self):
-		return self.comment
+		if self.extra.has_key("C"):
+			return self.extra["C"]
+		else:
+		 	return ""
 
 	def add_child(self, child):
 		self.children.append(child)
 
-	def get_prop(self):
-		return self.prop
+	def num_child(self):
+		return len(children)
 
 	def has_child(self):
 		return len(self.children) > 0
@@ -105,20 +116,23 @@ class Game(object):
 		self.current.add_child(node)
 		self.current = node
 
-	def on_comment(self, current):
-		self.current.set_comment(self.sgf.next_token())
+	def on_extra(self, propid):
+		self.current.add_extra(propid, self.sgf.next_token())
 
-	def on_meta(self, current):
-		self.info[current] = self.sgf.next_token()
+	def on_meta(self, propid):
+		self.info[propid] = self.sgf.next_token()
 
 	def build_tree(self):
 		while True:
 			try:
 				current = self.sgf.next_token()
-				if current == "B" or current == "W":
+		
+				if is_stone(current):
 					self.on_move(current)
 				elif is_meta(current):
 					self.on_meta(current)
+				elif is_extra(current):
+					self.on_extra(current)
 				else:
 					pass
 			except IndexError:
