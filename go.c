@@ -126,6 +126,29 @@ void test_4(int *x, int *y, int *color)
     *color = WHITE;
 }
 
+void test_5(int *x, int *y, int *color)
+{
+    printf("========== 5 ========= \n");
+
+    /* dead ones */
+    board[0][1] = WHITE;
+    board[0][2] = WHITE;
+    board[0][3] = WHITE;
+    board[1][2] = WHITE;
+
+    /* killer */
+    board[0][0] = BLACK;
+    board[0][4] = BLACK;
+    board[1][1] = BLACK;
+    board[1][4] = BLACK;
+    board[2][2] = BLACK;
+    board[2][3] = BLACK;
+
+    *x = 0;
+    *y = 1;
+    *color = WHITE;
+}
+
 void reset_cluster(cluster_t *c)
 {
     c->n = 0;
@@ -265,10 +288,11 @@ int main(void)
         test_1, 
         test_2,
         test_3,
-        test_4
+        test_4,
+        test_5
     };
 
-    for ( i = 0; i < 4; i ++ )
+    for ( i = 0; i < 5; i ++ )
     {
         run_test( tests[i] );
     }
