@@ -47,6 +47,7 @@ void init_board(void)
     }
 }
 
+/* Tests setup {{{ */
 void test_1(int *x, int *y, int *color)
 {
     printf("========== 1 ========= \n");
@@ -148,6 +149,7 @@ void test_5(int *x, int *y, int *color)
     *y = 1;
     *color = WHITE;
 }
+/* }}} */
 
 void reset_cluster(cluster_t *c)
 {
