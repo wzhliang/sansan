@@ -129,9 +129,9 @@ class Game(object):
 
 
 class GameGui(Game):
-	def __init__(self, name, board):
-		__super__(name)
-		self.goban = board
+	def __init__(self, name, goban):
+		Game.__init__(self, name)
+		self.goban = goban
 
 	def navigate(self):
 		node = self.root
@@ -139,12 +139,12 @@ class GameGui(Game):
 			if node.name == "B" or node.name == "W":
 				self.goban.place_stone_pos(
 					node.prop, board.str2color(node.name) ) 
+			node = node.children[0]
 
-			
-board = Board()
-game = GameGui(sys.argv[1], board)
+goban = board.Board()
+game = GameGui(sys.argv[1], goban)
 game.build_tree()
-board.clear()
+goban.clear()
 game.navigate()
 
 	
