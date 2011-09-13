@@ -4,8 +4,32 @@ from pprint import pprint
 from pdb import set_trace
 import sys
 
+class Node(object):
+	def __init__(self, name):
+		self.name = name
+		self.children = []
+		self.comment = ""
+		self.prop = ""
 
-class SGF:
+	def set_property(self, prop):
+		self.prop = prop
+
+	def set_comment(self, comment):
+		self.comment = comment
+
+	def get_comment(self):
+		return self.comment
+
+	def add_child(self, child):
+		self.children.append(child)
+
+	def get_prop(self):
+		return self.prop
+
+	def has_child(self):
+		return len(self.children) > 0
+
+class SGF(object):
 	def __init__(self, filename):
 		start = Literal(";")
 		cap = lowercase.upper()
@@ -51,7 +75,6 @@ class SGF:
 	def show(self):
 		print "All moves in %s" % self.sgf_file
 
-		set_trace()
 		while True:
 			try:
 				current = self.next_token()
@@ -62,10 +85,45 @@ class SGF:
 				if current == "B" or current == "W":
 					self.on_move(current)
 			except IndexError:
+				break
+
+class Game(object):
+	def __init__(self, sgf_file):
+		self.sgf = SGF(sgf_file)
+		self.root = Node('root')
+		self.current= self.root
+
+	def on_move(self, propid):
+		node = Node(propid)
+		node.set_property(self.sgf.next_token())
+		self.current.add_child(node)
+		self.current = node
+
+	def on_comment(self, current):
+		self.current.set_comment(self.sgf.next_token())
+	
+	def build_tree(self):
+		while True:
+			try:
+				current = self.sgf.next_token()
+				if current == "B" or current == "W":
+					self.on_move(current)
+				elif current == "C":
+					self.on_comment(current)
+				else:
+					pass
+			except IndexError:
 				break;
 
-sgf = SGF(sys.argv[1])
-sgf.show()
+	def navigate(self):
+		node = self.root
+		while node.has_child():
+			print "%s %s [%s]" % (node.name, node.prop, node.get_comment())
+			node = node.children[0]
+
+game = Game(sys.argv[1])
+game.build_tree()
+game.navigate()
 
 	
 
