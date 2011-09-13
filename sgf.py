@@ -4,6 +4,11 @@ from pprint import pprint
 from pdb import set_trace
 import sys
 
+
+def is_meta(tag):
+	metas = [ "PB", "PW", "WR", "BR", "FF", "DT", "RE", "SZ", "KM", "TM", "OT" ]
+	return tag in metas
+
 class Node(object):
 	def __init__(self, name):
 		self.name = name
@@ -92,6 +97,7 @@ class Game(object):
 		self.sgf = SGF(sgf_file)
 		self.root = Node('root')
 		self.current= self.root
+		self.info = {}
 
 	def on_move(self, propid):
 		node = Node(propid)
@@ -101,15 +107,18 @@ class Game(object):
 
 	def on_comment(self, current):
 		self.current.set_comment(self.sgf.next_token())
-	
+
+	def on_meta(self, current):
+		self.info[current] = self.sgf.next_token()
+
 	def build_tree(self):
 		while True:
 			try:
 				current = self.sgf.next_token()
 				if current == "B" or current == "W":
 					self.on_move(current)
-				elif current == "C":
-					self.on_comment(current)
+				elif is_meta(current):
+					self.on_meta(current)
 				else:
 					pass
 			except IndexError:
@@ -117,6 +126,8 @@ class Game(object):
 
 	def navigate(self):
 		node = self.root
+		print "Black: %s %s" % (self.info["PB"], self.info["BR"])
+		print "White: %s %s" % (self.info["PW"], self.info["WR"])
 		while node.has_child():
 			print "%s %s [%s]" % (node.name, node.prop, node.get_comment())
 			node = node.children[0]
