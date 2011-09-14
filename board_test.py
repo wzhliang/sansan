@@ -59,4 +59,24 @@ class BoardTest(unittest.TestCase):
 		alive = pan.is_alive(3, 3, WHITE, [])
 		self.assertEqual(alive, False)
 
+	def test_e(self):
+		print "\n=========================\n"
+		pan = Board()
+
+		pan.place_stone_xy(1, 2, WHITE)
+		pan.place_stone_xy(1, 3, WHITE)
+		pan.place_stone_xy(1, 4, WHITE)
+		pan.place_stone_xy(2, 3, WHITE)
+
+		pan.place_stone_xy(1, 1, BLACK)
+		pan.place_stone_xy(1, 5, BLACK)
+		pan.place_stone_xy(2, 2, BLACK)
+		pan.place_stone_xy(2, 5, BLACK)
+		pan.place_stone_xy(3, 3, BLACK)
+		pan.place_stone_xy(3, 4, BLACK)
+
+		pprint(pan.data)
+		alive = pan.is_alive(1, 2, WHITE, [])
+		self.assertEqual(alive, True)
+
 unittest.main()
