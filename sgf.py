@@ -5,20 +5,22 @@ from pprint import pprint
 import sys
 import board
 
+__metas = [ "PB", "PW", "WR", "BR", "FF", "DT", "RE", "SZ", "KM", "TM", "OT" ]
+__stones = [ "AB", "AW", "B", "W" ]
+__extra = [ "C" ]
 
 def is_meta(tag):
-	metas = [ "PB", "PW", "WR", "BR", "FF", "DT", "RE", "SZ", "KM", "TM", "OT" ]
-	return tag in metas
+	return tag in __metas
 
 def is_stone(tag):
-	stones = [ "AB", "AW", "B", "W" ]
-	return tag in stones
+	return tag in __stones
 
 def is_extra(tag):
-	extra = [ "C" ]
-	return tag in extra
+	return tag in __extra
 
 class Node(object):
+	"""this class assums that the primary property is the first one in the string.
+		So files like ;C[haha]B[ab] will not work. """
 	def __init__(self, name):
 		self.name = name
 		self.prop = ""
@@ -48,6 +50,7 @@ class Node(object):
 
 class SGF(object):
 	def __init__(self, filename):
+		#BNF
 		start = Literal(";")
 		cap = lowercase.upper()
 		text = QuotedString(quoteChar="[", 
@@ -75,10 +78,7 @@ class SGF(object):
 		return tok
 
 	def __parse(self):
-		fp = open(self.sgf_file)
-		_all = "".join(fp)
-		self.moves = self.game.parseString(_all)
-		fp.close()
+		self.moves = self.game.parseFile(self.sgf_file)
 
 	def show(self):
 		print "All moves in %s" % self.sgf_file
@@ -107,7 +107,7 @@ class Game(object):
 		while True:
 			try:
 				current = self.sgf.next_token()
-		
+
 				if is_stone(current):
 					self.on_move(current)
 				elif is_meta(current):
@@ -146,10 +146,4 @@ game = GameGui(sys.argv[1], goban)
 game.build_tree()
 goban.clear()
 game.navigate()
-
-	
-
-
-
-
-
+pprint(goban.data)
