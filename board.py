@@ -172,6 +172,8 @@ class Board(object):
 		return self.neighbours_xy(x, y)
 
 	def play_xy(self, x, y, color):
+		"""Play a stone at the position. Update board data when stones are captured.
+		Returns the captures stone. """
 		if not self.valid_xy(x, y) or not valid_color(color):
 			raise BoardError
 
@@ -194,3 +196,5 @@ class Board(object):
 			raise BoardError # Scuicide not allowed
 
 		self.remove_stones(all_dead)
+
+		return all_dead

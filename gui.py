@@ -77,7 +77,6 @@ class GoBoard(board.Board, QGraphicsView):
 		self.current_stone = board.BLACK
 		self.modified = False
 		self.next_move = None
-		self.stones = {}
 
 	def set_game(self, game):
 		self.game = game
@@ -181,42 +180,30 @@ class GoBoard(board.Board, QGraphicsView):
 		return gi
 
 	def remove_stone(self, xy):
-		#print "remove_stone: removing ", item
-		x, y = xy
-		print "remove_stone: pos ", board.xy2pos(x, y)
-		gi = self.stones.pop( board.xy2pos(x, y) )
+		x, y = self.convert_coord(xy)
+		gi = self.scene.itemAt(x, y)
 		self.scene.removeItem( gi )
 
 	def delShadedStone(self):
 		print "delShadedStone() stubbed"
 
-	def play(self, pos, color=None):
-		""" Play a stone of color (default is self.currentColor) at pos. """
-		if color is None:
-			color = self.currentColor
-		if abstractBoard.play(self, pos, color):					# legal move?
-			captures = self.undostack[len(self.undostack)-1][2]	 # retrieve list of captured stones
-			print "captures: ", captures
-			for x in captures:
-				self.remove_stone( self.stone[x] )
-			self.place_stone(pos, color)
-			self.currentColor = self.invert(color)
-			self.delShadedStone()
-			return 1
-		else: return 0
+	def play_xy(self, x, y, color):
+		try:
+			dead = Board.play_xy(x, y, color)
+		except BoardError:
+			print "Unable to make move: (%d,%d,%d)" % (x, y, color)
+			pass
+		for dx, dy in dead:
+			self.remove_stone((dx, dy))
 
 	def clear(self):
 		#TODO: remove existing stones
 		#TODO: might need a modified flag
 		#print "GoBoard: number of stones on board: ", len( self.stones_gi )
-		#for s in self.stones_gi:
-			#self.scene.removeItem( s )
-		for k in self.stones.keys():
-			self.stones.pop( k )
 		
 		# Clearing all current stuff TODO: refresh the board instead.
-		for i in self.scene.items():
-			self.scene.removeItem( i )
+		for gi in self.scene.items():
+			self.scene.removeItem(gi)
 
 		self.draw_board()
 		board.Board.clear(self)
