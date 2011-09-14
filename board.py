@@ -1,14 +1,13 @@
 #!/usr/bin/python
-from pdb import set_trace
-
+#from pdb import set_trace
 
 EMPTY = 0
 BLACK = 1
 WHITE = 2
 WALL = 3
 
-__pos = "ABCDEFGHJIKLMNOPQRST"
-__num = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 
+__pos = "ABCDEFGHJIKLMNOPQRS"
+__num = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
 	12, 13, 14, 15, 16, 17, 18, 19]
 
 __pdict = dict(zip(__pos, __num))
@@ -84,8 +83,8 @@ class Board(object):
 
 	def valid_id(self, _id):
 		#FIXME
-			return True
-		
+		return True
+
 	def valid_xy(self, x, y):
 		if x > 0 and x < 20 and y > 0 and y < 20:
 			return True
@@ -180,17 +179,18 @@ class Board(object):
 			raise BoardError
 
 		self.data[x][y] = color
-		if not self.is_alive(x, y, color, []):
-			self.data[x][y] = EMPTY
-			raise BoardError # Scuicide not allowed
 
 		all_dead = []
 		nb = self.neighbours_xy(x, y)
 		for nx, ny in nb:
 			clust = []
+			if (nx, ny) in all_dead:
+				continue
 			if not self.is_alive(nx, ny, enemy(color), clust ):
-				all_dead.extend(clust) # TODO duplications
+				all_dead.extend(clust)
+
+		if len(all_dead) == 0 and not self.is_alive(x, y, color, []):
+			self.data[x][y] = EMPTY
+			raise BoardError # Scuicide not allowed
 
 		self.remove_stones(all_dead)
-
-

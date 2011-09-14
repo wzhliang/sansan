@@ -131,15 +131,44 @@ class BoardTest(unittest.TestCase):
 		nb = pan.neighbours_pos("AB")
 		self.assertEqual(len(nb), 3)
 		pprint(nb)
-		# TODO: Enable this
-		#nb = pan.neighbours_pos("TT")
-		#self.assertEqual(len(nb), 2)
-		#pprint(nb)
-		#nb = pan.neighbours_pos("SS")
-		#self.assertEqual(len(nb), 4)
-		#pprint(nb)
-		#nb = pan.neighbours_pos("SB")
-		#self.assertEqual(len(nb), 3)
-		#pprint(nb)
+
+		nb = pan.neighbours_pos("SS")
+		self.assertEqual(len(nb), 2)
+		pprint(nb)
+		nb = pan.neighbours_pos("RR")
+		self.assertEqual(len(nb), 4)
+		pprint(nb)
+		nb = pan.neighbours_pos("SB")
+		self.assertEqual(len(nb), 3)
+		pprint(nb)
+
+	def test_h(self):
+		print "\n========= h =============\n"
+		pan = Board()
+
+		pan.place_stone_xy(2, 3, WHITE)
+		pan.place_stone_xy(3, 2, WHITE)
+		pan.place_stone_xy(3, 4, WHITE)
+		pan.place_stone_xy(4, 3, WHITE)
+
+		pan.place_stone_xy(3, 1, BLACK)
+		pan.place_stone_xy(2, 2, BLACK)
+		pan.place_stone_xy(4, 2, BLACK)
+		pan.place_stone_xy(1, 3, BLACK)
+		pan.place_stone_xy(5, 3, BLACK)
+		pan.place_stone_xy(2, 4, BLACK)
+		pan.place_stone_xy(4, 4, BLACK)
+		pan.place_stone_xy(3, 5, BLACK)
+
+		print "Initially:"
+		pprint(pan.data)
+
+		pan.play_xy(3, 3, BLACK)
+		self.assertEqual(pan.data[2][3], EMPTY)
+		self.assertEqual(pan.data[3][2], EMPTY)
+		self.assertEqual(pan.data[3][4], EMPTY)
+		self.assertEqual(pan.data[4][3], EMPTY)
+		print "Killing WHITEs:"
+		pprint(pan.data)
 
 unittest.main()
