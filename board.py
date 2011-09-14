@@ -36,6 +36,11 @@ def xy2id(x, y):
 	""" convert (x,y) to 1D array id"""
 	return x * 19 + y
 
+def pos2xy(pos):
+	x = __pdict[pos.upper()[0]]
+	y = __pdict[pos.upper()[1]]
+	return (x, y)
+	
 def id2xy(_id):
 	""" convert id to (x,y)"""
 	return divmod(_id, 19)

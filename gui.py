@@ -169,16 +169,18 @@ class GoBoard(board.Board, QGraphicsView):
 
 	def place_stone_pos(self, pos, color):
 		# Note: Should never be called directly!!!
+		stones = "EBW"
 		try:
 			board.Board.place_stone_pos(
 					self, pos, color)
 		except board.BoardError:
+			print "Failed"
 			return
 
-		stone = Stone(color)
+		stone = Stone(stones[color])
 		gi = self.scene.addPixmap( stone.get_bitmap() )
 		gi.setZValue( self._stone_zvalue )
-		x, y = self.convert_coord( pos )
+		x, y = self.convert_coord( board.pos2xy(pos) )
 		gi.setPos( x, y )
 		return gi
 
