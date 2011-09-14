@@ -17,13 +17,10 @@ import pdb
 import sgf
 import board
 
-BLACK_STONE = 'B'
-WHITE_STONE = 'W'
-
 class Bitmap:
 	@staticmethod
 	def get_bitmap_for_stone(color):
-		if ( color == BLACK_STONE ):
+		if ( color == board.BLACK ):
 			return "res/yun_b.png"
 		else:
 			return "res/yun_w.png"
@@ -33,7 +30,7 @@ class Bitmap:
 		return "background.png"
 
 class Stone:
-	def __init__(self,color):
+	def __init__(self, color):
 		self.color = color
 		self.bitmap = QPixmap( Bitmap.get_bitmap_for_stone(color) )
 		self.bitmap = self.bitmap.scaledToHeight(20)
@@ -77,7 +74,7 @@ class GoBoard(board.Board, QGraphicsView):
 						  self.width + 2 * self.edge,
 						  self.height + 2 * self.edge )
 
-		self.current_stone = BLACK_STONE
+		self.current_stone = board.BLACK
 		self.modified = False
 		self.next_move = None
 		self.stones = {}
@@ -87,10 +84,10 @@ class GoBoard(board.Board, QGraphicsView):
 		self.current = game.root
 
 	def next_stone(self):
-		if self.current_stone == BLACK_STONE:
-			self.current_stone = WHITE_STONE
+		if self.current_stone == board.BLACK:
+			self.current_stone = board.WHITE
 		else:
-			self.current_stone = BLACK_STONE
+			self.current_stone = board.BLACK
 
 	def mousePressEvent(self, event):
 		while True:
@@ -102,10 +99,11 @@ class GoBoard(board.Board, QGraphicsView):
 				break
 
 	def mouseReleaseEvent(self, event):
-		print "mouse released ", event.button(), event.pos()
+		pass
+		#print "mouse released ", event.button(), event.pos()
 
 	def out_of_board(self, pix):
-		x,y = pix
+		x, y = pix
 		if x < self.x0 or y < self.y0 or x > self.x1 or y > self.y1:
 			return True
 		else:
@@ -129,7 +127,7 @@ class GoBoard(board.Board, QGraphicsView):
 				((gy-1)*self.w- Stone.get_width()/2)  + self.edge )
 	
 	def draw_stars(self):
-		stars = [ (4,4), (4,16), (16,4), (16,16), (10,10) ]
+		stars = [ (4, 4), (4, 16), (16, 4), (16, 16), (10, 10) ]
 		for s in stars:
 			x, y = (s[0]*self.w, s[1]*self.h)
 			self.scene.addEllipse( x, y, 2, 2 )
@@ -182,43 +180,11 @@ class GoBoard(board.Board, QGraphicsView):
 		gi.setPos( x, y )
 		return gi
 
-
-	def _digit2at(self, pos):
-		"Convert position in digit format to AT format"
-		at="ABCDEFGHIJKLMNOPQRST"
-		digit=(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19)
-		str = ""
-		x,y = pos
-		str += at[digit.index(x)]
-		str += at[digit.index(y)]
-
-		return str
-	
-	def _at2digit(self, pos):
-		"""Convert position in AT format into digit format"""
-		at="ABCDEFGHIJKLMNOPQRST"
-		digit=(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19)
-		x = pos[0].upper()
-		y = pos[1].upper()
-
-		xx = digit[at.index(x)]
-		yy = digit[at.index(y)]
-
-		return (xx, yy)
-
-	def place_stone_AT(self, color, pos):
-		xx, yy = self._at2digit( pos )
-
-		#print "place_stone_AT ", pos
-		s = self.place_stone( color, (xx,yy))
-		if s:
-			self.stones[pos.upper()] = s
-		abstractBoard.play( self, (xx,yy), color )
-
-	def remove_stone(self, pos):
+	def remove_stone(self, xy):
 		#print "remove_stone: removing ", item
-		print "remove_stone: pos ", self._digit2at(pos)
-		gi = self.stones.pop( self._digit2at(pos) )
+		x, y = xy
+		print "remove_stone: pos ", board.xy2pos(x, y)
+		gi = self.stones.pop( board.xy2pos(x, y) )
 		self.scene.removeItem( gi )
 
 	def delShadedStone(self):
@@ -226,8 +192,8 @@ class GoBoard(board.Board, QGraphicsView):
 
 	def play(self, pos, color=None):
 		""" Play a stone of color (default is self.currentColor) at pos. """
-
-		if color is None: color = self.currentColor
+		if color is None:
+			color = self.currentColor
 		if abstractBoard.play(self, pos, color):					# legal move?
 			captures = self.undostack[len(self.undostack)-1][2]	 # retrieve list of captured stones
 			print "captures: ", captures
@@ -238,18 +204,6 @@ class GoBoard(board.Board, QGraphicsView):
 			self.delShadedStone()
 			return 1
 		else: return 0
-
-	def set_cursor(self, cursor):
-		self.cursor = cursor
-
-	def _is_setup_node(self, node):
-		""" decide if a sgf node is for setup or game play"""
-		dict = [ 'B', 'W' ]
-		for k in node.keys():
-			if k in dict:
-				return False
-
-		return True
 
 	def clear(self):
 		#TODO: remove existing stones
@@ -265,17 +219,7 @@ class GoBoard(board.Board, QGraphicsView):
 			self.scene.removeItem( i )
 
 		self.draw_board()
-
 		board.Board.clear(self)
-
-
-	def _find_play_move(self, node):
-		"for a node, find the part that is a play mark"
-		for k in node.keys():
-			if k == 'B' or k == 'W':
-				return k
-
-		return None
 
 	def setup(self):
 		self.clear()
@@ -290,22 +234,6 @@ class MyWidget(QWidget):
 
 		self.goban.set_game( self.game )
 		self.goban.setup()
-
-	def next(self):
-		if self.coll is None:
-			return
-
-		found = False
-
-		while not found:
-			try:
-				sgf = EnhancedCursor( self.coll.get_next() )
-				self.goban.set_cursor( sgf )
-				self.goban.setup()
-				found = True
-				#TODO: need to handle running ouf of problems.
-			except SGFError:
-				print "SGF error"
 
 
 class MainWindow(QMainWindow):

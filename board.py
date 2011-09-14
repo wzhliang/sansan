@@ -25,6 +25,14 @@ def str2color(s):
 	else:
 		return 0
 
+def enemy(color):
+	if color == BLACK:
+		return WHITE
+	elif color == WHITE:
+		return BLACK
+	else:
+		raise IndexError
+
 def pos2xy(pos):
 	""" convert pos like 'ab' to x, y"""
 	x = __pdict[pos.upper()[0]]
@@ -36,6 +44,10 @@ def pos2id(pos):
 	x = __pdict[pos.upper()[0]]
 	y = __pdict[pos.upper()[1]]
 	return xy2id(x, y)
+
+def xy2pos(x, y):
+	""" convert (x,y) to 'ab' like pos"""
+	return __ndict[x] + __ndict[y]
 
 def xy2id(x, y):
 	""" convert (x,y) to 1D array id"""
@@ -140,6 +152,45 @@ class Board(object):
 
 		return False
 
+	def remove_stones(self, cluster):
+		for x, y in cluster:
+			self.data[x][y] = EMPTY
 
+	def neighbours_xy(self, x, y):
+		nb = []
+		if self.valid_xy(x-1, y):
+			nb.append((x-1, y))
+		if self.valid_xy(x+1, y):
+			nb.append((x+1, y))
+		if self.valid_xy(x, y-1):
+			nb.append((x, y-1))
+		if self.valid_xy(x, y+1):
+			nb.append((x, y+1))
+
+		return nb
+	def neighbours_pos(self, pos):
+		x, y = pos2xy(pos)
+		return self.neighbours_xy(x, y)
+
+	def play_xy(self, x, y, color):
+		if not self.valid_xy(x, y) or not valid_color(color):
+			raise BoardError
+
+		if self.data[x][y] != EMPTY:
+			raise BoardError
+
+		self.data[x][y] = color
+		if not self.is_alive(x, y, color, []):
+			self.data[x][y] = EMPTY
+			raise BoardError # Scuicide not allowed
+
+		all_dead = []
+		nb = self.neighbours_xy(x, y)
+		for nx, ny in nb:
+			clust = []
+			if not self.is_alive(nx, ny, enemy(color), clust ):
+				all_dead.extend(clust) # TODO duplications
+
+		self.remove_stones(all_dead)
 
 
