@@ -139,9 +139,9 @@ class GoBoard(board.Board, QGraphicsView):
 	
 	def draw_stars(self):
 		stars = [ (4, 4), (4, 16), (16, 4), (16, 16), (10, 10) ]
-		for s in stars:
-			x, y = (s[0]*self.w, s[1]*self.h)
-			self.scene.addEllipse( x, y, 2, 2 )
+		for x, y in stars:
+			sx, sy = self.convert_coord((x, y))
+			self.scene.addEllipse( sx, sy, 12, 12 )
 
 	def draw_board(self):
 		pen = QPen()

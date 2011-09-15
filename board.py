@@ -6,7 +6,7 @@ BLACK = 1
 WHITE = 2
 WALL = 3
 
-__pos = "ABCDEFGHJIKLMNOPQRS"
+__pos = "ABCDEFGHIJKLMNOPQRS"
 __num = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
 	12, 13, 14, 15, 16, 17, 18, 19]
 
@@ -184,6 +184,7 @@ class Board(object):
 	def play_xy(self, x, y, color):
 		"""Play a stone at the position. Update board data when stones are captured.
 		Returns the captures stone. """
+		print "play_xy(%d,%d,%d)" % (x, y, color)
 		if not self.valid_xy(x, y) or not valid_color(color):
 			raise BoardError
 		if self.data[x][y] != EMPTY:
