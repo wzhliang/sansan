@@ -38,41 +38,41 @@ def pos2xy(pos):
 	y = __pdict[pos.upper()[1]]
 	return x, y
 
+def xy2pos(x, y):
+	"""convert (x,y) to 'ab' like pos"""
+	return __ndict[x] + __ndict[y]
+
 def pos2id(pos):
-	""" convert pos like 'ab' to 1D array id"""
+	"""obsolete: convert pos like 'ab' to 1D array id"""
 	x = __pdict[pos.upper()[0]]
 	y = __pdict[pos.upper()[1]]
 	return xy2id(x, y)
 
-def xy2pos(x, y):
-	""" convert (x,y) to 'ab' like pos"""
-	return __ndict[x] + __ndict[y]
-
 def xy2id(x, y):
-	""" convert (x,y) to 1D array id"""
+	"""obsolete: convert (x,y) to 1D array id"""
 	return x * 19 + y
 
 def id2xy(_id):
-	""" convert id to (x,y)"""
+	"""obsolete: convert id to (x,y)"""
 	return divmod(_id, 19)
 
 def id2pos(_id):
-	""" convet id to 'ab' like pos """
+	"""obsolete: convet id to 'ab' like pos """
 	x, y = divmod(_id, 19)
 	return __ndict[x] + __ndict[y]
-	
+
 class BoardError(Exception):
 	pass
 
 class Board(object):
-	def __init__(self, size=19):
+	def __init__(self, size = 19):
 		self.size = size
 		self.points = (size+2)*(size+2)
 		self.data = []
-		self.data.append( [WALL] * 21 )
+		self.data.append([WALL] * 21)
 		for i in range(1, 20):
-			self.data.append( [EMPTY] * 21 )
-		self.data.append( [WALL] * 21 )
+			self.data.append([EMPTY] * 21)
+		self.data.append([WALL] * 21)
 		self.clear()
 
 	def clear(self):
@@ -81,24 +81,25 @@ class Board(object):
 			self.data[i][20] = WALL
 
 	def valid_id(self, _id):
-		#FIXME
+		#FIXME obsolete
 		return True
 
 	def valid_xy(self, x, y):
-		if x > 0 and x < 20 and y > 0 and y < 20:
+		"This only verifies the valid x, y for a stone"
+		if x > 0 and x <= self.size and y > 0 and y <= self.size:
 			return True
 		else:
 			return False
 
 	def place_stone_pos(self, pos, color):
-		print "%s %d" % (pos, color)
-		if pos == "":
+		if pos == "": # Allow pass
 			print "PASS"
 		else:
 			x, y = pos2xy(pos)
 			self.place_stone_xy(x, y, color)
 
 	def place_stone_id(self, _id, color):
+		"obsolete"
 		if not valid_color(color) or not self.valid_id(_id):
 			raise BoardError
 
@@ -106,12 +107,11 @@ class Board(object):
 			print "Warning: remove when removing stone is implemented"
 			#raise BoardError
 
-		self.data[_id] = color;
+		self.data[_id] = color
 
 	def place_stone_xy(self, x, y, color):
 		if not self.valid_xy(x, y):
 			raise BoardError
-
 		if not valid_color(color):
 			raise BoardError
 
@@ -127,6 +127,9 @@ class Board(object):
 			return False
 
 	def is_alive(self, x, y, color, cluster):
+		""" Decide if a cluster of stones is alive. x, y is a seed inside the cluster.
+			cluster will hold all the stones that are NOT alive when this method finishes.
+		"""
 		if self.data[x][y] != color:
 			return False
 
@@ -138,9 +141,9 @@ class Board(object):
 
 		cluster.append((x, y))
 
+		# Check neighbours
 		if self.is_alive(x-1, y, color, cluster):
 			return True
-
 		if self.is_alive(x+1, y, color, cluster):
 			return True
 		if self.is_alive(x, y-1, color, cluster):
@@ -155,6 +158,7 @@ class Board(object):
 			self.data[x][y] = EMPTY
 
 	def neighbours_xy(self, x, y):
+		"returns a list of positions that's neighbour to (x,y)"
 		nb = []
 		if self.valid_xy(x-1, y):
 			nb.append((x-1, y))
@@ -166,7 +170,9 @@ class Board(object):
 			nb.append((x, y+1))
 
 		return nb
+
 	def neighbours_pos(self, pos):
+		"handy wrapper of neighbours_xy() that takes in 'ab' like pos"
 		x, y = pos2xy(pos)
 		return self.neighbours_xy(x, y)
 
@@ -175,7 +181,6 @@ class Board(object):
 		Returns the captures stone. """
 		if not self.valid_xy(x, y) or not valid_color(color):
 			raise BoardError
-
 		if self.data[x][y] != EMPTY:
 			raise BoardError
 

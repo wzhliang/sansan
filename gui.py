@@ -19,11 +19,11 @@ import sgf
 import board
 
 def debug_trace():
-  '''Set a tracepoint in the Python debugger that works with Qt'''
-  from PyQt4.QtCore import pyqtRemoveInputHook
-  from pdb import set_trace
-  pyqtRemoveInputHook()
-  set_trace()
+	'''Set a tracepoint in the Python debugger that works with Qt'''
+	from PyQt4.QtCore import pyqtRemoveInputHook
+	from pdb import set_trace
+	pyqtRemoveInputHook()
+	set_trace()
 
 class Bitmap:
 	@staticmethod
@@ -38,6 +38,7 @@ class Bitmap:
 		return "background.png"
 
 class Stone:
+	"""TODO: make this a child of QGraphicsPixmapItem"""
 	def __init__(self, color):
 		self.color = color
 		self.bitmap = QPixmap( Bitmap.get_bitmap_for_stone(color) )
@@ -58,9 +59,9 @@ class Stone:
 
 class GoBoard(board.Board, QGraphicsView):
 	def __init__(self, parent = None, size = 19):
+		#TODO: how does it know to use board.Board or QGraphicsView?
 		super(GoBoard, self).__init__(size)
-		self.size = 19
-		self._stone_zvalue = 5
+		self.size = size
 		self.w = 20
 		self.h = 20
 		self.edge = 25
@@ -72,7 +73,7 @@ class GoBoard(board.Board, QGraphicsView):
 		self.y1 = (self.size-1)*self.h + self.edge
 		self.game = None
 		self.current = None
-		self.stones = []
+		self.stones = [] # 2D array for holding stones (QGraphicsPixmapItem)
 		for i in range(19):
 			self.stones.append( [None] * 19 )
 
@@ -84,8 +85,6 @@ class GoBoard(board.Board, QGraphicsView):
 		self.scene.setSceneRect( 0, 0,
 				self.width + 2 * self.edge,
 				self.height + 2 * self.edge )
-
-		self.current_stone = board.BLACK
 
 	def set_game(self, game):
 		self.game = game
@@ -101,7 +100,7 @@ class GoBoard(board.Board, QGraphicsView):
 				break
 
 	def mousePressEvent(self, event):
-		if (mouseEvent.button() != QtCore.Qt.LeftButton):
+		if event.button() != Qt.LeftButton:
 			return
 
 		self.play_next_move()
@@ -149,14 +148,14 @@ class GoBoard(board.Board, QGraphicsView):
 		pen.setWidth(2)
 
 		# Draw background 
-		bg_color = QColor( 0xcb, 0x91, 0x43 )
-		self.scene.setBackgroundBrush( QBrush(bg_color) )
+		bg_color = QColor(0xcb, 0x91, 0x43)
+		self.scene.setBackgroundBrush(QBrush(bg_color))
 
 		#self.draw_stars()
 
 		# Draw frame
-		rect = QRectF( self.x0, self.y0, self.x1 - self.x0,  self.y1 - self.y0 )
-		self.scene.addRect( rect, pen  )
+		rect = QRectF(self.x0, self.y0, self.x1 - self.x0,  self.y1 - self.y0)
+		self.scene.addRect(rect, pen)
 
 		# Draw lines
 		for i in range(18):
@@ -178,20 +177,16 @@ class GoBoard(board.Board, QGraphicsView):
 		self.show()
 
 	def add_stone(self, x, y, color):
-		"""Don't change model """
-		print "add_stone(%d,%d,%d)" % (x, y, color)
+		""" Doesn't change model """
 		stone = Stone(color)
 		gi = QGraphicsPixmapItem(stone.get_bitmap())
 		self.stones[x-1][y-1] = gi
 		x, y = self.convert_coord((x, y))
-		print "setPos(%d,%d)" % (x,y)
 		gi.setPos(x, y)
 		gi.setZValue(5)
 		self.scene.addItem(gi)
 
 	def place_stone_pos(self, pos, color):
-		print("place_stone_pos()\n");
-		# Note: Should never be called directly!!!
 		try:
 			super(GoBoard, self).place_stone_pos(self, pos, color)
 			x, y = board.pos2xy(pos)
@@ -200,21 +195,17 @@ class GoBoard(board.Board, QGraphicsView):
 			print "Failed to place stone"
 			pass
 
-	def remove_stone(self, xy):
-		print "remove_stone()", xy
-		x, y = xy
-		print "remove(%d,%d)" % (x, y)
+	def remove_stone(self, x, y):
 		gi = self.stones[x-1][y-1]
 		self.scene.removeItem(gi)
 
 	def play_xy(self, x, y, color):
-		print("play_xy()\n");
 		try:
 			dead = super(GoBoard, self).play_xy(x, y, color)
 			# Add only as the model knows about this new stone
 			self.add_stone(x, y, color)
 			for dx, dy in dead:
-				self.remove_stone((dx, dy))
+				self.remove_stone(dx, dy)
 		except IndexError:
 			print "Unable to make move: (%d,%d,%d)" % (x, y, color)
 			# Remove the just played stone
@@ -236,11 +227,13 @@ class GoBoard(board.Board, QGraphicsView):
 		self.clear()
 
 class MyWidget(QWidget):
-	def __init__(self, parent=None):
+	def __init__(self, parent = None):
 		super(MyWidget, self ).__init__(parent)
+
 		self.goban = GoBoard(self)
 		self.goban.draw_board()
-		self.game = sgf.Game( sys.argv[1] )
+
+		self.game = sgf.Game(sys.argv[1])
 		self.game.build_tree()
 
 		self.goban.set_game( self.game )
@@ -328,8 +321,6 @@ class MainWindow(QMainWindow):
 		self.helpMenu = self.menuBar().addMenu("&Help")
 		self.helpMenu.addAction(self.aboutAct)
 		self.helpMenu.addAction(self.aboutQtAct)
-
-
 
 # MAIN MAIN MAIN ######################################
 app = QApplication(sys.argv)
