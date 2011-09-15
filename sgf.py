@@ -1,5 +1,4 @@
-from pyparsing import Word, Literal, QuotedString, OneOrMore
-from string import lowercase
+from pyparsing import Word, Literal, QuotedString, OneOrMore, srange
 from pprint import pprint
 #from pdb import set_trace
 import sys
@@ -52,13 +51,12 @@ class SGF(object):
 	def __init__(self, filename):
 		#BNF
 		start = Literal(";")
-		cap = lowercase.upper()
 		text = QuotedString(quoteChar="[", 
 				escChar="\\",
 				multiline=True,
 				unquoteResults=True,
 				endQuoteChar="]")
-		prop_id = Word(cap, min=1, max=2)
+		prop_id = Word(srange("[A-Z]"), min=1, max=2)
 		prop = prop_id + OneOrMore(text)
 		node = start + OneOrMore(prop)
 		sequence = OneOrMore(node)
@@ -129,9 +127,9 @@ class Game(object):
 
 
 class GameGui(Game):
-	def __init__(self, name, goban):
+	def __init__(self, name, _goban):
 		Game.__init__(self, name)
-		self.goban = goban
+		self.goban = _goban
 
 	def navigate(self):
 		node = self.root
