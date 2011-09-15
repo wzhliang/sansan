@@ -171,4 +171,39 @@ class BoardTest(unittest.TestCase):
 		print "Killing WHITEs:"
 		pprint(pan.data)
 
+	def test_i(self):
+		print "\n========= i =============\n"
+		pan = Board()
+
+		pan.place_stone_xy(3, 4, WHITE)
+		pan.place_stone_xy(3, 5, WHITE)
+		pan.place_stone_xy(3, 6, WHITE)
+		pan.place_stone_xy(4, 4, WHITE)
+		pan.place_stone_xy(4, 6, WHITE)
+		pan.place_stone_xy(5, 5, WHITE)
+
+		pan.place_stone_xy(2, 4, BLACK)
+		pan.place_stone_xy(2, 5, BLACK)
+		pan.place_stone_xy(2, 6, BLACK)
+		pan.place_stone_xy(3, 3, BLACK)
+		pan.place_stone_xy(3, 7, BLACK)
+		pan.place_stone_xy(4, 3, BLACK)
+		pan.place_stone_xy(4, 7, BLACK)
+		pan.place_stone_xy(5, 4, BLACK)
+		pan.place_stone_xy(5, 6, BLACK)
+		pan.place_stone_xy(6, 5, BLACK)
+
+		print "Initially:"
+		pprint(pan.data)
+
+		pan.play_xy(4, 5, BLACK)
+		self.assertEqual(pan.data[3][4], EMPTY)
+		self.assertEqual(pan.data[3][5], EMPTY)
+		self.assertEqual(pan.data[3][6], EMPTY)
+		self.assertEqual(pan.data[4][4], EMPTY)
+		self.assertEqual(pan.data[4][6], EMPTY)
+		self.assertEqual(pan.data[5][5], EMPTY)
+		print "Killing WHITEs:"
+		pprint(pan.data)
+
 unittest.main()

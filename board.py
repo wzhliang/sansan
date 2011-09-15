@@ -73,7 +73,6 @@ class Board(object):
 		for i in range(1, 20):
 			self.data.append( [EMPTY] * 21 )
 		self.data.append( [WALL] * 21 )
-
 		self.clear()
 
 	def clear(self):

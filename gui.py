@@ -5,8 +5,9 @@ import os
 import time
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
+from pdb import set_trace
+from pprint import pprint
 
-import pdb
 
 #TODO:
 # once the board is resize, everything is in a mess
@@ -16,6 +17,13 @@ import pdb
 
 import sgf
 import board
+
+def debug_trace():
+  '''Set a tracepoint in the Python debugger that works with Qt'''
+  from PyQt4.QtCore import pyqtRemoveInputHook
+  from pdb import set_trace
+  pyqtRemoveInputHook()
+  set_trace()
 
 class Bitmap:
 	@staticmethod
@@ -49,13 +57,13 @@ class Stone:
 		return self.pos
 
 class GoBoard(board.Board, QGraphicsView):
-	def __init__(self, parent= None, size=19):
-		board.Board.__init__(self, size)
+	def __init__(self, parent = None, size = 19):
+		super(GoBoard, self).__init__(size)
 		self.size = 19
 		self._stone_zvalue = 5
 		self.w = 20
 		self.h = 20
-		self.edge = 25 
+		self.edge = 25
 		self.x0 = 0 + self.edge
 		self.y0 = 0 + self.edge
 		self.width = (self.size-1)*self.w
@@ -64,38 +72,43 @@ class GoBoard(board.Board, QGraphicsView):
 		self.y1 = (self.size-1)*self.h + self.edge
 		self.game = None
 		self.current = None
+		self.stones = []
+		for i in range(19):
+			self.stones.append( [None] * 19 )
 
-		self.scene = QGraphicsScene( 0, 0, 
-									self.width + 2 * self.edge,
-									self.height + 2 * self.edge )
+		self.scene = QGraphicsScene(0, 0,
+				self.width + 2 * self.edge,
+				self.height + 2 * self.edge)
 		super(QGraphicsView, self).__init__(self.scene, parent)
 
-		self.setSceneRect( 0, 0,
-						  self.width + 2 * self.edge,
-						  self.height + 2 * self.edge )
+		self.scene.setSceneRect( 0, 0,
+				self.width + 2 * self.edge,
+				self.height + 2 * self.edge )
 
 		self.current_stone = board.BLACK
-		self.modified = False
-		self.next_move = None
 
 	def set_game(self, game):
 		self.game = game
 		self.current = game.root
 
-	def next_stone(self):
-		if self.current_stone == board.BLACK:
-			self.current_stone = board.WHITE
-		else:
-			self.current_stone = board.BLACK
-
-	def mousePressEvent(self, event):
+	def play_next_move(self):
 		while True:
 			self.current = self.current.children[0]
 			print "GUI: %s %s" % (self.current.name, self.current.prop)
 			if self.current.name == "B" or self.current.name == "W":
-				self.place_stone_pos(self.current.prop,
-						board.str2color(self.current.name) )
+				x, y = board.pos2xy(self.current.prop)
+				self.play_xy(x, y, board.str2color(self.current.name))
 				break
+
+	def mousePressEvent(self, event):
+		if (mouseEvent.button() != QtCore.Qt.LeftButton):
+			return
+
+		self.play_next_move()
+
+	def keyPressEvent(self, event):
+		if event.key() == Qt.Key_Right:
+			self.play_next_move()
 
 	def mouseReleaseEvent(self, event):
 		pass
@@ -122,8 +135,8 @@ class GoBoard(board.Board, QGraphicsView):
 		if gx > 19 or gy > 19 or gx < 0 or gy < 0:
 			return (-1, -1)
 
-		return ( (gx-1)*self.w- Stone.get_width()/2 + self.edge, 
-				((gy-1)*self.w- Stone.get_width()/2)  + self.edge )
+		return ((gx-1)*self.w - Stone.get_width()/2 + self.edge, 
+				(gy-1)*self.w - Stone.get_width()/2 + self.edge )
 	
 	def draw_stars(self):
 		stars = [ (4, 4), (4, 16), (16, 4), (16, 16), (10, 10) ]
@@ -164,49 +177,60 @@ class GoBoard(board.Board, QGraphicsView):
 
 		self.show()
 
+	def add_stone(self, x, y, color):
+		"""Don't change model """
+		print "add_stone(%d,%d,%d)" % (x, y, color)
+		stone = Stone(color)
+		gi = QGraphicsPixmapItem(stone.get_bitmap())
+		self.stones[x-1][y-1] = gi
+		x, y = self.convert_coord((x, y))
+		print "setPos(%d,%d)" % (x,y)
+		gi.setPos(x, y)
+		gi.setZValue(5)
+		self.scene.addItem(gi)
+
 	def place_stone_pos(self, pos, color):
+		print("place_stone_pos()\n");
 		# Note: Should never be called directly!!!
 		try:
-			board.Board.place_stone_pos(
-					self, pos, color)
+			super(GoBoard, self).place_stone_pos(self, pos, color)
+			x, y = board.pos2xy(pos)
+			self.add_stone(x, y, color)
 		except board.BoardError:
-			return
-
-		stone = Stone(color)
-		gi = self.scene.addPixmap( stone.get_bitmap() )
-		gi.setZValue( self._stone_zvalue )
-		x, y = self.convert_coord( pos )
-		gi.setPos( x, y )
-		return gi
+			print "Failed to place stone"
+			pass
 
 	def remove_stone(self, xy):
-		x, y = self.convert_coord(xy)
-		gi = self.scene.itemAt(x, y)
-		self.scene.removeItem( gi )
-
-	def delShadedStone(self):
-		print "delShadedStone() stubbed"
+		print "remove_stone()", xy
+		x, y = xy
+		print "remove(%d,%d)" % (x, y)
+		gi = self.stones[x-1][y-1]
+		self.scene.removeItem(gi)
 
 	def play_xy(self, x, y, color):
+		print("play_xy()\n");
 		try:
-			dead = Board.play_xy(x, y, color)
-		except BoardError:
+			dead = super(GoBoard, self).play_xy(x, y, color)
+			# Add only as the model knows about this new stone
+			self.add_stone(x, y, color)
+			for dx, dy in dead:
+				self.remove_stone((dx, dy))
+		except IndexError:
 			print "Unable to make move: (%d,%d,%d)" % (x, y, color)
+			# Remove the just played stone
 			pass
-		for dx, dy in dead:
-			self.remove_stone((dx, dy))
 
-	def clear(self):
+	def _clear(self):
 		#TODO: remove existing stones
 		#TODO: might need a modified flag
 		#print "GoBoard: number of stones on board: ", len( self.stones_gi )
 		
 		# Clearing all current stuff TODO: refresh the board instead.
-		for gi in self.scene.items():
-			self.scene.removeItem(gi)
+		#set_trace()
+		#for gi in self.scene.items():
+			#self.scene.removeItem(gi)
 
 		self.draw_board()
-		board.Board.clear(self)
 
 	def setup(self):
 		self.clear()
