@@ -1,4 +1,6 @@
 #!/usr/bin/python
+from debug import debug_trace
+
 EMPTY = 0
 BLACK = 1
 WHITE = 2
@@ -32,8 +34,11 @@ def enemy(color):
 
 def pos2xy(pos):
 	""" convert pos like 'ab' to x, y"""
-	x = __pdict[pos.upper()[0]]
-	y = __pdict[pos.upper()[1]]
+	try:
+		x = __pdict[pos.upper()[0]]
+		y = __pdict[pos.upper()[1]]
+	except AttributeError:
+		debug_trace()
 	return x, y
 
 def xy2pos(x, y):

@@ -172,7 +172,10 @@ class Game(object):
 				self.current = node.prev_br
 				break
 			node = node.parent
-		return remove
+		if node:
+			return remove
+		else:
+			return []
 
 	def branch_down(self):
 		"Try move up to the previous branch"
@@ -184,7 +187,10 @@ class Game(object):
 				self.current = node.next_br
 				break
 			node = node.parent
-		return remove
+		if node:
+			return remove
+		else:
+			return []
 
 class GameGui(Game):
 	def __init__(self, name, _goban):
