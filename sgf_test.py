@@ -24,7 +24,8 @@ class GameGui(Game):
 	def navigate_back(self):
 		node = None
 		while True:
-			node = self.forth()
+			self.forth()
+			node = self.where()
 			if is_stone(node.name):
 				self.goban.play_pos( node.prop, board.str2color(node.name) ) 
 				print "##############################################"

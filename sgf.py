@@ -4,6 +4,7 @@ from pprint import pprint
 #from pdb import set_trace
 import sys
 import board
+from util import *
 from pdb import set_trace
 
 # BNF from red-bean
@@ -18,22 +19,6 @@ from pdb import set_trace
 #  CValueType = (ValueType | Compose)
 #  ValueType  = (None | Number | Real | Double | Color | SimpleText |
 #		Text | Point  | Move | Stone)
-
-__metas = [ "PB", "PW", "WR", "BR", "FF", "DT", "RE", "SZ", "KM", "TM", "OT" ]
-__stones = [ "AB", "AW", "B", "W" ]
-__extra = [ "C" ]
-
-def is_meta(tag):
-	return tag in __metas
-
-def is_stone(tag):
-	return tag in __stones
-
-def is_extra(tag):
-	return tag in __extra
-
-def is_branch(tag):
-	return tag in "()"
 
 class Node(object):
 	"""this class assums that the primary property is the first one in the string.
@@ -57,7 +42,7 @@ class Node(object):
 		if self.extra.has_key("C"):
 			return self.extra["C"]
 		else:
-		 	return ""
+			return ""
 
 	def add_child(self, child):
 		if self.num_child() > 0:
@@ -71,6 +56,15 @@ class Node(object):
 
 	def has_child(self):
 		return len(self.children) > 0
+
+	def __str__(self):
+		return "%s[%s]" % (self.name, self.prop)
+
+class SGFError(Exception):
+	pass
+
+class SGFNoMoreNode(SGFError):
+	pass
 
 class SGF(object):
 	def __init__(self, filename):
@@ -157,12 +151,13 @@ class Game(object):
 		self.current = self.root
 
 	def forth(self, branch=0):
-		self.current = self.current.children[0]
-		return self.current
+		try:
+			self.current = self.current.children[branch]
+		except IndexError:
+			raise SGFNoMoreNode
 
 	def back(self):
 		self.current = self.current.parent
-		return self.current
 
 	def where(self):
 		return self.current

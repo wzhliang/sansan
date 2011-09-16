@@ -65,7 +65,6 @@ class GoBoard(board.Board, QGraphicsView):
 		self.x1 = (self.size-1)*self.w + self.edge
 		self.y1 = (self.size-1)*self.h + self.edge
 		self.game = None
-		self.current = None
 		self.stones = [] # 2D array for holding stones (QGraphicsPixmapItem)
 		for i in range(19):
 			self.stones.append( [None] * 19 )
@@ -84,20 +83,20 @@ class GoBoard(board.Board, QGraphicsView):
 
 	def play_next_move(self):
 		while True:
-			self.current = self.game.forth()
-			print "GUI: %s %s" % (self.current.name, self.current.prop)
-			if sgf.is_stone(self.current.name):
-				x, y = board.pos2xy(self.current.prop)
-				self.play_xy(x, y, board.str2color(self.current.name))
+			self.game.forth()
+			print "GUI: %s" % (self.game.where())
+			if sgf.is_stone(self.game.where().name):
+				x, y = board.pos2xy(self.game.where().prop)
+				self.play_xy(x, y, board.str2color(self.game.where().name))
 				break
 
 	def go_back(self):
 		while True:
-			x, y = board.pos2xy(self.current.prop)
+			x, y = board.pos2xy(self.game.where().prop)
 			self.remove_stone(x, y)
 			super(GoBoard, self).remove_stones([(x, y)])
-			self.current = self.game.back()
-			if sgf.is_stone(self.current.name):
+			self.game.back()
+			if sgf.is_stone(self.game.where().name):
 				break
 
 	def remove_stones(self, group):
