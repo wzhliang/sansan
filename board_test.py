@@ -206,4 +206,22 @@ class BoardTest(unittest.TestCase):
 		print "Killing WHITEs:"
 		pprint(pan.data)
 
+	def test_j(self):
+		print "\n========= j =============\n"
+		pan = Board()
+
+		pan.place_stone_xy(6, 19, BLACK)
+
+		pan.place_stone_xy(5, 18, WHITE)
+		pan.place_stone_xy(6, 18, WHITE)
+		pan.place_stone_xy(7, 19, WHITE)
+
+		print "Initially:"
+		pprint(pan.data)
+
+		pan.play_xy(5, 19, WHITE)
+		self.assertEqual(pan.data[1][4], EMPTY)
+		print "Killing WHITEs:"
+		pprint(pan.data)
+
 unittest.main()

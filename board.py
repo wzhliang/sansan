@@ -1,5 +1,6 @@
 #!/usr/bin/python
 #from pdb import set_trace
+from debug import debug_trace
 
 EMPTY = 0
 BLACK = 1
@@ -123,10 +124,10 @@ class Board(object):
 		self.data[x][y] = color
 
 	def has_liberty(self, x, y):
-		if ( self.data[x-1][y] == EMPTY or
+		if (self.data[x-1][y] == EMPTY or
 			self.data[x+1][y] == EMPTY or
 			self.data[x][y-1] == EMPTY or
-			self.data[x][y+1] == EMPTY ):
+			self.data[x][y+1] == EMPTY):
 			return True
 		else:
 			return False
@@ -159,6 +160,7 @@ class Board(object):
 		return False
 
 	def remove_stones(self, cluster):
+		print "remove_stones()", cluster
 		for x, y in cluster:
 			self.data[x][y] = EMPTY
 
@@ -181,10 +183,16 @@ class Board(object):
 		x, y = pos2xy(pos)
 		return self.neighbours_xy(x, y)
 
+	def play_pos(self, pos, color):
+		x, y = pos2xy(pos)
+		return self.play_xy(x, y, color)
+
 	def play_xy(self, x, y, color):
 		"""Play a stone at the position. Update board data when stones are captured.
 		Returns the captures stone. """
 		print "play_xy(%d,%d,%d)" % (x, y, color)
+		#if x == 5 and y == 19:
+			#debug_trace()
 		if not self.valid_xy(x, y) or not valid_color(color):
 			raise BoardError
 		if self.data[x][y] != EMPTY:
@@ -205,6 +213,7 @@ class Board(object):
 			self.data[x][y] = EMPTY
 			raise BoardError # Scuicide not allowed
 
-		self.remove_stones(all_dead)
+		if len(all_dead) > 0:
+			self.remove_stones(all_dead)
 
 		return all_dead

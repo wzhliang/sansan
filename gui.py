@@ -8,7 +8,6 @@ from PyQt4.QtGui import *
 from pdb import set_trace
 from pprint import pprint
 
-
 #TODO:
 # once the board is resize, everything is in a mess
 # needs a bit of edge for the board.
@@ -17,13 +16,6 @@ from pprint import pprint
 
 import sgf
 import board
-
-def debug_trace():
-	'''Set a tracepoint in the Python debugger that works with Qt'''
-	from PyQt4.QtCore import pyqtRemoveInputHook
-	from pdb import set_trace
-	pyqtRemoveInputHook()
-	set_trace()
 
 class Bitmap:
 	@staticmethod
@@ -204,7 +196,7 @@ class GoBoard(board.Board, QGraphicsView):
 		return gi
 
 	def remove_stone(self, xy):
-		#print "remove_stone: removing ", item
+		print "remove_stone: removing ", item
 		x, y = xy
 		print "remove_stone: pos ", board.xy2pos(x, y)
 		gi = self.stones.pop( board.xy2pos(x, y) )

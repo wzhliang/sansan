@@ -3,6 +3,7 @@ from pprint import pprint
 #from pdb import set_trace
 import sys
 import board
+from pdb import set_trace
 
 __metas = [ "PB", "PW", "WR", "BR", "FF", "DT", "RE", "SZ", "KM", "TM", "OT" ]
 __stones = [ "AB", "AW", "B", "W" ]
@@ -24,6 +25,7 @@ class Node(object):
 		self.name = name
 		self.prop = ""
 		self.children = []
+		self.parent = None
 		self.extra = {} # extra properties, including comment
 
 	def set_property(self, prop):
@@ -40,6 +42,7 @@ class Node(object):
 
 	def add_child(self, child):
 		self.children.append(child)
+		child.parent = self
 
 	def num_child(self):
 		return len(self.children)
@@ -117,6 +120,19 @@ class Game(object):
 			except IndexError:
 				break
 
+		self.reset()
+	
+	def reset(self):
+		self.current = self.root
+
+	def forth(self, branch=0):
+		self.current = self.current.children[0]
+		return self.current
+
+	def back(self):
+		self.current = self.current.parent
+		return self.current
+
 	def navigate(self):
 		node = self.root
 		print "Black: %s %s" % (self.info["PB"], self.info["BR"])
@@ -124,7 +140,6 @@ class Game(object):
 		while node.has_child():
 			print "%s %s [%s]" % (node.name, node.prop, node.get_comment())
 			node = node.children[0]
-
 
 class GameGui(Game):
 	def __init__(self, name, _goban):
@@ -139,9 +154,9 @@ class GameGui(Game):
 					node.prop, board.str2color(node.name) ) 
 			node = node.children[0]
 
-goban = board.Board()
-game = GameGui(sys.argv[1], goban)
-game.build_tree()
-goban.clear()
-game.navigate()
-pprint(goban.data)
+#goban = board.Board()
+#game = GameGui(sys.argv[1], goban)
+#game.build_tree()
+#goban.clear()
+##game.navigate()
+#pprint(goban.data)
