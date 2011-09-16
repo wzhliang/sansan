@@ -89,6 +89,7 @@ class GoBoard(board.Board, QGraphicsView):
 		else:
 			x, y = pos2xy(self.game.where().prop)
 			self.play_xy(x, y, str2color(self.game.where().name))
+			print self.game.where().get_comment().decode("euc-cn")
 
 	def play_next_move(self):
 		while True:
