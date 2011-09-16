@@ -1,9 +1,23 @@
-from pyparsing import Word, Literal, QuotedString, OneOrMore, srange
+from pyparsing import (Word, Literal, QuotedString, OneOrMore,
+		srange, Forward, ZeroOrMore)
 from pprint import pprint
 #from pdb import set_trace
 import sys
 import board
 from pdb import set_trace
+
+# BNF from red-bean
+# 
+#  Collection = GameTree { GameTree }
+#  GameTree   = "(" Sequence { GameTree } ")"
+#  Sequence   = Node { Node }
+#  Node       = ";" { Property }
+#  Property   = PropIdent PropValue { PropValue }
+#  PropIdent  = UcLetter { UcLetter }
+#  PropValue  = "[" CValueType "]"
+#  CValueType = (ValueType | Compose)
+#  ValueType  = (None | Number | Real | Double | Color | SimpleText |
+#		Text | Point  | Move | Stone)
 
 __metas = [ "PB", "PW", "WR", "BR", "FF", "DT", "RE", "SZ", "KM", "TM", "OT" ]
 __stones = [ "AB", "AW", "B", "W" ]
@@ -17,6 +31,9 @@ def is_stone(tag):
 
 def is_extra(tag):
 	return tag in __extra
+
+def is_branch(tag):
+	return tag in "()"
 
 class Node(object):
 	"""this class assums that the primary property is the first one in the string.
@@ -63,11 +80,11 @@ class SGF(object):
 		prop = prop_id + OneOrMore(text)
 		node = start + OneOrMore(prop)
 		sequence = OneOrMore(node)
-		branch = Literal("(") + sequence + Literal(")")
-		self.game = OneOrMore( branch )
+		branch = Forward()
+		branch << "(" + sequence + ZeroOrMore(branch) + ")"
+		self.game = OneOrMore(branch)
 
 		self.meta = {}
-
 		self.sgf_file = filename
 		self.moves = None
 		self.__parse()
@@ -91,6 +108,7 @@ class Game(object):
 		self.root = Node('root')
 		self.current = self.root
 		self.info = {}
+		self.stack = []
 
 	def on_move(self, propid):
 		node = Node(propid)
@@ -104,6 +122,12 @@ class Game(object):
 	def on_meta(self, propid):
 		self.info[propid] = self.sgf.next_token()
 
+	def on_branch(self, br):
+		if br == "(":
+			self.stack.append(self.current)
+		else:
+			self.current = self.stack.pop()
+
 	def build_tree(self):
 		while True:
 			try:
@@ -115,6 +139,8 @@ class Game(object):
 					self.on_meta(current)
 				elif is_extra(current):
 					self.on_extra(current)
+				elif is_branch(current):
+					self.on_branch(current)
 				else:
 					pass
 			except IndexError:

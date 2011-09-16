@@ -107,7 +107,7 @@ class Board(object):
 	def place_stone_id(self, _id, color):
 		"obsolete"
 		if not valid_color(color) or not self.valid_id(_id):
-			raise BoardError
+			raise BoardError("Invalid color.")
 
 		if self.data[_id] != EMPTY:
 			print "Warning: remove when removing stone is implemented"
@@ -117,9 +117,9 @@ class Board(object):
 
 	def place_stone_xy(self, x, y, color):
 		if not self.valid_xy(x, y):
-			raise BoardError
+			raise BoardError("Invalid position.")
 		if not valid_color(color):
-			raise BoardError
+			raise BoardError("Invalid color.")
 
 		self.data[x][y] = color
 
@@ -183,10 +183,6 @@ class Board(object):
 		x, y = pos2xy(pos)
 		return self.neighbours_xy(x, y)
 
-	def play_pos(self, pos, color):
-		x, y = pos2xy(pos)
-		return self.play_xy(x, y, color)
-
 	def play_xy(self, x, y, color):
 		"""Play a stone at the position. Update board data when stones are captured.
 		Returns the captures stone. """
@@ -194,9 +190,9 @@ class Board(object):
 		#if x == 5 and y == 19:
 			#debug_trace()
 		if not self.valid_xy(x, y) or not valid_color(color):
-			raise BoardError
+			raise BoardError("Invalid stone color.")
 		if self.data[x][y] != EMPTY:
-			raise BoardError
+			raise BoardError("Position occupied.");
 
 		self.data[x][y] = color
 
@@ -211,9 +207,13 @@ class Board(object):
 
 		if len(all_dead) == 0 and not self.is_alive(x, y, color, []):
 			self.data[x][y] = EMPTY
-			raise BoardError # Scuicide not allowed
+			raise BoardError("Suicide not allowed") # Scuicide not allowed
 
 		if len(all_dead) > 0:
 			self.remove_stones(all_dead)
 
 		return all_dead
+
+	def play_pos(self, pos, color):
+		x, y = pos2xy(pos)
+		return self.play_xy(x, y, color)

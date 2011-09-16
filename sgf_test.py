@@ -37,7 +37,7 @@ class GameGui(Game):
 				x, y = pos2xy(node.prop)
 				self.goban.remove_stones([(x, y)]) 
 				print "##############################################"
-				print node.get_comment()
+				print node.get_comment().decode("euc-cn")
 				pprint(self.goban.data)
 			node = self.back()
 
@@ -55,5 +55,11 @@ class BoardTest(unittest.TestCase):
 		pan = Board()
 		game = GameGui("sgf/kj.sgf", pan)
 		game.navigate_back()
+
+	def test_c(self):
+		print "\n========= c =============\n"
+		pan = Board()
+		game = GameGui("branch.sgf", pan)
+		game.navigate()
 
 unittest.main()

@@ -80,15 +80,22 @@ class GoBoard(board.Board, QGraphicsView):
 
 	def set_game(self, game):
 		self.game = game
-		self.current = game.root
 
 	def play_next_move(self):
 		while True:
-			self.current = self.current.children[0]
+			self.current = self.forth()
 			print "GUI: %s %s" % (self.current.name, self.current.prop)
-			if self.current.name == "B" or self.current.name == "W":
+			if board.is_stone(self.current.name):
 				x, y = board.pos2xy(self.current.prop)
 				self.play_xy(x, y, board.str2color(self.current.name))
+				break
+
+	def go_back(self):
+		while True:
+			x, y = board.pos2xy(self.current.prop)
+			self.remove_stones([(x, y)])
+			self.current = self.game.back()
+			if board.is_stone(self.current.name):
 				break
 
 	def mousePressEvent(self, event):
@@ -100,6 +107,8 @@ class GoBoard(board.Board, QGraphicsView):
 	def keyPressEvent(self, event):
 		if event.key() == Qt.Key_Right:
 			self.play_next_move()
+		elif event.key() == Qt.Key_Left:
+			self.go_back()
 
 	def mouseReleaseEvent(self, event):
 		pass
@@ -267,7 +276,6 @@ class MyWidget(QWidget):
 
 		self.goban.set_game( self.game )
 		self.goban.setup()
-
 
 class MainWindow(QMainWindow):
 	def __init__(self):
