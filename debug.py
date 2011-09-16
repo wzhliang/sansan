@@ -5,3 +5,4 @@ def debug_trace():
 	'''Set a tracepoint in the Python debugger that works with Qt'''
 	pyqtRemoveInputHook()
 	set_trace()
+	pass

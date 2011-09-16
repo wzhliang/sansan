@@ -14,6 +14,7 @@ from pprint import pprint
 # Stop hard-coding stone size, etc.
 # Draw star, tianyuan, etc
 
+from debug import debug_trace
 import sgf
 import board
 
@@ -83,9 +84,9 @@ class GoBoard(board.Board, QGraphicsView):
 
 	def play_next_move(self):
 		while True:
-			self.current = self.forth()
+			self.current = self.game.forth()
 			print "GUI: %s %s" % (self.current.name, self.current.prop)
-			if board.is_stone(self.current.name):
+			if sgf.is_stone(self.current.name):
 				x, y = board.pos2xy(self.current.prop)
 				self.play_xy(x, y, board.str2color(self.current.name))
 				break
@@ -93,10 +94,39 @@ class GoBoard(board.Board, QGraphicsView):
 	def go_back(self):
 		while True:
 			x, y = board.pos2xy(self.current.prop)
-			self.remove_stones([(x, y)])
+			self.remove_stone(x, y)
+			super(GoBoard, self).remove_stones([(x, y)])
 			self.current = self.game.back()
-			if board.is_stone(self.current.name):
+			if sgf.is_stone(self.current.name):
 				break
+
+	def remove_stones(self, group):
+		remove = []
+		for prop in group:
+			x, y = board.pos2xy(prop)
+			self.remove_stone(x, y)
+			remove.append((x,y))
+		super(GoBoard, self).remove_stones(remove)
+
+	def go_up(self):
+		"Go up in variantions"
+		remove = self.game.branch_up()
+		if len(remove) == 0:
+			return
+		self.remove_stones(remove)
+		x, y = board.pos2xy(self.game.where().prop)
+		color = board.str2color(self.game.where().name)
+		self.play_xy(x, y, color)
+
+	def go_down(self):
+		"Go up in variantions"
+		remove = self.game.branch_down()
+		if len(remove) == 0:
+			return
+		self.remove_stones(remove)
+		x, y = board.pos2xy(self.game.where().prop)
+		color = board.str2color(self.game.where().name)
+		self.play_xy(x, y, color)
 
 	def mousePressEvent(self, event):
 		if event.button() != Qt.LeftButton:
@@ -109,6 +139,10 @@ class GoBoard(board.Board, QGraphicsView):
 			self.play_next_move()
 		elif event.key() == Qt.Key_Left:
 			self.go_back()
+		elif event.key() == Qt.Key_Up:
+			self.go_up()
+		elif event.key() == Qt.Key_Down:
+			self.go_down()
 
 	def mouseReleaseEvent(self, event):
 		pass
@@ -142,7 +176,7 @@ class GoBoard(board.Board, QGraphicsView):
 		stars = [ (4, 4), (4, 16), (16, 4), (16, 16), (10, 10) ]
 		for x, y in stars:
 			sx, sy = self.convert_coord((x, y))
-			self.scene.addEllipse( sx, sy, 12, 12 )
+			self.scene.addEllipse(sx, sy, 12, 12)
 
 	def draw_board(self):
 		pen = QPen()
@@ -204,34 +238,9 @@ class GoBoard(board.Board, QGraphicsView):
 		gi.setPos( x, y )
 		return gi
 
-	def remove_stone(self, xy):
-		print "remove_stone: removing ", item
-		x, y = xy
-		print "remove_stone: pos ", board.xy2pos(x, y)
-		gi = self.stones.pop( board.xy2pos(x, y) )
-		self.scene.removeItem( gi )
-
-	def delShadedStone(self):
-		print "delShadedStone() stubbed"
-
-	def play(self, pos, color=None):
-		""" Play a stone of color (default is self.currentColor) at pos. """
-		if color is None:
-			color = self.currentColor
-		if abstractBoard.play(self, pos, color):					# legal move?
-			captures = self.undostack[len(self.undostack)-1][2]	 # retrieve list of captured stones
-			print "captures: ", captures
-			for x in captures:
-				self.remove_stone( self.stone[x] )
-			self.place_stone(pos, color)
-			self.currentColor = self.invert(color)
-			self.delShadedStone()
-			return 1
-		else: return 0
-
 	def clear(self):
-			print "Failed to place stone"
-			pass
+		print "Failed to place stone"
+		pass
 
 	def remove_stone(self, x, y):
 		gi = self.stones[x-1][y-1]

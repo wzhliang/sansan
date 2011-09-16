@@ -59,7 +59,22 @@ class BoardTest(unittest.TestCase):
 	def test_c(self):
 		print "\n========= c =============\n"
 		pan = Board()
-		game = GameGui("branch.sgf", pan)
+		game = GameGui("sgf/branch.sgf", pan)
 		game.navigate()
+
+	def test_d(self):
+		print "\n========= d =============\n"
+		pan = Board()
+		game = GameGui("sgf/branch.sgf", pan)
+		for i in range(4):
+			game.forth()
+		self.assertEqual(game.where().num_child(), 2)
+		game.forth()
+		self.assertEqual(game.where().prop, "nc")
+		game.branch_down()
+		self.assertEqual(game.where().prop, "nd")
+		game.branch_up()
+		self.assertEqual(game.where().prop, "nc")
+
 
 unittest.main()

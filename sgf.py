@@ -43,6 +43,8 @@ class Node(object):
 		self.prop = ""
 		self.children = []
 		self.parent = None
+		self.prev_br = None
+		self.next_br = None
 		self.extra = {} # extra properties, including comment
 
 	def set_property(self, prop):
@@ -58,6 +60,9 @@ class Node(object):
 		 	return ""
 
 	def add_child(self, child):
+		if self.num_child() > 0:
+			self.children[-1].next_br = child
+			child.prev_br = self.children[-1]
 		self.children.append(child)
 		child.parent = self
 
@@ -159,13 +164,32 @@ class Game(object):
 		self.current = self.current.parent
 		return self.current
 
-	def navigate(self):
-		node = self.root
-		print "Black: %s %s" % (self.info["PB"], self.info["BR"])
-		print "White: %s %s" % (self.info["PW"], self.info["WR"])
-		while node.has_child():
-			print "%s %s [%s]" % (node.name, node.prop, node.get_comment())
-			node = node.children[0]
+	def where(self):
+		return self.current
+
+	def branch_up(self):
+		"Try move up to the previous branch"
+		remove = []
+		node = self.current
+		while node:
+			remove.append(node.prop)
+			if node.prev_br:
+				self.current = node.prev_br
+				break
+			node = node.parent
+		return remove
+
+	def branch_down(self):
+		"Try move up to the previous branch"
+		remove = []
+		node = self.current
+		while node:
+			remove.append(node.prop)
+			if node.next_br:
+				self.current = node.next_br
+				break
+			node = node.parent
+		return remove
 
 class GameGui(Game):
 	def __init__(self, name, _goban):
