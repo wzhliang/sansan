@@ -5,7 +5,6 @@ import os
 import time
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
-from pdb import set_trace
 from pprint import pprint
 
 #TODO:
@@ -68,7 +67,7 @@ class GoBoard(board.Board, QGraphicsView):
 		self.game = None
 		self.stones = [] # 2D array for holding stones (QGraphicsPixmapItem)
 		for i in range(19):
-			self.stones.append( [None] * 19 )
+			self.stones.append([None] * 19)
 
 		self.scene = QGraphicsScene(0, 0,
 				self.width + 2 * self.edge,
@@ -247,8 +246,8 @@ class GoBoard(board.Board, QGraphicsView):
 		return gi
 
 	def clear(self):
-		print "Failed to place stone"
-		pass
+		#TODO: remove all graphic items
+		super(GoBoard, self).clear()
 
 	def remove_stone(self, x, y):
 		gi = self.stones[x-1][y-1]

@@ -2,6 +2,7 @@
 #from pdb import set_trace
 from debug import debug_trace
 from util import *
+from pprint import pprint
 
 class BoardError(Exception):
 	pass
@@ -123,8 +124,6 @@ class Board(object):
 		"""Play a stone at the position. Update board data when stones are captured.
 		Returns the captures stone. """
 		print "play_xy(%d,%d,%d)" % (x, y, color)
-		#if x == 5 and y == 19:
-			#debug_trace()
 		if not self.valid_xy(x, y) or not valid_color(color):
 			raise BoardError("Invalid stone color.")
 		if self.data[x][y] != EMPTY:
@@ -138,7 +137,7 @@ class Board(object):
 			clust = []
 			if (nx, ny) in all_dead:
 				continue
-			if not self.is_alive(nx, ny, enemy(color), clust ):
+			if not self.is_alive(nx, ny, enemy(color), clust):
 				all_dead.extend(clust)
 
 		if len(all_dead) == 0 and not self.is_alive(x, y, color, []):

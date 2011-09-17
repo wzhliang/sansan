@@ -14,12 +14,15 @@ class GameGui(Game):
 
 	def navigate(self):
 		node = self.root
-		while node.has_child():
+		while node:
 			if node.name == "B" or node.name == "W":
 				self.goban.play_pos( node.prop, board.str2color(node.name) ) 
 				print "##############################################"
 				pprint(self.goban.data)
-			node = node.children[0]
+			try:
+				node = node.children[0]
+			except IndexError:
+				break
 
 	def navigate_back(self):
 		node = None
@@ -77,5 +80,11 @@ class BoardTest(unittest.TestCase):
 		game.branch_up()
 		self.assertEqual(game.where().prop, "nc")
 
+	def test_e(self):
+		print "\n========= e =============\n"
+		pan = Board()
+		game = GameGui("sgf/bug.sgf", pan)
+		game.navigate()
+		pprint(pan.data)
 
 unittest.main()
