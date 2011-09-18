@@ -1,3 +1,4 @@
 - Improve support for node property. E.g. ;AB[]AW[]
 - BUG: with kj.sgf, GUI doesn't remove black stone on the edge.
 - BUG: SGF wenzhi - rory doesn't parse. (Probably because multigo extension)
+- BUG: going backwords should put the removed stone back

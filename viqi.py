@@ -35,11 +35,11 @@ class Stone:
 	def __init__(self, color):
 		self.color = color
 		self.bitmap = QPixmap( Bitmap.get_bitmap_for_stone(color) )
-		self.bitmap = self.bitmap.scaledToHeight(20)
+		self.bitmap = self.bitmap.scaledToHeight(40)
 
 	@staticmethod
 	def get_width():
-		return 20
+		return 40
 
 	def get_bitmap(self):
 		return self.bitmap
@@ -55,9 +55,9 @@ class GoBoard(board.Board, QGraphicsView):
 		#TODO: how does it know to use board.Board or QGraphicsView?
 		super(GoBoard, self).__init__(size)
 		self.size = size
-		self.w = 20
-		self.h = 20
-		self.edge = 25
+		self.w = 40
+		self.h = 40
+		self.edge = 50
 		self.x0 = 0 + self.edge
 		self.y0 = 0 + self.edge
 		self.width = (self.size-1)*self.w
@@ -379,6 +379,6 @@ class MainWindow(QMainWindow):
 app = QApplication(sys.argv)
 w = MainWindow()
 w.show()
-w.resize( 460, 460 )
+w.resize( 920, 920 )
 sys.exit(app.exec_())
 
