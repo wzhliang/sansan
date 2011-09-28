@@ -168,6 +168,7 @@ int in_cluster(int id, cluster_t *c)
     int i;
     for ( i = 0; i < c->n; i ++ )
     {
+		c->
         if ( c->c[i] == id )
         {
             return 1;

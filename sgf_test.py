@@ -87,4 +87,15 @@ class BoardTest(unittest.TestCase):
 		game.navigate()
 		pprint(pan.data)
 
+	def test_f(self):
+		print "\n========= f =============\n"
+		pan = Board()
+		game = GameGui("sgf/yijian-ttimm.sgf", pan)
+		meta = game.sgf.meta
+		self.assertEqual(meta["PB"], "ttimm")
+		self.assertEqual(meta["PW"], "yijian")
+		self.assertEqual(meta["BR"], "1k")
+		self.assertEqual(meta["WR"], "1k")
+		self.assertEqual(meta["RE"], "W+10.50")
+
 unittest.main()

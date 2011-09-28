@@ -88,7 +88,8 @@ class GoBoard(board.Board, QGraphicsView):
 		else:
 			x, y = pos2xy(self.game.where().prop)
 			self.play_xy(x, y, str2color(self.game.where().name))
-			print self.game.where().get_comment().decode("euc-cn")
+			comment = self.game.where().get_comment().decode("euc-cn")
+			self.emit(SIGNAL("newComment(PyQt_PyObject)"), comment)
 
 	def play_next_move(self):
 		while True:
@@ -293,6 +294,10 @@ class MyWidget(QWidget):
 		self.goban.set_game( self.game )
 		self.goban.setup()
 
+		layout = QVBoxLayout()
+		layout.addWidget(self.goban)
+		self.setLayout(layout)
+
 class MainWindow(QMainWindow):
 	def __init__(self):
 		super(MainWindow, self).__init__()
@@ -302,6 +307,7 @@ class MainWindow(QMainWindow):
 
 		self.createActions()
 		self.createMenus()
+		self.createDockWindows()
 
 		self.setWindowTitle("SIHUO")
 
@@ -374,6 +380,38 @@ class MainWindow(QMainWindow):
 		self.helpMenu = self.menuBar().addMenu("&Help")
 		self.helpMenu.addAction(self.aboutAct)
 		self.helpMenu.addAction(self.aboutQtAct)
+
+	def populateGameInfo(self):
+		pprint(self.widget.game.sgf.meta)
+		self.gameInfoEdit.append("BLACK: " + self.widget.game.sgf.meta["PB"] + 
+			" " + self.widget.game.sgf.meta["BR"])
+		self.gameInfoEdit.append("WHITE: " + self.widget.game.sgf.meta["PW"] +
+			" " + self.widget.game.sgf.meta["WR"])
+		self.gameInfoEdit.append("RESULT: " + self.widget.game.sgf.meta["RE"])
+
+	def displayComment(self, comment):
+		self.commentEdit.clear()
+		self.commentEdit.append(comment)
+
+	def createDockWindows(self):
+		dock = QDockWidget("Game Info", self)
+		dock.setAllowedAreas(Qt.LeftDockWidgetArea | Qt.RightDockWidgetArea)
+		self.gameInfoEdit = QTextEdit()
+		dock.setWidget(self.gameInfoEdit)
+		self.addDockWidget(Qt.RightDockWidgetArea, dock)
+		#self.populateGameInfo()
+		#self.viewMenu.addAction(dock.toggleViewAction())
+
+		dock = QDockWidget("Comment", self)
+		self.commentEdit = QTextEdit()
+		dock.setWidget(self.commentEdit)
+		self.addDockWidget(Qt.RightDockWidgetArea, dock)
+		#self.viewMenu.addAction(dock.toggleViewAction())
+
+
+		self.connect(self.widget.goban, SIGNAL("newComment(PyQt_PyObject)"), self.displayComment)
+		#self.customerList.currentTextChanged.connect(self.insertCustomer)
+		#self.paragraphsList.currentTextChanged.connect(self.addParagraph)
 
 # MAIN MAIN MAIN ######################################
 app = QApplication(sys.argv)
