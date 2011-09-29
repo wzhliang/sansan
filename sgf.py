@@ -83,7 +83,6 @@ class SGF(object):
 		branch << "(" + sequence + ZeroOrMore(branch) + ")"
 		self.game = OneOrMore(branch)
 
-		self.meta = {}
 		self.sgf_file = filename
 		self.moves = None
 		self.__parse()

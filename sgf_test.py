@@ -90,12 +90,12 @@ class BoardTest(unittest.TestCase):
 	def test_f(self):
 		print "\n========= f =============\n"
 		pan = Board()
-		game = GameGui("sgf/yijian-ttimm.sgf", pan)
-		meta = game.sgf.meta
-		self.assertEqual(meta["PB"], "ttimm")
+		game = GameGui("sgf/yijian-Elaure.sgf", pan)
+		meta = game.info
+		self.assertEqual(meta["PB"], "Elaure")
 		self.assertEqual(meta["PW"], "yijian")
 		self.assertEqual(meta["BR"], "1k")
 		self.assertEqual(meta["WR"], "1k")
-		self.assertEqual(meta["RE"], "W+10.50")
+		self.assertEqual(meta["RE"], "W+8.50")
 
 unittest.main()
