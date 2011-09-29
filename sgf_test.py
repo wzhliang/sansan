@@ -19,6 +19,9 @@ class GameGui(Game):
 				self.goban.play_pos( node.prop, board.str2color(node.name) ) 
 				print "##############################################"
 				pprint(self.goban.data)
+			else:
+				print "Non stone node:"
+				print node
 			try:
 				node = node.children[0]
 			except IndexError:
@@ -47,6 +50,28 @@ class GameGui(Game):
 				print node.get_comment().decode("euc-cn")
 				pprint(self.goban.data)
 			node = self.back()
+
+class GameGuiA(Game):
+	def __init__(self, name, _goban):
+		Game.__init__(self, name)
+		self.goban = _goban
+		self.build_tree()
+
+	def find_extra(self, name):
+		"Assuming no branch"
+		node = self.root
+		while node:
+			if node.extra.has_key(name):
+				print "Found ", name
+				pprint(node.extra[name])
+				return True
+
+			try:
+				node = node.children[0]
+			except IndexError:
+				break
+
+		return False
 
 
 
@@ -102,5 +127,12 @@ class BoardTest(unittest.TestCase):
 		self.assertEqual(meta.RE, "W+8.50")
 		self.assertEqual(meta.AA, "")
 		self.assertEqual(meta.BB, "")
+
+	def test_g(self):
+		print "\n========= g =============\n"
+		pan = Board()
+		game = GameGuiA("sgf/marks.sgf", pan)
+		for n in ["TR", "MA", "CR"]:
+			self.assertEqual(game.find_extra(n), True)
 
 unittest.main()

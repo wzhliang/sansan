@@ -1,8 +1,9 @@
 from pyparsing import (Word, Literal, QuotedString, OneOrMore,
-		srange, Forward, ZeroOrMore)
+		srange, Forward, ZeroOrMore, Combine, Group)
 from pprint import pprint
 #from pdb import set_trace
 import sys
+import types
 import board
 from util import *
 from pdb import set_trace
@@ -75,8 +76,8 @@ class SGF(object):
 				multiline=True,
 				unquoteResults=True,
 				endQuoteChar="]")
-		prop_id = Word(srange("[A-Z]"), min=1, max=2)
-		prop = prop_id + OneOrMore(text)
+		prop_id = Word(srange("[A-Z]"), min=1, max=10)
+		prop = prop_id + Group(OneOrMore(text))
 		node = start + OneOrMore(prop)
 		sequence = OneOrMore(node)
 		branch = Forward()
@@ -110,15 +111,19 @@ class Game(object):
 
 	def on_move(self, propid):
 		node = Node(propid)
-		node.set_property(self.sgf.next_token())
+		node.set_property(self.sgf.next_token()[0])
 		self.current.add_child(node)
 		self.current = node
 
 	def on_extra(self, propid):
-		self.current.add_extra(propid, self.sgf.next_token())
+		tok = self.sgf.next_token()
+		if propid == "C":
+			self.current.add_extra(propid, tok[0])
+		else:
+			self.current.add_extra(propid, tok.asList())
 
 	def on_meta(self, propid):
-		self.info[propid] = self.sgf.next_token()
+		self.info[propid] = self.sgf.next_token()[0]
 
 	def on_branch(self, br):
 		if br == "(":
@@ -130,7 +135,10 @@ class Game(object):
 		while True:
 			try:
 				current = self.sgf.next_token()
+				pprint(current)
 
+				if not type(current) is str:
+					continue
 				if is_stone(current):
 					self.on_move(current)
 				elif is_meta(current):
@@ -145,7 +153,7 @@ class Game(object):
 				break
 
 		self.reset()
-	
+
 	def reset(self):
 		self.current = self.root
 

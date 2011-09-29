@@ -69,9 +69,10 @@ def id2pos(_id):
 	x, y = divmod(_id, 19)
 	return __ndict[x] + __ndict[y]
 
-__metas = [ "PB", "PW", "WR", "BR", "FF", "DT", "RE", "SZ", "KM", "TM", "OT" ]
+__metas = [ "PB", "PW", "WR", "BR", "FF", "DT", "RE", "SZ", "KM", "TM", "OT",
+	"EV", "CA", "GM", "AP", "ST", "RU"  ]
 __stones = [ "AB", "AW", "B", "W" ]
-__extra = [ "C" ]
+__extra = [ "C", "MA", "TR", "CR", "SQ", "SL" ]
 
 def is_meta(tag):
 	return tag in __metas
