@@ -382,12 +382,10 @@ class MainWindow(QMainWindow):
 		self.helpMenu.addAction(self.aboutQtAct)
 
 	def populateGameInfo(self):
-		pprint(self.widget.game.sgf.meta)
-		self.gameInfoEdit.append("BLACK: " + self.widget.game.sgf.meta["PB"] + 
-			" " + self.widget.game.sgf.meta["BR"])
-		self.gameInfoEdit.append("WHITE: " + self.widget.game.sgf.meta["PW"] +
-			" " + self.widget.game.sgf.meta["WR"])
-		self.gameInfoEdit.append("RESULT: " + self.widget.game.sgf.meta["RE"])
+		meta = self.widget.game.info
+		self.gameInfoEdit.append("BLACK: " + meta["PB"] + " " + meta["BR"])
+		self.gameInfoEdit.append("WHITE: " + meta["PW"] + " " + meta["WR"])
+		self.gameInfoEdit.append("RESULT: " + meta["RE"])
 
 	def displayComment(self, comment):
 		self.commentEdit.clear()
@@ -399,7 +397,7 @@ class MainWindow(QMainWindow):
 		self.gameInfoEdit = QTextEdit()
 		dock.setWidget(self.gameInfoEdit)
 		self.addDockWidget(Qt.RightDockWidgetArea, dock)
-		#self.populateGameInfo()
+		self.populateGameInfo()
 		#self.viewMenu.addAction(dock.toggleViewAction())
 
 		dock = QDockWidget("Comment", self)
