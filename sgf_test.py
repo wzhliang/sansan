@@ -24,6 +24,9 @@ class GameGui(Game):
 			except IndexError:
 				break
 
+	#def __getattr__(self, name):
+		#return super(GameGui, self).__getattr__(name)
+
 	def navigate_back(self):
 		node = None
 		while True:
@@ -91,11 +94,13 @@ class BoardTest(unittest.TestCase):
 		print "\n========= f =============\n"
 		pan = Board()
 		game = GameGui("sgf/yijian-Elaure.sgf", pan)
-		meta = game.info
-		self.assertEqual(meta["PB"], "Elaure")
-		self.assertEqual(meta["PW"], "yijian")
-		self.assertEqual(meta["BR"], "1k")
-		self.assertEqual(meta["WR"], "1k")
-		self.assertEqual(meta["RE"], "W+8.50")
+		meta = game
+		self.assertEqual(meta.PB, "Elaure")
+		self.assertEqual(meta.PW, "yijian")
+		self.assertEqual(meta.BR, "1k")
+		self.assertEqual(meta.WR, "1k")
+		self.assertEqual(meta.RE, "W+8.50")
+		self.assertEqual(meta.AA, "")
+		self.assertEqual(meta.BB, "")
 
 unittest.main()

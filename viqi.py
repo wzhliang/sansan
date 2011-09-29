@@ -382,10 +382,12 @@ class MainWindow(QMainWindow):
 		self.helpMenu.addAction(self.aboutQtAct)
 
 	def populateGameInfo(self):
-		meta = self.widget.game.info
-		self.gameInfoEdit.append("BLACK: " + meta["PB"] + " " + meta["BR"])
-		self.gameInfoEdit.append("WHITE: " + meta["PW"] + " " + meta["WR"])
-		self.gameInfoEdit.append("RESULT: " + meta["RE"])
+		meta = self.widget.game
+		self.gameInfoEdit.append("BLACK: " + meta.PB.decode("euc-cn")
+			+ " " + meta.BR.decode("euc-cn"))
+		self.gameInfoEdit.append("WHITE: " + meta.PW.decode("euc-cn")
+			+ " " + meta.WR.decode("euc-cn"))
+		self.gameInfoEdit.append("RESULT: " + meta.RE.decode("euc-cn"))
 
 	def displayComment(self, comment):
 		self.commentEdit.clear()

@@ -191,6 +191,14 @@ class Game(object):
 		else:
 			return []
 
+	def __getattr__(self, name):
+		"Gurantteed no exception"
+		if self.info.has_key(name):
+			return self.info[name]
+		else:
+			return ""
+
+
 class GameGui(Game):
 	def __init__(self, name, _goban):
 		Game.__init__(self, name)
