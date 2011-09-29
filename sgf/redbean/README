@@ -1,0 +1,106 @@
+ last updated: 1997-05-27
+
+   
+                       1. GENERAL SGF FF[4] EXAMPLE FILE
+                                       
+Purpose
+
+   The example SGF file and the GIF pictures should illustrate some of
+   the features of SGF FF[4] and give application coders an impression
+   how to draw or represent various properties.
+   
+   Note: The colors chosen, the screen structure (seperate window for
+   variations & other information, seperate comment window) etc. are
+   specific to Primiview, the application used to create these pictures.
+   
+   Your application doesn't have to look the same.
+   You are free to choose whatever colors, structures etc. you want. Same
+   goes for representation of advanced markup such as DD (dimmed points).
+   
+General comments
+
+   Primiview's node numbering starts with zero (0) (just like MGT). Node
+   numbering is done in the order the nodes appear in the SGF file.
+   
+   If your application can't handle SGF collections then you have to
+   extract the second part using a split utility or a text editor.
+   
+Gametree 1: properties
+
+  VARIATION A: (MOVES, COMMENTS, ANNOTATIONS)
+     * Nodes: 1-13
+     * Pictures:
+          + ex01.gif: B, W (node 11)
+            
+   There's nothing special about these nodes.
+   Note the new (FF[4]) way to write pass moves: "B[]", "W[]" (nodes 12,
+   13)
+   
+  VARIATION B: (SETUP)
+     * Nodes: 14-17
+     * Pictures:
+          + ex02.gif: AB,AW (node 14)
+          + ex03.gif: AE (node 15)
+            
+   This variation illustrates how to use AB, AW, AE & PL.
+   Here compressed point lists are used for the first time. Have a look
+   at the SGF specification and the two pictures to get the idea.
+   
+  VARIATION C: (MARKUP)
+     * Nodes: 18-21
+     * Pictures:
+          + ex04.gif: MA, TR, CR, SQ, SL, TB, TW (node 19)
+          + ex05.gif: LB (node 20)
+          + ex06.gif: LB, different ways of handling long labels (node
+            20)
+          + ex07.gif: AR, LN, DD (node 21)
+          + ex08.gif: VW (node 19)
+            
+   Node 19 shows various kind of board markup.
+   Node 20 shows labels. Label length are from 1-8 chars. There are two
+   pictures: the second one shows different ways of handling long labels.
+   Node 21 shows three new FF[4] properties: DD (dimmed points), AR
+   (arrows) and LN (lines)
+   
+   The picture ex08.gif illustartes how VW (view) works.
+   The VW property isn't directly encoded into the SGF file. The picture
+   shows node 19 and gives two examples of a restricted view.
+   
+  VARIATION D: (STYLE & TEXT TYPE)
+     * Nodes: 22-32
+     * Pictures:
+          + ex09.gif: ST[2] (children / no board markup) (node 23)
+          + ex10.gif: ST[1] (siblings / auto-board markup) (node 23)
+            
+   Node 22 contains a comment text which serves as example for hard and
+   soft linebreaks and for different encodings of linebreaks.
+   
+   Note that ex09.gif & ex10.gif are both taken from the same node (#23).
+   They only differ in the ST (style) used. The example itself doesn't
+   contain a ST property. The picture just illustrates the use of ST.
+   
+  VARIATION E: (TIME LIMITS, CAPTURES & MOVE NUMBERS)
+     * Nodes: 33-53
+     * Pictures: -
+       
+   This variation shows the use of BL, WL, OB, OW, MN.
+   It also contains a suicidal move (and capture).
+   
+Gametree 2: Game-info
+
+   This game-tree shows how game-info properties may be stored, if there
+   are several games merged into a single gametree. See the comment texts
+   for what the game-info should look like.
+
+
+   
+                            2. PRINT EXAMPLE FILES
+                                       
+   SGF provides some properties for storing print and layout information.
+   These properties are: FG, VW, PM and MN.
+   
+   The following files contain two games from GoWorld 78 (of course, the
+   commentary isn't included, but all the board-markup is). You should
+   have this magazine to verify the layout with the example files.
+     * print1.sgf - 21st Mejin, game 2
+     * print2.sgf - 51st Honinbo, game 5

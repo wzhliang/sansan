@@ -1,0 +1,140 @@
+<HTML>
+<HEAD><TITLE>SGF FF[4] Example Files</TITLE></HEAD>
+<BODY alink="#FF0000" bgcolor="#FFFFFF" link="#0000FF" text="#000000" vlink="#FF0000">
+<A HREF="../index.html"><IMG SRC="../head.gif" ALT="[SGF FF[4] - Smart Game Format]" BORDER=0></A>
+<I>last updated: 1997-05-27</I>
+
+<H1>1. General SGF FF[4] Example File</H1>
+
+<H2>Purpose</H2>
+
+The example SGF file and the GIF pictures should illustrate some of the
+features of SGF FF[4] and give application coders an impression how to draw
+or represent various properties.
+<P>
+<B>Note:</B> The colors chosen, the screen structure (seperate window for
+variations & other information, seperate comment window) etc. are specific
+to Primiview, the application used to create these pictures.
+<P>
+Your application doesn't have to look the same.<BR>
+You are free to choose whatever colors, structures etc. you want.
+Same goes for representation of advanced markup such as DD (dimmed points).
+
+<H2>General comments</H2>
+
+Primiview's node numbering starts with zero (0) (just like MGT).
+Node numbering is done in the order the nodes appear in the SGF file.
+<P>
+If your application can't handle SGF collections then you have to extract
+the second part using a split utility or a text editor.
+
+<HR>
+<H2><A HREF="ff4_ex.sgf">Download example SGF file</A></H2>
+<H2><A HREF="examples.tar.gz">Download gzip'ed tar-archive (175K)</A> - including 
+print1.sgf & print2.sgf</H2>
+<HR>
+
+<H2>Gametree 1: properties</H2>
+
+<H3>Variation A: (Moves, comments, annotations)</H3>
+<UL>
+<LI><B>Nodes:</B> 1-13
+<LI><B>Pictures:</B>
+<UL>
+<LI><A HREF="ex01.gif">ex01.gif</A>: B, W (node 11)
+</UL></UL>
+
+There's nothing special about these nodes.<BR>
+Note the new (FF[4]) way to write pass moves: "B[]", "W[]" (nodes 12, 13)
+
+
+<H3>Variation B: (Setup)</H3>
+
+<UL>
+<LI><B>Nodes:</B> 14-17
+<LI><B>Pictures:</B>
+<UL>
+<LI><A HREF="ex02.gif">ex02.gif</A>: AB,AW (node 14)
+<LI><A HREF="ex03.gif">ex03.gif</A>: AE (node 15)
+</UL></UL>
+
+This variation illustrates how to use AB, AW, AE & PL.<BR>
+Here compressed point lists are used for the first time.
+Have a look at the SGF specification and the two pictures to get the idea.
+
+
+<H3>Variation C: (Markup)</H3>
+
+<UL>
+<LI><B>Nodes: 18-21</B>
+<LI><B>Pictures:</B>
+<UL>
+<LI><A HREF="ex04.gif">ex04.gif</A>: MA, TR, CR, SQ, SL, TB, TW (node 19)
+<LI><A HREF="ex05.gif">ex05.gif</A>: LB (node 20)
+<LI><A HREF="ex06.gif">ex06.gif</A>: LB, different ways of handling long labels (node 20)
+<LI><A HREF="ex07.gif">ex07.gif</A>: AR, LN, DD (node 21)
+<LI><A HREF="ex08.gif">ex08.gif</A>: VW (node 19)
+</UL></UL>
+
+Node 19 shows various kind of board markup.<BR>
+Node 20 shows labels. Label length are from 1-8 chars.
+There are two pictures: the second one shows different ways of handling
+long labels.<BR>
+Node 21 shows three new FF[4] properties: DD (dimmed points),
+AR (arrows) and LN (lines)
+<P>
+The picture ex08.gif illustartes how VW (view) works.<BR>
+The VW property isn't directly encoded into the SGF file.
+The picture shows node 19 and gives two examples of a restricted view.
+
+
+<H3>Variation D: (Style & text type)</H3>
+
+<UL>
+<LI><B>Nodes:</B> 22-32
+<LI><B>Pictures:</B>
+<UL>
+<LI><A HREF="ex09.gif">ex09.gif</A>: ST[2] (children / no board markup)   (node 23)
+<LI><A HREF="ex10.gif">ex10.gif</A>: ST[1] (siblings / auto-board markup) (node 23)
+</UL></UL>
+
+Node 22 contains a comment text which serves as example for hard and
+soft linebreaks and for different encodings of linebreaks.
+<P>
+Note that ex09.gif & ex10.gif are both taken from the same node (#23).
+They only differ in the ST (style) used. The example itself doesn't contain
+a ST property. The picture just illustrates the use of ST.
+
+
+<H3>Variation E: (Time limits, captures & move numbers)</H3>
+
+<UL>
+<LI><B>Nodes:</B> 33-53
+<LI><B>Pictures:</B> -
+</UL>
+
+This variation shows the use of BL, WL, OB, OW, MN.<BR>
+It also contains a suicidal move (and capture).
+
+
+<H2>Gametree 2: Game-info</H2>
+
+This game-tree shows how game-info properties may be stored, if there are
+several games merged into a single gametree. See the comment texts for
+what the game-info should look like.
+
+<H1>2. Print Example Files</H1>
+
+SGF provides some properties for storing print and layout information.
+These properties are: FG, VW, PM and MN.
+<P>
+The following files contain two games from GoWorld 78 (of course, the commentary isn't
+included, but all the board-markup is). You should have this magazine to
+verify the layout with the example files.
+<UL>
+<LI><A HREF="print1.sgf">print1.sgf</A> - 21st Mejin, game 2
+<LI><A HREF="print2.sgf">print2.sgf</A> - 51st Honinbo, game 5
+</UL>
+
+</BODY></HTML>
+
