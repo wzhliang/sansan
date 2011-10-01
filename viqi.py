@@ -50,6 +50,60 @@ class Stone:
 	def get_pos(self):
 		return self.pos
 
+class Cross(QGraphicsItem):
+	"Indicator of the current stone"
+	Type = QGraphicsItem.UserType + 2
+
+	def __init__(self, point, size):
+		"point: QPointF object as I don't know the board"
+		super(Cross, self).__init__()
+
+		self.size = size
+		self.point = point
+		self.topLeft = QPointF(point.x() - size, point.y() - size)
+
+		self.setAcceptedMouseButtons(Qt.NoButton)
+		#self.adjust() TODO: Do I need this?
+
+	def x(self):
+		return self.point.x()
+
+	def y(self):
+		return self.point.y()
+
+	def type(self):
+		return Cross.Type
+
+	def boundingRect(self):
+		return QRectF(self.x() - self.size, self.y() - self.size,
+			2.0*self.size, 2.0*self.size)
+
+	def paint(self, painter, option, widget):
+		if self.size <= 0:
+			return
+
+		# Draw the line itself.
+		line = QLineF(self.point.x() - self.size, self.point.y(),
+			self.point.x() + self.size, self.point.y())
+
+		if line.length() == 0.0:
+			return
+
+		painter.setPen(QPen(Qt.red, 3, Qt.SolidLine,
+			Qt.RoundCap, Qt.RoundJoin))
+		painter.drawLine(line)
+
+		line = QLineF(self.point.x(), self.point.y() + self.size,
+			self.point.x(), self.point.y() - self.size)
+
+		if line.length() == 0.0:
+			return
+
+		painter.setPen(QPen(Qt.red, 3, Qt.SolidLine,
+				Qt.RoundCap, Qt.RoundJoin))
+		painter.drawLine(line)
+
+
 class GoBoard(board.Board, QGraphicsView):
 	def __init__(self, parent = None, size = 19):
 		#TODO: how does it know to use board.Board or QGraphicsView?
@@ -57,7 +111,7 @@ class GoBoard(board.Board, QGraphicsView):
 		self.size = size
 		self.w = 40
 		self.h = 40
-		self.edge = 50
+		self.edge = 30
 		self.x0 = 0 + self.edge
 		self.y0 = 0 + self.edge
 		self.width = (self.size-1)*self.w
@@ -66,6 +120,7 @@ class GoBoard(board.Board, QGraphicsView):
 		self.y1 = (self.size-1)*self.h + self.edge
 		self.game = None
 		self.stones = [] # 2D array for holding stones (QGraphicsPixmapItem)
+		self.cross = None
 		for i in range(19):
 			self.stones.append([None] * 19)
 
@@ -124,6 +179,11 @@ class GoBoard(board.Board, QGraphicsView):
 		else:
 			x, y = pos2xy(self.game.where().prop)
 			self.play_xy(x, y, str2color(self.game.where().name))
+			if self.cross:
+				self.scene.removeItem(self.cross)
+			cx, cy = self.convert_coord((x, y))
+			self.cross = Cross(QPointF(cx, cy), 10)
+			self.scene.addItem(self.cross)
 
 	def handle_stone(self, node):
 		for l in node.prop:
@@ -191,18 +251,21 @@ class GoBoard(board.Board, QGraphicsView):
 		return  ( (px + self.w/2 )/self.w + 1, (py+self.h/2)/self.h + 1)
 
 	def convert_coord(self, go):
+		"convert stone logical position into pixel postion"
 		gx, gy = go
 		if gx > 19 or gy > 19 or gx < 0 or gy < 0:
 			return (-1, -1)
 
-		return ((gx-1)*self.w - Stone.get_width()/2 + self.edge, 
-				(gy-1)*self.w - Stone.get_width()/2 + self.edge )
+		return ((gx-1)*self.w +  self.edge, 
+				(gy-1)*self.w + self.edge )
 	
 	def draw_stars(self):
 		stars = [ (4, 4), (4, 16), (16, 4), (16, 16), (10, 10) ]
 		for x, y in stars:
 			sx, sy = self.convert_coord((x, y))
-			self.scene.addEllipse(sx, sy, 12, 12)
+			sx -= 4
+			sy -= 4
+			self.scene.addEllipse(sx, sy, 8, 8, brush = QBrush(Qt.black))
 
 	def draw_board(self):
 		pen = QPen()
@@ -212,7 +275,7 @@ class GoBoard(board.Board, QGraphicsView):
 		bg_color = QColor(0xcb, 0x91, 0x43)
 		self.scene.setBackgroundBrush(QBrush(bg_color))
 
-		#self.draw_stars()
+		self.draw_stars()
 
 		# Draw frame
 		rect = QRectF(self.x0, self.y0, self.x1 - self.x0,  self.y1 - self.y0)
@@ -243,8 +306,10 @@ class GoBoard(board.Board, QGraphicsView):
 		gi = QGraphicsPixmapItem(stone.get_bitmap())
 		self.stones[x-1][y-1] = gi
 		x, y = self.convert_coord((x, y))
+		x -= 0.45*self.w # FIXME: somehow, this is in the middle
+		y -= 0.45*self.w
 		gi.setPos(x, y)
-		gi.setZValue(5)
+		#gi.setZValue(5)
 
 		effect = QGraphicsDropShadowEffect(self)
 		effect.setBlurRadius(1)
@@ -424,6 +489,6 @@ class MainWindow(QMainWindow):
 app = QApplication(sys.argv)
 w = MainWindow()
 w.show()
-w.resize( 920, 920 )
+w.resize( 1324, 920 )
 sys.exit(app.exec_())
 
