@@ -163,13 +163,25 @@ class GoBoard(board.Board, QGraphicsView):
 		if is_stone(node.name):
 			self.handle_stone(node)
 		# When going back, the stone is already there
-		elif is_move(node.name) and not back:
-			self.handle_move(node)
+		elif is_move(node.name):
+			if not back:
+				self.handle_move(node)
+			self.refresh_cross(node)
+
 
 		for e in node.extra:
 			if is_comment(e):
 				self.emit(SIGNAL("newComment(PyQt_PyObject)"), node.get_comment())
 			print "Handling %s..." % e
+
+	def refresh_cross(self, node):
+		if self.cross:
+			self.scene.removeItem(self.cross)
+		x, y = pos2xy(self.game.where().prop)
+		cx, cy = self.convert_coord((x, y))
+		self.cross = Cross(QPointF(cx, cy), 10)
+		self.cross.setZValue(10)
+		self.scene.addItem(self.cross)
 
 	def handle_move(self, node):
 		"Handle a move. Deal with dead stone, etc. Assuming it's a play node"
@@ -179,11 +191,6 @@ class GoBoard(board.Board, QGraphicsView):
 		else:
 			x, y = pos2xy(self.game.where().prop)
 			self.play_xy(x, y, str2color(self.game.where().name))
-			if self.cross:
-				self.scene.removeItem(self.cross)
-			cx, cy = self.convert_coord((x, y))
-			self.cross = Cross(QPointF(cx, cy), 10)
-			self.scene.addItem(self.cross)
 
 	def handle_stone(self, node):
 		for l in node.prop:
