@@ -85,3 +85,6 @@ def is_extra(tag):
 
 def is_branch(tag):
 	return tag in "()"
+
+def is_node(tag):
+	return tag == ";"

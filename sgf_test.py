@@ -64,7 +64,7 @@ class GameGuiA(Game):
 			if node.extra.has_key(name):
 				print "Found ", name
 				pprint(node.extra[name])
-				return node.extra[name]
+				return node
 
 			try:
 				node = node.children[0]
@@ -98,7 +98,7 @@ class BoardTest(unittest.TestCase):
 		print "\n========= d =============\n"
 		pan = Board()
 		game = GameGui("sgf/branch.sgf", pan)
-		for i in range(4):
+		for i in range(5):
 			game.forth()
 		self.assertEqual(game.where().num_child(), 2)
 		game.forth()
@@ -137,12 +137,22 @@ class BoardTest(unittest.TestCase):
 
 	def test_h(self):
 		print "\n========= h =============\n"
-		print "Test support for unexpected nodes"
+		print "Test support for comment in the first node as most tom qipu does"
 		pan = Board()
 		game = GameGuiA("sgf/kj1.sgf", pan)
-		comment = game.find_extra("C")
-		self.assertNotEqual(comment, None)
-		print comment
+		node = game.find_extra("C")
+		self.assertNotEqual(node, None)
+		print node.get_comment()
 
+	def test_i(self):
+		print "\n========= i =============\n"
+		print "Test support for strange node where move property is in the middle"
+		pan = Board()
+		game = GameGuiA("sgf/strange.sgf", pan)
+		node = game.find_extra("C")
+		self.assertNotEqual(node, None)
+		self.assertEqual(node.get_comment().startswith("Elaure"), True)
+		self.assertEqual(node.name, "B")
+		self.assertEqual(node.prop, "pd")
 
 unittest.main()

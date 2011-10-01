@@ -24,7 +24,7 @@ from pdb import set_trace
 class Node(object):
 	"""this class assums that the primary property is the first one in the string.
 		So files like ;C[haha]B[ab] will not work. """
-	def __init__(self, name):
+	def __init__(self, name = ""):
 		self.name = name
 		self.prop = ""
 		self.children = []
@@ -32,6 +32,9 @@ class Node(object):
 		self.prev_br = None
 		self.next_br = None
 		self.extra = {} # extra properties, including comment
+
+	def set_name(self, name):
+		self.name = name
 
 	def set_property(self, prop):
 		self.prop = prop
@@ -65,7 +68,6 @@ class Node(object):
 			- comment
 			- or marks"""
 		pass
-
 
 	def __str__(self):
 		return "%s[%s]" % (self.name, self.prop)
@@ -119,10 +121,8 @@ class Game(object):
 		self.stack = []
 
 	def on_move(self, propid):
-		node = Node(propid)
-		node.set_property(self.sgf.next_token()[0])
-		self.current.add_child(node)
-		self.current = node
+		self.current.set_name(propid)
+		self.current.set_property(self.sgf.next_token()[0])
 
 	def on_extra(self, propid):
 		tok = self.sgf.next_token()
@@ -139,12 +139,18 @@ class Game(object):
 			self.stack.append(self.current)
 		else:
 			self.current = self.stack.pop()
+	
+	def on_node(self, n):
+		"n is alwasy ';'"
+		node = Node()
+		self.current.add_child(node)
+		self.current = node
 
 	def build_tree(self):
 		while True:
 			try:
 				current = self.sgf.next_token()
-				pprint(current)
+				print "SGF: %s" % current
 
 				if not type(current) is str:
 					continue
@@ -156,6 +162,8 @@ class Game(object):
 					self.on_extra(current)
 				elif is_branch(current):
 					self.on_branch(current)
+				elif is_node(current):
+					self.on_node(current)
 				else:
 					pass
 			except IndexError:
