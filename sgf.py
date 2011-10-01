@@ -67,7 +67,13 @@ class Node(object):
 			- move
 			- comment
 			- or marks"""
-		pass
+		if not self.name == "":
+			return True
+		for e in self.extra:
+			if not is_meta(e):
+				return True
+
+		return False
 
 	def __str__(self):
 		return "%s[%s]" % (self.name, self.prop)

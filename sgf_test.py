@@ -155,4 +155,20 @@ class BoardTest(unittest.TestCase):
 		self.assertEqual(node.name, "B")
 		self.assertEqual(node.prop, "pd")
 
+	def test_j(self):
+		print "\n========= j =============\n"
+		print "Test presentable()"
+		pan = Board()
+		game = GameGuiA("sgf/marks.sgf", pan)
+		good = False
+		while True:
+			try:
+				game.forth()
+			except SGFNoMoreNode:
+				break
+			if game.where().presentable():
+				good = True
+				break
+		self.assertEqual(good, True)
+
 unittest.main()
