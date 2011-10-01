@@ -58,6 +58,15 @@ class Node(object):
 	def has_child(self):
 		return len(self.children) > 0
 
+	def presentable(self):
+		"""a presentable node is something with
+			- stones
+			- move
+			- comment
+			- or marks"""
+		pass
+
+
 	def __str__(self):
 		return "%s[%s]" % (self.name, self.prop)
 

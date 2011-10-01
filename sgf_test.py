@@ -64,14 +64,14 @@ class GameGuiA(Game):
 			if node.extra.has_key(name):
 				print "Found ", name
 				pprint(node.extra[name])
-				return True
+				return node.extra[name]
 
 			try:
 				node = node.children[0]
 			except IndexError:
 				break
 
-		return False
+		return None
 
 
 
@@ -133,6 +133,16 @@ class BoardTest(unittest.TestCase):
 		pan = Board()
 		game = GameGuiA("sgf/marks.sgf", pan)
 		for n in ["TR", "MA", "CR"]:
-			self.assertEqual(game.find_extra(n), True)
+			self.assertNotEqual(game.find_extra(n), None)
+
+	def test_h(self):
+		print "\n========= h =============\n"
+		print "Test support for unexpected nodes"
+		pan = Board()
+		game = GameGuiA("sgf/kj1.sgf", pan)
+		comment = game.find_extra("C")
+		self.assertNotEqual(comment, None)
+		print comment
+
 
 unittest.main()
