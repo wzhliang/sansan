@@ -35,7 +35,7 @@ class Stone:
 	def __init__(self, color):
 		self.color = color
 		self.bitmap = QPixmap( Bitmap.get_bitmap_for_stone(color) )
-		self.bitmap = self.bitmap.scaledToHeight(40)
+		self.bitmap = self.bitmap.scaledToHeight(37)
 
 	@staticmethod
 	def get_width():
@@ -227,6 +227,12 @@ class GoBoard(board.Board, QGraphicsView):
 		x, y = self.convert_coord((x, y))
 		gi.setPos(x, y)
 		gi.setZValue(5)
+
+		effect = QGraphicsDropShadowEffect(self)
+		effect.setBlurRadius(1)
+		effect.setOffset(3.0)
+		gi.setGraphicsEffect(effect)
+
 		self.scene.addItem(gi)
 
 	def place_stone_pos(self, pos, color):
