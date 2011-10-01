@@ -71,14 +71,18 @@ def id2pos(_id):
 
 __metas = [ "PB", "PW", "WR", "BR", "FF", "DT", "RE", "SZ", "KM", "TM", "OT",
 	"EV", "CA", "GM", "AP", "ST", "RU"  ]
-__stones = [ "AB", "AW", "B", "W" ]
+__stones = [ "AB", "AW", "B", "W" ] # TODO: This is confusing with __moves
 __extra = [ "C", "MA", "TR", "CR", "SQ", "SL" ]
+__moves = [ "B", "W" ]
 
 def is_meta(tag):
 	return tag in __metas
 
 def is_stone(tag):
 	return tag in __stones
+
+def is_move(tag):
+	return tag in __moves
 
 def is_extra(tag):
 	return tag in __extra
@@ -88,3 +92,7 @@ def is_branch(tag):
 
 def is_node(tag):
 	return tag == ";"
+
+def is_comment(name):
+	return name == "C";
+	

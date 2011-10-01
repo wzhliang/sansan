@@ -81,36 +81,45 @@ class GoBoard(board.Board, QGraphicsView):
 	def set_game(self, game):
 		self.game = game
 
-	def _play_node(self, node):
-		"Assuming it's a play node"
+	def go_next(self):
+		try:
+			self.game.forth()
+		except sgf.SGFNoMoreNode:
+			print "End of game or branch."
+			return
+		print "GUI: %s" % (self.game.where())
+		self.handle_node(self.game.where())
+		if is_move(self.game.where().name):
+			self.handle_move(self.game.where())
+
+	def go_prev(self):
+		# TODO: should put back the deaad stones
+		x, y = pos2xy(self.game.where().prop)
+		self.remove_stone(x, y)
+		super(GoBoard, self).remove_stones([(x, y)])
+		self.game.back()
+		self.handle_node(self.game.where())
+		#TODO: The following causes exception of cause (place occupied) but not
+		#sure if there is situation where going back will kill some stones
+		#if is_move(self.game.where().name):
+		#	self.handle_move(self.game.where())
+
+	def handle_node(self, node):
+		"Handle a node, like mark, comment, etc. dead stone is not handled here"
+		self.emit(SIGNAL("newComment(PyQt_PyObject)"), "")
+		for e in node.extra:
+			if is_comment(e):
+				self.emit(SIGNAL("newComment(PyQt_PyObject)"), node.get_comment())
+
+	def handle_move(self, node):
+		"Handle a move. Deal with dead stone, etc. Assuming it's a play node"
 		if node.prop == "":
 			print "PASS"
+			self.emit(SIGNAL("newComment(PyQt_PyObject)"), "PASS")
 		else:
 			x, y = pos2xy(self.game.where().prop)
 			self.play_xy(x, y, str2color(self.game.where().name))
-			comment = self.game.where().get_comment().decode("euc-cn")
-			self.emit(SIGNAL("newComment(PyQt_PyObject)"), comment)
-
-	def play_next_move(self):
-		while True:
-			try:
-				self.game.forth()
-			except sgf.SGFNoMoreNode:
-				print "End of game"
-				break
-			print "GUI: %s" % (self.game.where())
-			if sgf.is_stone(self.game.where().name):
-				self._play_node(self.game.where())
-				break
-
-	def go_back(self):
-		while True:
-			x, y = pos2xy(self.game.where().prop)
-			self.remove_stone(x, y)
-			super(GoBoard, self).remove_stones([(x, y)])
-			self.game.back()
-			if sgf.is_stone(self.game.where().name):
-				break
+			self.handle_node(self.game.where())
 
 	def _remove_stones(self, group):
 		remove = []
@@ -126,7 +135,9 @@ class GoBoard(board.Board, QGraphicsView):
 		if len(remove) == 0:
 			return
 		self._remove_stones(remove)
-		self._play_node(self.game.where())
+		self.handle_node(self.game.where())
+		if is_move(self.game.where().name):
+			self.handle_move(self.game.where())
 
 	def go_down(self):
 		"Go up in variantions"
@@ -134,19 +145,21 @@ class GoBoard(board.Board, QGraphicsView):
 		if len(remove) == 0:
 			return
 		self._remove_stones(remove)
-		self._play_node(self.game.where())
+		self.handle_node(self.game.where())
+		if is_move(self.game.where().name):
+			self.handle_move(self.game.where())
 
 	def mousePressEvent(self, event):
 		if event.button() != Qt.LeftButton:
 			return
 
-		self.play_next_move()
+		self.go_next()
 
 	def keyPressEvent(self, event):
 		if event.key() == Qt.Key_Right:
-			self.play_next_move()
+			self.go_next()
 		elif event.key() == Qt.Key_Left:
-			self.go_back()
+			self.go_prev()
 		elif event.key() == Qt.Key_Up:
 			self.go_up()
 		elif event.key() == Qt.Key_Down:
@@ -397,7 +410,7 @@ class MainWindow(QMainWindow):
 
 	def displayComment(self, comment):
 		self.commentEdit.clear()
-		self.commentEdit.append(comment)
+		self.commentEdit.append(comment.decode("euc-cn"))
 
 	def createDockWindows(self):
 		dock = QDockWidget("Game Info", self)
