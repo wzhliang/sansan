@@ -176,6 +176,8 @@ class GoBoard(board.Board, QGraphicsView):
 				self.emit(SIGNAL("newComment(PyQt_PyObject)"), node.get_comment())
 			elif e == "LB":
 				self._handle_LB(node.extra[e])
+			elif e == "CR":
+				self._handle_CR(node.extra[e])
 
 	def clear_marks(self):
 		"""Assuming that marks are only relavant for a particular move and ALL should be
@@ -215,6 +217,11 @@ class GoBoard(board.Board, QGraphicsView):
 			pos, char = l.split(":")
 			x, y = pos2xy(pos)
 			self.add_label(x, y, char)
+
+	def _handle_CR(self, locs):
+		for l in locs:
+			x, y = pos2xy(l)
+			self.add_circle(x, y, 20)
 
 	def _remove_stones(self, group):
 		remove = []
@@ -351,6 +358,14 @@ class GoBoard(board.Board, QGraphicsView):
 		x -= 0.2*self.w # FIXME: hard-coded location
 		y -= 0.2*self.w
 		gi.setPos(x, y)
+		gi.setZValue(5)
+
+	def add_circle(self, x, y, size):
+		sx, sy = self.convert_coord((x, y))
+		sx -= 0.2*self.w # FIXME: hard-coded location
+		sy -= 0.2*self.w
+		gi = self.scene.addEllipse(sx, sy, size, size, brush = QBrush(Qt.black))
+		self.marks.append(gi) # overwriting previous one. should be GCed automatically
 		gi.setZValue(5)
 
 	def clear(self):
