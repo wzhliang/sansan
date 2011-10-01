@@ -17,9 +17,9 @@ def valid_color(color):
 	return color == BLACK or color == WHITE
 
 def str2color(s):
-	if s == "B":
+	if s == "B" or s == "AB":
 		return BLACK
-	elif s == "W":
+	elif s == "W" or s == "AW":
 		return WHITE
 	else:
 		return 0
@@ -71,7 +71,7 @@ def id2pos(_id):
 
 __metas = [ "PB", "PW", "WR", "BR", "FF", "DT", "RE", "SZ", "KM", "TM", "OT",
 	"EV", "CA", "GM", "AP", "ST", "RU"  ]
-__stones = [ "AB", "AW", "B", "W" ] # TODO: This is confusing with __moves
+__stones = [ "AB", "AW" ]
 __extra = [ "C", "MA", "TR", "CR", "SQ", "SL" ]
 __moves = [ "B", "W" ]
 

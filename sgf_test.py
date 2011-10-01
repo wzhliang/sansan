@@ -171,4 +171,23 @@ class BoardTest(unittest.TestCase):
 				break
 		self.assertEqual(good, True)
 
+	def test_k(self):
+		print "\n========= k =============\n"
+		print "Test support for PB, PW nodes."
+		pan = Board()
+		game = GameGui("sgf/place.sgf", pan)
+		game.forth() # Skip the first node
+		game.forth()
+		self.assertEqual(game.where().name, "AB")
+		pprint(game.where().prop)
+		self.assertEqual(len(game.where().prop), 4)
+		self.assertTrue("aa" in game.where().prop)
+		self.assertTrue("bb" in game.where().prop)
+		game.forth()
+		self.assertEqual(game.where().name, "AW")
+		pprint(game.where().prop)
+		self.assertEqual(len(game.where().prop), 4)
+		self.assertTrue("gg" in game.where().prop)
+		self.assertTrue("ef" in game.where().prop)
+
 unittest.main()

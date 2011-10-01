@@ -109,6 +109,7 @@ class SGF(object):
 	def next_token(self):
 		tok = self.moves[self.current]
 		self.current += 1
+		print "SGF: ", tok
 		return tok
 
 	def __parse(self):
@@ -129,6 +130,10 @@ class Game(object):
 	def on_move(self, propid):
 		self.current.set_name(propid)
 		self.current.set_property(self.sgf.next_token()[0])
+
+	def on_stone(self, propid):
+		self.current.set_name(propid)
+		self.current.set_property(self.sgf.next_token().asList())
 
 	def on_extra(self, propid):
 		tok = self.sgf.next_token()
@@ -156,12 +161,13 @@ class Game(object):
 		while True:
 			try:
 				current = self.sgf.next_token()
-				print "SGF: %s" % current
 
 				if not type(current) is str:
 					continue
-				if is_stone(current):
+				if is_move(current):
 					self.on_move(current)
+				elif is_stone(current):
+					self.on_stone(current)
 				elif is_meta(current):
 					self.on_meta(current)
 				elif is_extra(current):

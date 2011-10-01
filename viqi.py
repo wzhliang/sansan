@@ -89,8 +89,6 @@ class GoBoard(board.Board, QGraphicsView):
 			return
 		print "GUI: %s" % (self.game.where())
 		self.handle_node(self.game.where())
-		if is_move(self.game.where().name):
-			self.handle_move(self.game.where())
 
 	def go_prev(self):
 		# TODO: should put back the deaad stones
@@ -98,18 +96,25 @@ class GoBoard(board.Board, QGraphicsView):
 		self.remove_stone(x, y)
 		super(GoBoard, self).remove_stones([(x, y)])
 		self.game.back()
-		self.handle_node(self.game.where())
+		self.handle_node(self.game.where(), True)
 		#TODO: The following causes exception of cause (place occupied) but not
 		#sure if there is situation where going back will kill some stones
 		#if is_move(self.game.where().name):
 		#	self.handle_move(self.game.where())
 
-	def handle_node(self, node):
+	def handle_node(self, node, back=0):
 		"Handle a node, like mark, comment, etc. dead stone is not handled here"
 		self.emit(SIGNAL("newComment(PyQt_PyObject)"), "")
+		if is_stone(node.name):
+			self.handle_stone(node)
+		# When going back, the stone is already there
+		elif is_move(node.name) and not back:
+			self.handle_move(node)
+
 		for e in node.extra:
 			if is_comment(e):
 				self.emit(SIGNAL("newComment(PyQt_PyObject)"), node.get_comment())
+			print "Handling %s..." % e
 
 	def handle_move(self, node):
 		"Handle a move. Deal with dead stone, etc. Assuming it's a play node"
@@ -119,7 +124,12 @@ class GoBoard(board.Board, QGraphicsView):
 		else:
 			x, y = pos2xy(self.game.where().prop)
 			self.play_xy(x, y, str2color(self.game.where().name))
-			self.handle_node(self.game.where())
+
+	def handle_stone(self, node):
+		for l in node.prop:
+			print "Placing stone at %s" % l
+			x, y = pos2xy(l)
+			self.add_stone(x, y, str2color(node.name))
 
 	def _remove_stones(self, group):
 		remove = []
@@ -136,8 +146,6 @@ class GoBoard(board.Board, QGraphicsView):
 			return
 		self._remove_stones(remove)
 		self.handle_node(self.game.where())
-		if is_move(self.game.where().name):
-			self.handle_move(self.game.where())
 
 	def go_down(self):
 		"Go up in variantions"
@@ -146,13 +154,10 @@ class GoBoard(board.Board, QGraphicsView):
 			return
 		self._remove_stones(remove)
 		self.handle_node(self.game.where())
-		if is_move(self.game.where().name):
-			self.handle_move(self.game.where())
 
 	def mousePressEvent(self, event):
 		if event.button() != Qt.LeftButton:
 			return
-
 		self.go_next()
 
 	def keyPressEvent(self, event):
@@ -247,23 +252,6 @@ class GoBoard(board.Board, QGraphicsView):
 		gi.setGraphicsEffect(effect)
 
 		self.scene.addItem(gi)
-
-	def place_stone_pos(self, pos, color):
-		stones = "EBW"
-		try:
-			super(GoBoard, self).place_stone_pos(self, pos, color)
-			x, y = pos2xy(pos)
-			self.add_stone(x, y, color)
-		except BoardError:
-			print "Failed"
-			return
-
-		stone = Stone(stones[color])
-		gi = self.scene.addPixmap( stone.get_bitmap() )
-		gi.setZValue( self._stone_zvalue )
-		x, y = self.convert_coord( pos2xy(pos) )
-		gi.setPos( x, y )
-		return gi
 
 	def clear(self):
 		#TODO: remove all graphic items
