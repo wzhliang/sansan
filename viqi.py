@@ -120,6 +120,7 @@ class GoBoard(board.Board, QGraphicsView):
 		self.y1 = (self.size-1)*self.h + self.edge
 		self.game = None
 		self.stones = [] # 2D array for holding stones (QGraphicsPixmapItem)
+		self.marks = [] # 2D array for hodling various marks
 		self.cross = None
 		for i in range(19):
 			self.stones.append([None] * 19)
@@ -160,6 +161,7 @@ class GoBoard(board.Board, QGraphicsView):
 	def handle_node(self, node, back=0):
 		"Handle a node, like mark, comment, etc. dead stone is not handled here"
 		self.emit(SIGNAL("newComment(PyQt_PyObject)"), "")
+		self.clear_marks()
 		if is_stone(node.name):
 			self.handle_stone(node)
 		# When going back, the stone is already there
@@ -168,11 +170,21 @@ class GoBoard(board.Board, QGraphicsView):
 				self.handle_move(node)
 			self.refresh_cross(node)
 
-
 		for e in node.extra:
+			print "Handling %s..." % e, node.extra[e]
 			if is_comment(e):
 				self.emit(SIGNAL("newComment(PyQt_PyObject)"), node.get_comment())
-			print "Handling %s..." % e
+			elif e == "LB":
+				self._handle_LB(node.extra[e])
+
+	def clear_marks(self):
+		"""Assuming that marks are only relavant for a particular move and ALL should be
+		cleared from board"""
+		while True:
+			try:
+				self.scene.removeItem(self.marks.pop())
+			except IndexError:
+				break
 
 	def refresh_cross(self, node):
 		if self.cross:
@@ -197,6 +209,12 @@ class GoBoard(board.Board, QGraphicsView):
 			print "Placing stone at %s" % l
 			x, y = pos2xy(l)
 			self.add_stone(x, y, str2color(node.name))
+
+	def _handle_LB(self, labels):
+		for l in labels:
+			pos, char = l.split(":")
+			x, y = pos2xy(pos)
+			self.add_label(x, y, char)
 
 	def _remove_stones(self, group):
 		remove = []
@@ -324,6 +342,16 @@ class GoBoard(board.Board, QGraphicsView):
 		gi.setGraphicsEffect(effect)
 
 		self.scene.addItem(gi)
+
+	def add_label(self, x, y, char):
+		""" Doesn't change model """
+		gi = self.scene.addText(char)
+		self.marks.append(gi) # overwriting previous one. should be GCed automatically
+		x, y = self.convert_coord((x, y))
+		x -= 0.2*self.w # FIXME: hard-coded location
+		y -= 0.2*self.w
+		gi.setPos(x, y)
+		gi.setZValue(5)
 
 	def clear(self):
 		#TODO: remove all graphic items
@@ -496,6 +524,6 @@ class MainWindow(QMainWindow):
 app = QApplication(sys.argv)
 w = MainWindow()
 w.show()
-w.resize( 1324, 920 )
+w.resize( 1124, 920 )
 sys.exit(app.exec_())
 

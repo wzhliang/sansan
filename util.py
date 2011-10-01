@@ -72,7 +72,7 @@ def id2pos(_id):
 __metas = [ "PB", "PW", "WR", "BR", "FF", "DT", "RE", "SZ", "KM", "TM", "OT",
 	"EV", "CA", "GM", "AP", "ST", "RU"  ]
 __stones = [ "AB", "AW" ]
-__extra = [ "C", "MA", "TR", "CR", "SQ", "SL" ]
+__extra = [ "C", "MA", "TR", "CR", "SQ", "SL", "LB" ]
 __moves = [ "B", "W" ]
 
 def is_meta(tag):
