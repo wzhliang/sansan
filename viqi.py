@@ -22,9 +22,9 @@ class Bitmap:
 	@staticmethod
 	def get_bitmap_for_stone(color):
 		if ( color == BLACK ):
-			return "res/yun_b.png"
+			return "res/b22.png"
 		else:
-			return "res/yun_w.png"
+			return "res/208.png"
 
 	@staticmethod
 	def get_bg_bitmap():
@@ -35,7 +35,7 @@ class Stone:
 	def __init__(self, color):
 		self.color = color
 		self.bitmap = QPixmap( Bitmap.get_bitmap_for_stone(color) )
-		self.bitmap = self.bitmap.scaledToHeight(37)
+		self.bitmap = self.bitmap.scaledToHeight(38, mode=1)
 
 	@staticmethod
 	def get_width():
@@ -330,6 +330,7 @@ class GoBoard(board.Board, QGraphicsView):
 			line.setLine( self.x0, y, self.x1,  y )
 			self.scene.addItem( line )
 
+		self.setRenderHint(QPainter.Antialiasing)
 		self.show()
 
 	def add_stone(self, x, y, color):
@@ -338,8 +339,8 @@ class GoBoard(board.Board, QGraphicsView):
 		gi = QGraphicsPixmapItem(stone.get_bitmap())
 		self.stones[x-1][y-1] = gi
 		x, y = self.convert_coord((x, y))
-		x -= 0.45*self.w # FIXME: somehow, this is in the middle
-		y -= 0.45*self.w
+		x -= 0.5*self.w # FIXME: somehow, this is in the middle
+		y -= 0.5*self.w
 		gi.setPos(x, y)
 		#gi.setZValue(5)
 
