@@ -162,6 +162,10 @@ class GoBoard(board.Board, QGraphicsView):
 		"Handle a node, like mark, comment, etc. dead stone is not handled here"
 		self.emit(SIGNAL("newComment(PyQt_PyObject)"), "")
 		self.clear_marks()
+
+		if node.is_root():
+			return
+
 		if is_stone(node.name):
 			self.handle_stone(node)
 		# When going back, the stone is already there
@@ -327,7 +331,7 @@ class GoBoard(board.Board, QGraphicsView):
 			y = self.y0 + i*self.h
 			line = QGraphicsLineItem()
 			#line.setPen( pen )
-			line.setLine( self.x0, y, self.x1,  y )
+			line.setLine(self.x0, y, self.x1, y)
 			self.scene.addItem( line )
 
 		self.setRenderHint(QPainter.Antialiasing)
@@ -353,11 +357,15 @@ class GoBoard(board.Board, QGraphicsView):
 
 	def add_label(self, x, y, char):
 		""" Doesn't change model """
-		gi = self.scene.addText(char)
+		font = QFont()
+		font.setBold(True)
+		font.setItalic(True)
+		font.setPixelSize(30)
+		gi = self.scene.addText(char, font)
 		self.marks.append(gi) # overwriting previous one. should be GCed automatically
 		x, y = self.convert_coord((x, y))
-		x -= 0.2*self.w # FIXME: hard-coded location
-		y -= 0.2*self.w
+		x -= 15
+		y -= 15
 		gi.setPos(x, y)
 		gi.setZValue(5)
 

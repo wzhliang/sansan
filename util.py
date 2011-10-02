@@ -32,15 +32,6 @@ def enemy(color):
 	else:
 		raise IndexError
 
-def pos2xy(pos):
-	""" convert pos like 'ab' to x, y"""
-	try:
-		x = __pdict[pos.upper()[0]]
-		y = __pdict[pos.upper()[1]]
-	except AttributeError:
-		debug_trace()
-	return x, y
-
 def xy2pos(x, y):
 	"""convert (x,y) to 'ab' like pos"""
 	return __ndict[x] + __ndict[y]

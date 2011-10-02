@@ -75,6 +75,9 @@ class Node(object):
 
 		return False
 
+	def is_root(self):
+		return self.name == "_root_"
+
 	def __str__(self):
 		return "%s[%s]" % (self.name, self.prop)
 
@@ -122,7 +125,7 @@ class SGF(object):
 class Game(object):
 	def __init__(self, sgf_file):
 		self.sgf = SGF(sgf_file)
-		self.root = Node('root')
+		self.root = Node('_root_')
 		self.current = self.root
 		self.info = {}
 		self.stack = []
