@@ -103,6 +103,189 @@ class Cross(QGraphicsItem):
 				Qt.RoundCap, Qt.RoundJoin))
 		painter.drawLine(line)
 
+class Square(QGraphicsItem):
+	"square mark"
+	Type = QGraphicsItem.UserType + 3
+
+	def __init__(self, point, size):
+		"point: QPointF object as I don't know the board"
+		super(Square, self).__init__()
+
+		self.size = size
+		self.point = point
+		self.topLeft = QPointF(point.x() - size, point.y() - size)
+
+		self.setAcceptedMouseButtons(Qt.NoButton)
+		#self.adjust() TODO: Do I need this?
+
+	def x(self):
+		return self.point.x()
+
+	def y(self):
+		return self.point.y()
+
+	def type(self):
+		return Square.Type
+
+	def boundingRect(self):
+		return QRectF(self.x() - self.size, self.y() - self.size,
+			2.0*self.size, 2.0*self.size)
+
+	def paint(self, painter, option, widget):
+		if self.size <= 0:
+			return
+
+		# Draw the line itself.
+		x1 = self.point.x() - self.size
+		x2 = self.point.x() + self.size
+		y1 = self.point.y() - self.size
+		y2 = self.point.y() + self.size
+
+		line = QLineF(x1, y1, x1, y2)
+		painter.setPen(QPen(Qt.red, 3, Qt.SolidLine,
+			Qt.RoundCap, Qt.RoundJoin))
+		painter.drawLine(line)
+	
+		line = QLineF(x1, y1, x2, y1)
+		painter.setPen(QPen(Qt.red, 3, Qt.SolidLine,
+			Qt.RoundCap, Qt.RoundJoin))
+		painter.drawLine(line)
+
+		line = QLineF(x2, y1, x2, y2)
+		painter.setPen(QPen(Qt.red, 3, Qt.SolidLine,
+			Qt.RoundCap, Qt.RoundJoin))
+		painter.drawLine(line)
+	
+		line = QLineF(x2, y2, x1, y2)
+		painter.setPen(QPen(Qt.red, 3, Qt.SolidLine,
+			Qt.RoundCap, Qt.RoundJoin))
+		painter.drawLine(line)
+
+class Triangle(QGraphicsItem):
+	"trangle mark"
+	Type = QGraphicsItem.UserType + 4
+
+	def __init__(self, point, size):
+		"point: QPointF object as I don't know the board"
+		super(Triangle, self).__init__()
+
+		self.size = size
+		self.point = point
+		self.topLeft = QPointF(point.x() - size, point.y() - size)
+
+		self.setAcceptedMouseButtons(Qt.NoButton)
+		#self.adjust() TODO: Do I need this?
+
+	def x(self):
+		return self.point.x()
+
+	def y(self):
+		return self.point.y()
+
+	def type(self):
+		return Triangle.Type
+
+	def boundingRect(self):
+		return QRectF(self.x() - self.size, self.y() - self.size,
+			2.0*self.size, 2.0*self.size)
+
+	def paint(self, painter, option, widget):
+		if self.size <= 0:
+			return
+
+		# Draw the line itself.
+		x1 = self.point.x() - self.size
+		x2 = self.point.x() + self.size
+		y1 = self.point.y() - self.size
+		y2 = self.point.y() + self.size
+
+		line = QLineF(x1, y1, x1, y2)
+		painter.setPen(QPen(Qt.red, 3, Qt.SolidLine,
+			Qt.RoundCap, Qt.RoundJoin))
+		painter.drawLine(line)
+	
+		line = QLineF(x1, y1, x2, y1)
+		painter.setPen(QPen(Qt.red, 3, Qt.SolidLine,
+			Qt.RoundCap, Qt.RoundJoin))
+		painter.drawLine(line)
+
+		line = QLineF(x1, y1, x2, y2)
+		painter.setPen(QPen(Qt.red, 3, Qt.SolidLine,
+			Qt.RoundCap, Qt.RoundJoin))
+		painter.drawLine(line)
+
+class Circle(QGraphicsItem):
+	"circle mark"
+	Type = QGraphicsItem.UserType + 5
+
+	def __init__(self, point, size):
+		"point: QPointF object as I don't know the board"
+		super(Circle, self).__init__()
+
+		self.size = size
+		self.point = point
+
+		self.setAcceptedMouseButtons(Qt.NoButton)
+		#self.adjust() TODO: Do I need this?
+
+	def x(self):
+		return self.point.x()
+
+	def y(self):
+		return self.point.y()
+
+	def type(self):
+		return Circle.Type
+
+	def boundingRect(self):
+		return QRectF(self.x() - self.size, self.y() - self.size,
+			2.0*self.size, 2.0*self.size)
+
+	def paint(self, painter, option, widget):
+		if self.size <= 0:
+			return
+
+		# Draw the line itself.
+		painter.setPen(QPen(Qt.red, 3, Qt.SolidLine,
+			Qt.RoundCap, Qt.RoundJoin))
+		painter.drawEllipse(self.point, self.size, self.size)
+
+class Mark(QGraphicsItem):
+	"generic mark"
+	Type = QGraphicsItem.UserType + 6
+
+	def __init__(self, point, size):
+		"point: QPointF object as I don't know the board"
+		super(Mark, self).__init__()
+
+		self.size = size
+		self.point = point
+
+		self.setAcceptedMouseButtons(Qt.NoButton)
+		#self.adjust() TODO: Do I need this?
+
+	def x(self):
+		return self.point.x()
+
+	def y(self):
+		return self.point.y()
+
+	def type(self):
+		return Circle.Type
+
+	def boundingRect(self):
+		return QRectF(self.x() - self.size, self.y() - self.size,
+			2.0*self.size, 2.0*self.size)
+
+	def paint(self, painter, option, widget):
+		if self.size <= 0:
+			return
+
+		# Draw the line itself.
+		painter.setPen(QPen(Qt.red, 3, Qt.SolidLine,
+			Qt.RoundCap, Qt.RoundJoin))
+		painter.drawEllipse(self.point, self.size, self.size)
+
 
 class GoBoard(board.Board, QGraphicsView):
 	def __init__(self, parent = None, size = 19):
@@ -178,6 +361,12 @@ class GoBoard(board.Board, QGraphicsView):
 				self._handle_LB(node.extra[e])
 			elif e == "CR":
 				self._handle_CR(node.extra[e])
+			elif e == "SQ":
+				self._handle_SQ(node.extra[e])
+			elif e == "TR":
+				self._handle_TR(node.extra[e])
+			elif e == "MA":
+				self._handle_MA(node.extra[e])
 
 	def clear_marks(self):
 		"""Assuming that marks are only relavant for a particular move and ALL should be
@@ -221,7 +410,22 @@ class GoBoard(board.Board, QGraphicsView):
 	def _handle_CR(self, locs):
 		for l in locs:
 			x, y = pos2xy(l)
-			self.add_circle(x, y, 20)
+			self.add_circle(x, y, 10)
+
+	def _handle_TR(self, locs):
+		for l in locs:
+			x, y = pos2xy(l)
+			self.add_triangle(x, y, 10)
+
+	def _handle_SQ(self, locs):
+		for l in locs:
+			x, y = pos2xy(l)
+			self.add_square(x, y, 10)
+
+	def _handle_MA(self, locs):
+		for l in locs:
+			x, y = pos2xy(l)
+			self.add_mark(x, y, 10)
 
 	def _remove_stones(self, group):
 		remove = []
@@ -331,6 +535,7 @@ class GoBoard(board.Board, QGraphicsView):
 			self.scene.addItem( line )
 
 		self.setRenderHint(QPainter.Antialiasing)
+		self.scale(0.8, 0.8)
 		self.show()
 
 	def add_stone(self, x, y, color):
@@ -362,16 +567,32 @@ class GoBoard(board.Board, QGraphicsView):
 		gi.setZValue(5)
 
 	def add_circle(self, x, y, size):
-		sx, sy = self.convert_coord((x, y))
-		sx -= 0.2*self.w # FIXME: hard-coded location
-		sy -= 0.2*self.w
-		gi = self.scene.addEllipse(sx, sy, size, size, brush = QBrush(Qt.black))
-		self.marks.append(gi) # overwriting previous one. should be GCed automatically
-		gi.setZValue(5)
+		x, y = self.convert_coord((x, y))
+		cr = Circle(QPointF(x, y), size)
+		cr.setZValue(5)
+		self.marks.append(cr)
+		self.scene.addItem(cr)
 
-	def clear(self):
-		#TODO: remove all graphic items
-		super(GoBoard, self).clear()
+	def add_triangle(self, x, y, size):
+		x, y = self.convert_coord((x, y))
+		tr = Triangle(QPointF(x, y), size)
+		tr.setZValue(5)
+		self.marks.append(tr)
+		self.scene.addItem(tr)
+
+	def add_square(self, x, y, size):
+		x, y = self.convert_coord((x, y))
+		sq = Square(QPointF(x, y), size)
+		sq.setZValue(5)
+		self.marks.append(sq)
+		self.scene.addItem(sq)
+
+	def add_mark(self, x, y, size):
+		x, y = self.convert_coord((x, y))
+		ma = Mark(QPointF(x, y), size)
+		ma.setZValue(5)
+		self.marks.append(ma)
+		self.scene.addItem(ma)
 
 	def remove_stone(self, x, y):
 		gi = self.stones[x-1][y-1]
@@ -540,6 +761,6 @@ class MainWindow(QMainWindow):
 app = QApplication(sys.argv)
 w = MainWindow()
 w.show()
-w.resize( 1124, 920 )
+w.resize( 920, 920 )
 sys.exit(app.exec_())
 

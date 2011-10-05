@@ -1,2 +1,3 @@
 - BUG: going backwords should put the removed stone back
 - TODO: support SGF from goproblems. They include AB, AW in the first node.
+- If there is markers node between move nodes, reverse navigation wouldn't work
