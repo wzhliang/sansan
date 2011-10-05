@@ -2,6 +2,7 @@
 
 import sys
 import os
+import math
 import time
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
@@ -171,7 +172,6 @@ class Triangle(QGraphicsItem):
 
 		self.size = size
 		self.point = point
-		self.topLeft = QPointF(point.x() - size, point.y() - size)
 
 		self.setAcceptedMouseButtons(Qt.NoButton)
 		#self.adjust() TODO: Do I need this?
@@ -194,22 +194,23 @@ class Triangle(QGraphicsItem):
 			return
 
 		# Draw the line itself.
-		x1 = self.point.x() - self.size
-		x2 = self.point.x() + self.size
+		x1 = self.point.x()
 		y1 = self.point.y() - self.size
-		y2 = self.point.y() + self.size
+		x2 = self.point.x() - abs(self.size*math.sin(30))
+		y2 = self.point.y() + self.size*math.cos(30)
+		x3 = self.point.x() + abs(self.size*math.sin(30))
 
-		line = QLineF(x1, y1, x1, y2)
+		line = QLineF(x1, y1, x2, y2)
 		painter.setPen(QPen(Qt.red, 3, Qt.SolidLine,
 			Qt.RoundCap, Qt.RoundJoin))
 		painter.drawLine(line)
 	
-		line = QLineF(x1, y1, x2, y1)
+		line = QLineF(x2, y2, x3, y2)
 		painter.setPen(QPen(Qt.red, 3, Qt.SolidLine,
 			Qt.RoundCap, Qt.RoundJoin))
 		painter.drawLine(line)
 
-		line = QLineF(x1, y1, x2, y2)
+		line = QLineF(x1, y1, x3, y2)
 		painter.setPen(QPen(Qt.red, 3, Qt.SolidLine,
 			Qt.RoundCap, Qt.RoundJoin))
 		painter.drawLine(line)
@@ -539,7 +540,6 @@ class GoBoard(board.Board, QGraphicsView):
 			self.scene.addItem( line )
 
 		self.setRenderHint(QPainter.Antialiasing)
-		self.scale(0.8, 0.8)
 		self.show()
 
 	def add_stone(self, x, y, color):
@@ -566,13 +566,18 @@ class GoBoard(board.Board, QGraphicsView):
 		font.setBold(True)
 		font.setItalic(True)
 		font.setPixelSize(30)
-		gi = self.scene.addText(char, font)
-		self.marks.append(gi) # overwriting previous one. should be GCed automatically
+
+		tx = QGraphicsTextItem()
+		tx.setPlainText(char)
+		tx.setDefaultTextColor(QColor("green"))
+		tx.setFont(font)
+		self.scene.addItem(tx)
+		self.marks.append(tx) # overwriting previous one. should be GCed automatically
 		x, y = self.convert_coord((x, y))
 		x -= 15
 		y -= 15
-		gi.setPos(x, y)
-		gi.setZValue(5)
+		tx.setPos(x, y)
+		tx.setZValue(5)
 
 	def add_circle(self, x, y, size):
 		x, y = self.convert_coord((x, y))
