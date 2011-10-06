@@ -2,3 +2,4 @@
 - TODO: support SGF from goproblems. They include AB, AW in the first node.
 - BUG: utf8 doesn't work.
 - When there is a very long comment, the doc window is scrolled to the bottom
+- If there is markers node between move nodes, reverse navigation wouldn't work
