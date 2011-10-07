@@ -4,6 +4,7 @@ import sys
 import os
 import math
 import time
+import types
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from pprint import pprint
@@ -322,41 +323,62 @@ class GoBoard(board.Board, QGraphicsView):
 		self.game = game
 
 	def go_next(self):
+		prev = self.game.where()
 		try:
 			self.game.forth()
 		except sgf.SGFNoMoreNode:
 			print "End of game or branch."
 			return
 		print "GUI: %s" % (self.game.where())
-		self.handle_node(self.game.where())
+		self.handle_node(prev, self.game.where())
 
 	def go_prev(self):
 		# TODO: should put back the deaad stones
+		prev = self.game.where()
 		x, y = pos2xy(self.game.where().prop)
 		self.remove_stone(x, y)
 		super(GoBoard, self).remove_stones([(x, y)])
 		self.game.back()
-		self.handle_node(self.game.where(), True)
-		#TODO: The following causes exception of cause (place occupied) but not
-		#sure if there is situation where going back will kill some stones
-		#if is_move(self.game.where().name):
-		#	self.handle_move(self.game.where())
+		self.handle_node(prev, self.game.where(), True)
 
-	def handle_node(self, node, back=0):
+	def attach_undo(self, added, removed):
+		def _undo(node):
+			print "_undo %s" % node
+			for x, y in added:
+				self.remove_stone(x, y)
+			for x, y in removed:
+				cl = str2color(node.name)
+				self.add_stone(x, y, enemy(cl))
+				self.place_stone_xy(x, y, enemy(cl))
+		return _undo
+
+	def handle_node(self, prev, node, back=0):
 		"Handle a node, like mark, comment, etc. dead stone is not handled here"
 		self.emit(SIGNAL("newComment(PyQt_PyObject)"), "")
 		self.clear_marks()
+		added = []
+		removed = []
 
 		if node.is_root():
 			return
 
+		if back:
+			try:
+				node.undo()
+			except AttributeError:
+				pass # Allow node with no undo
+
 		if is_stone(node.name):
-			self.handle_stone(node)
+			added.extend(self.handle_stone(node))
 		# When going back, the stone is already there
 		elif is_move(node.name):
 			if not back:
-				self.handle_move(node)
+				removed.extend(self.handle_move(node))
 			self.refresh_cross(node)
+
+		# Closure magic
+		# TODO: use functools.partial
+		prev.undo = types.MethodType(self.attach_undo(added, removed), node)
 
 		for e in node.extra:
 			print "Handling %s..." % e, node.extra[e]
@@ -396,14 +418,17 @@ class GoBoard(board.Board, QGraphicsView):
 		if node.prop == "":
 			print "PASS"
 			self.emit(SIGNAL("newComment(PyQt_PyObject)"), "PASS")
+			return []
 		else:
 			x, y = pos2xy(self.game.where().prop)
-			self.play_xy(x, y, str2color(self.game.where().name))
+			return self.play_xy(x, y, str2color(self.game.where().name))
 
 	def handle_stone(self, node):
+		add = []
 		for l in node.prop:
 			print "Placing stone at %s" % l
 			x, y = pos2xy(l)
+			add.append((x,y))
 			self.add_stone(x, y, str2color(node.name))
 
 	def _handle_LB(self, labels):
@@ -442,19 +467,21 @@ class GoBoard(board.Board, QGraphicsView):
 
 	def go_up(self):
 		"Go up in variantions"
+		prev = self.game.where()
 		remove = self.game.branch_up()
 		if len(remove) == 0:
 			return
 		self._remove_stones(remove)
-		self.handle_node(self.game.where())
+		self.handle_node(prev, self.game.where())
 
 	def go_down(self):
 		"Go up in variantions"
+		prev = self.game.where()
 		remove = self.game.branch_down()
 		if len(remove) == 0:
 			return
 		self._remove_stones(remove)
-		self.handle_node(self.game.where())
+		self.handle_node(prev, self.game.where())
 
 	def mousePressEvent(self, event):
 		if event.button() != Qt.LeftButton:
@@ -560,6 +587,8 @@ class GoBoard(board.Board, QGraphicsView):
 
 		self.scene.addItem(gi)
 
+		return gi
+
 	def add_label(self, x, y, char):
 		""" Doesn't change model """
 		font = QFont()
@@ -618,6 +647,7 @@ class GoBoard(board.Board, QGraphicsView):
 			self.add_stone(x, y, color)
 			for dx, dy in dead:
 				self.remove_stone(dx, dy)
+			return dead
 		except IndexError:
 			print "Unable to make move: (%d,%d,%d)" % (x, y, color)
 			# Remove the just played stone
