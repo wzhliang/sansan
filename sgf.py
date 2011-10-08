@@ -196,6 +196,8 @@ class Game(object):
 			raise SGFNoMoreNode
 
 	def back(self):
+		if self.current.is_root():
+			raise SGFNoMoreNode
 		self.current = self.current.parent
 
 	def where(self):

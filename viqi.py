@@ -335,11 +335,15 @@ class GoBoard(board.Board, QGraphicsView):
 	def go_prev(self):
 		# TODO: should put back the deaad stones
 		prev = self.game.where()
-		x, y = pos2xy(self.game.where().prop)
-		self.remove_stone(x, y)
-		super(GoBoard, self).remove_stones([(x, y)])
-		self.game.back()
-		self.handle_node(prev, self.game.where(), True)
+		if not prev.prop == "":
+			x, y = pos2xy(self.game.where().prop)
+			self.remove_stone(x, y)
+			super(GoBoard, self).remove_stones([(x, y)])
+		try:
+			self.game.back()
+			self.handle_node(prev, self.game.where(), True)
+		except sgf.SGFNoMoreNode:
+			pass
 
 	def attach_undo(self, added, removed):
 		def _undo(node):
@@ -374,7 +378,8 @@ class GoBoard(board.Board, QGraphicsView):
 		elif is_move(node.name):
 			if not back:
 				removed.extend(self.handle_move(node))
-			self.refresh_cross(node)
+			if not node.prop == "": # PASS
+				self.refresh_cross(node)
 
 		# Closure magic
 		# TODO: use functools.partial
@@ -405,13 +410,12 @@ class GoBoard(board.Board, QGraphicsView):
 				break
 
 	def refresh_cross(self, node):
-		if self.cross:
-			self.scene.removeItem(self.cross)
 		x, y = pos2xy(self.game.where().prop)
 		cx, cy = self.convert_coord((x, y))
-		self.cross = Cross(QPointF(cx, cy), 10)
-		self.cross.setZValue(10)
-		self.scene.addItem(self.cross)
+		cross = Cross(QPointF(cx, cy), 10)
+		cross.setZValue(10)
+		self.scene.addItem(cross)
+		self.marks.append(cross)
 
 	def handle_move(self, node):
 		"Handle a move. Deal with dead stone, etc. Assuming it's a play node"
