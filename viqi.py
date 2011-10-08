@@ -4,7 +4,7 @@ import sys
 import os
 import math
 import time
-import types
+import functools
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from pprint import pprint
@@ -345,8 +345,8 @@ class GoBoard(board.Board, QGraphicsView):
 		except sgf.SGFNoMoreNode:
 			pass
 
-	def attach_undo(self, added, removed):
-		def _undo(node):
+	def attach_undo(self, node, added, removed):
+		def _undo():
 			print "_undo %s" % node
 			for x, y in added:
 				self.remove_stone(x, y)
@@ -383,7 +383,7 @@ class GoBoard(board.Board, QGraphicsView):
 
 		# Closure magic
 		# TODO: use functools.partial
-		prev.undo = types.MethodType(self.attach_undo(added, removed), node)
+		prev.undo = functools.partial(self.attach_undo, node, added, removed)()
 
 		for e in node.extra:
 			print "Handling %s..." % e, node.extra[e]
