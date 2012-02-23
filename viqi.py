@@ -333,7 +333,6 @@ class GoBoard(board.Board, QGraphicsView):
 		self.handle_node(prev, self.game.where())
 
 	def go_prev(self):
-		# TODO: should put back the deaad stones
 		prev = self.game.where()
 		if not prev.prop == "":
 			x, y = pos2xy(self.game.where().prop)
@@ -382,7 +381,6 @@ class GoBoard(board.Board, QGraphicsView):
 				self.refresh_cross(node)
 
 		# Closure magic
-		# TODO: use functools.partial
 		prev.undo = functools.partial(self.attach_undo, node, added, removed)()
 
 		for e in node.extra:
