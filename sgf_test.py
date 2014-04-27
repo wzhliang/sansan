@@ -74,7 +74,6 @@ class GameGuiA(Game):
 		return None
 
 
-
 class BoardTest(unittest.TestCase):
 	def test_a(self):
 		print "\n========= a =============\n"
@@ -189,5 +188,12 @@ class BoardTest(unittest.TestCase):
 		self.assertEqual(len(game.where().prop), 4)
 		self.assertTrue("gg" in game.where().prop)
 		self.assertTrue("ef" in game.where().prop)
+
+	def test_l(self):
+		print "\n========= l =============\n"
+		print "Test support non-std pandago property"
+		pan = Board()
+		game = GameGui("sgf/pandago.sgf", pan)
+		game.navigate()
 
 unittest.main()

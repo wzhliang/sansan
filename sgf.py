@@ -254,10 +254,4 @@ class GameGui(Game):
 					node.prop, board.str2color(node.name) ) 
 			node = node.children[0]
 
-if __name__ == '__main__':
-	goban = board.Board()
-	game = GameGui(sys.argv[1], goban)
-	game.build_tree()
-	goban.clear()
-	game.navigate()
-	pprint(goban.data)
+# EoF
