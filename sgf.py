@@ -96,7 +96,7 @@ class SGF(object):
 				multiline=True,
 				unquoteResults=True,
 				endQuoteChar="]")
-		prop_id = Word(srange("[A-Z]"), min=1, max=10)
+		prop_id = Word(srange("[A-Za-z]"), min=1, max=10)
 		prop = prop_id + Group(OneOrMore(text))
 		node = start + OneOrMore(prop)
 		sequence = OneOrMore(node)
@@ -254,9 +254,10 @@ class GameGui(Game):
 					node.prop, board.str2color(node.name) ) 
 			node = node.children[0]
 
-#goban = board.Board()
-#game = GameGui(sys.argv[1], goban)
-#game.build_tree()
-#goban.clear()
-##game.navigate()
-#pprint(goban.data)
+if __name__ == '__main__':
+	goban = board.Board()
+	game = GameGui(sys.argv[1], goban)
+	game.build_tree()
+	goban.clear()
+	game.navigate()
+	pprint(goban.data)
