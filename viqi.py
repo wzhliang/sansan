@@ -677,7 +677,10 @@ class MyWidget(QWidget):
 		self.goban = GoBoard(self)
 		self.goban.draw_board()
 
-		self.game = sgf.Game(fn)
+		f = open(fn, "r")
+		content = f.read()
+		self.game = sgf.Game(content)
+		f.close()
 		self.game.build_tree()
 
 		self.goban.set_game(self.game)

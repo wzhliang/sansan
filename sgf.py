@@ -102,7 +102,7 @@ class SGF(object):
 		branch << "(" + sequence + ZeroOrMore(branch) + ")"
 		self.game = OneOrMore(branch)
 
-		self.sgf_file = filename
+		self.sgf_content = filename
 		self.moves = None
 		self.__parse()
 		self.current = 0
@@ -114,15 +114,15 @@ class SGF(object):
 		return tok
 
 	def __parse(self):
-		self.moves = self.game.parseFile(self.sgf_file)
+		self.moves = self.game.parseString(self.sgf_content)
 
 	def show(self):
-		print "All moves in %s" % self.sgf_file
+		print "All moves in %s" % self.sgf_content
 		pprint(self.moves)
 
 class Game(object):
-	def __init__(self, sgf_file):
-		self.sgf = SGF(sgf_file)
+	def __init__(self, sgf_content):
+		self.sgf = SGF(sgf_content)
 		self.root = Node('_root_')
 		self.current = self.root
 		self.info = {}
