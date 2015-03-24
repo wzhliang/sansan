@@ -16,14 +16,15 @@ from util import *
 import sgf
 import board
 import adapter
+from wq_rc import *
 
 class Bitmap:
 	@staticmethod
 	def get_bitmap_for_stone(color):
 		if ( color == BLACK ):
-			return "res/b22.png"
+			return ":res/b22.png"
 		else:
-			return "res/208.png"
+			return ":res/208.png"
 
 	@staticmethod
 	def get_bg_bitmap():

@@ -1,0 +1,10 @@
+<!DOCTYPE RCC><RCC version="1.0">
+<qresource>
+	<file>res/208.png</file>
+	<file>res/b22.png</file>
+	<file>res/w2.png</file>
+	<file>res/wood.jpg</file>
+	<file>res/yun_b.png</file>
+	<file>res/yun_w.png</file>
+</qresource>
+</RCC>
