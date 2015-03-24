@@ -700,6 +700,7 @@ class MainWindow(QMainWindow):
 		self.createActions()
 		self.createMenus()
 		self.setWindowTitle("WQ")
+		self.setWindowIcon(QIcon(':res/icon320x320.png'))
 
 		if len(sys.argv) > 1:
 			self.widget = MyWidget(sys.argv[1])

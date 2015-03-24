@@ -6,5 +6,6 @@
 	<file>res/wood.jpg</file>
 	<file>res/yun_b.png</file>
 	<file>res/yun_w.png</file>
+	<file>res/icon320x320.png</file>
 </qresource>
 </RCC>
