@@ -714,6 +714,7 @@ class MainWindow(QMainWindow):
 		self.setCentralWidget(self.widget)
 		self.createDockWindows()
 		self.resize(1200, 900)
+		self.widget.setFocus()
 
 	def next(self):
 		print 'Move to next'
@@ -722,12 +723,6 @@ class MainWindow(QMainWindow):
 	def reset(self):
 		print 'Reset'
 		self.widget.goban.clear()
-
-	def undo(self):
-		print "Invoked <b>Edit|Undo</b>"
-
-	def redo(self):
-		print "Invoked <b>Edit|Redo</b>"
 
 	def about(self):
 		QMessageBox.about(self, "About Menu",
@@ -742,24 +737,8 @@ class MainWindow(QMainWindow):
 				shortcut=QKeySequence.Open,
 				statusTip="Open an existing file", triggered=self.open)
 
-		self.nextAct = QAction("&Next...", self,
-				shortcut= QKeySequence( "Ctrl-N" ),
-				statusTip="Go to next problem", triggered=self.next)
-
-		self.resetAct = QAction("&Restart...", self,
-				shortcut= QKeySequence( "Ctrl-R" ),
-				statusTip="Rstart problem solving", triggered=self.reset)
-
 		self.exitAct = QAction("E&xit", self, shortcut="Ctrl+Q",
 				statusTip="Exit the application", triggered=self.close)
-
-		self.undoAct = QAction("&Undo", self,
-				shortcut=QKeySequence.Undo,
-				statusTip="Undo the last operation", triggered=self.undo)
-
-		self.redoAct = QAction("&Redo", self,
-				shortcut=QKeySequence.Redo,
-				statusTip="Redo the last operation", triggered=self.redo)
 
 		self.aboutAct = QAction("&About", self,
 				statusTip="Show the application's About box",
@@ -773,8 +752,6 @@ class MainWindow(QMainWindow):
 	def createMenus(self):
 		self.fileMenu = self.menuBar().addMenu("&File")
 		self.fileMenu.addAction(self.openAct)
-		self.fileMenu.addAction(self.nextAct)
-		self.fileMenu.addAction(self.resetAct)
 		self.fileMenu.addSeparator()
 		self.fileMenu.addAction(self.exitAct)
 
