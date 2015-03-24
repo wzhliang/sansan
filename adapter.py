@@ -3,6 +3,7 @@
 import urllib2
 from util import which
 import subprocess
+import re
 
 class AdapterError(Exception):
 	pass
@@ -38,7 +39,17 @@ class HttpAdapter(Adapter):
 	def adapt(self):
 		resp = urllib2.urlopen(self.src, data=None, timeout=20)
 		return resp.read()
-		
+
+class SinaAdapter(HttpAdapter):
+	"""javascript:gibo_load('http://duiyi.sina.com.cn/cgibo/20153/gjdjp2015-0323.sgf')"""
+	def __init__(self, source):
+		pat = re.compile("gibo_load\('(.*)'\)")
+		matobj = pat.search(source)
+		print matobj.group(1)
+		if matobj is None:
+			raise AdapterError("Not a sina qipu address")
+		super(SinaAdapter, self).__init__(matobj.group(1))
+
 class PassthroughAdapter(Adapter):
 	def __init__(self, source):
 		super(PassthroughAdapter, self).__init__(source)
@@ -55,6 +66,8 @@ class PassthroughAdapter(Adapter):
 
 def getAdapter(fn):
 	name = fn.lower()
+	if "duiyi.sina" in name:
+		return SinaAdapter(fn)
 	if name.startswith("http://"):
 		return HttpAdapter(fn)
 	if name.endswith(".sgf"):
