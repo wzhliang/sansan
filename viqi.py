@@ -1,13 +1,10 @@
 #!/usr/bin/python
 
 import sys
-import os
 import math
-import time
 import functools
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
-from pprint import pprint
 
 #TODO:
 # once the board is resize, everything is in a mess
@@ -16,7 +13,6 @@ from pprint import pprint
 # Draw star, tianyuan, etc
 
 from util import *
-from debug import debug_trace
 import sgf
 import board
 import adapter
@@ -545,6 +541,7 @@ class GoBoard(board.Board, QGraphicsView):
 		# Draw background 
 		bg_color = QColor(0xcb, 0x91, 0x43)
 		self.scene.setBackgroundBrush(QBrush(bg_color))
+		# self.scene.addPixmap(QPixmap("res/wood.jpg"))
 
 		self.draw_stars()
 
@@ -699,17 +696,24 @@ class MainWindow(QMainWindow):
 	def __init__(self):
 		super(MainWindow, self).__init__()
 
-		self.widget = MyWidget(sys.argv[1])
-		self.setCentralWidget(self.widget)
-
 		self.createActions()
 		self.createMenus()
-		self.createDockWindows()
-
 		self.setWindowTitle("WQ")
 
+		if len(sys.argv) > 1:
+			self.widget = MyWidget(sys.argv[1])
+			self.setCentralWidget(self.widget)
+			self.createDockWindows()
+			self.resize(1200, 900)
+		else:
+			self.resize(200, 200)
+
 	def open(self):
-		print "Invoked <b>File|Open</b>"
+		fn = QFileDialog.getOpenFileName(caption = "Open File", filter = "(*.sgf *.gib)");
+		self.widget = MyWidget(str(fn))
+		self.setCentralWidget(self.widget)
+		self.createDockWindows()
+		self.resize(1200, 900)
 
 	def next(self):
 		print 'Move to next'
@@ -814,6 +818,5 @@ class MainWindow(QMainWindow):
 app = QApplication(sys.argv)
 w = MainWindow()
 w.show()
-w.resize( 920, 920 )
 sys.exit(app.exec_())
 
