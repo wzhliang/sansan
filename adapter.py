@@ -1,4 +1,6 @@
 #!/usr/bin/python
+
+import urllib2
 from util import which
 import subprocess
 
@@ -28,6 +30,14 @@ class ExternalAdapter(Adapter):
 			raise AdapterError("unable to convert")
 
 		return output
+
+class HttpAdapter(Adapter):
+	def __init__(self, source):
+		super(HttpAdapter, self).__init__(source)
+
+	def adapt(self):
+		resp = urllib2.urlopen(self.src, data=None, timeout=20)
+		return resp.read()
 		
 class PassthroughAdapter(Adapter):
 	def __init__(self, source):
@@ -45,6 +55,8 @@ class PassthroughAdapter(Adapter):
 
 def getAdapter(fn):
 	name = fn.lower()
+	if name.startswith("http://"):
+		return HttpAdapter(fn)
 	if name.endswith(".sgf"):
 		return PassthroughAdapter(fn)
 	elif name.endswith(".gib"):
