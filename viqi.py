@@ -671,16 +671,16 @@ class GoBoard(board.Board, QGraphicsView):
 		self.clear()
 
 class MyWidget(QWidget):
-	def __init__(self, parent = None):
-		super(MyWidget, self ).__init__(parent)
+	def __init__(self, fn, parent = None):
+		super(MyWidget, self).__init__(parent)
 
 		self.goban = GoBoard(self)
 		self.goban.draw_board()
 
-		self.game = sgf.Game(sys.argv[1])
+		self.game = sgf.Game(fn)
 		self.game.build_tree()
 
-		self.goban.set_game( self.game )
+		self.goban.set_game(self.game)
 		self.goban.setup()
 
 		layout = QVBoxLayout()
@@ -691,7 +691,7 @@ class MainWindow(QMainWindow):
 	def __init__(self):
 		super(MainWindow, self).__init__()
 
-		self.widget = MyWidget()
+		self.widget = MyWidget(sys.argv[1])
 		self.setCentralWidget(self.widget)
 
 		self.createActions()
