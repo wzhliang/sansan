@@ -1,9 +1,7 @@
 from pyparsing import (Word, Literal, QuotedString, OneOrMore,
-		srange, Forward, ZeroOrMore, Combine, Group)
+		srange, Forward, ZeroOrMore, Group)
 from pprint import pprint
 #from pdb import set_trace
-import sys
-import types
 import board
 from util import *
 from pdb import set_trace
@@ -22,7 +20,7 @@ from pdb import set_trace
 #		Text | Point  | Move | Stone)
 
 class Node(object):
-	"""this class assums that the primary property is the first one in the string.
+	"""this class assumes that the primary property is the first one in the string.
 		So files like ;C[haha]B[ab] will not work. """
 	def __init__(self, name = ""):
 		self.name = name
@@ -98,7 +96,7 @@ class SGF(object):
 				endQuoteChar="]")
 		prop_id = Word(srange("[A-Za-z]"), min=1, max=10)
 		prop = prop_id + Group(OneOrMore(text))
-		node = start + OneOrMore(prop)
+		node = ZeroOrMore(start) + OneOrMore(prop)
 		sequence = OneOrMore(node)
 		branch = Forward()
 		branch << "(" + sequence + ZeroOrMore(branch) + ")"
