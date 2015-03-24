@@ -19,6 +19,7 @@ from util import *
 from debug import debug_trace
 import sgf
 import board
+import adapter
 
 class Bitmap:
 	@staticmethod
@@ -677,10 +678,14 @@ class MyWidget(QWidget):
 		self.goban = GoBoard(self)
 		self.goban.draw_board()
 
-		f = open(fn, "r")
-		content = f.read()
-		self.game = sgf.Game(content)
-		f.close()
+		try:
+			ad = adapter.getAdapter(fn)
+			self.game = sgf.Game(ad.adapt())
+		except adapter.AdapterError as e:
+			print "Adapter: %s" % e
+		except IOError:
+			print "Unable to get adapter"
+			
 		self.game.build_tree()
 
 		self.goban.set_game(self.game)
