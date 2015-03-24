@@ -706,7 +706,7 @@ class MainWindow(QMainWindow):
 		self.createMenus()
 		self.createDockWindows()
 
-		self.setWindowTitle("SIHUO")
+		self.setWindowTitle("WQ")
 
 	def open(self):
 		print "Invoked <b>File|Open</b>"

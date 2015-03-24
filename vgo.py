@@ -602,7 +602,7 @@ class MainWindow(QMainWindow):
         self.createActions()
         self.createMenus()
 
-        self.setWindowTitle("SIHUO")
+        self.setWindowTitle("WQ")
 
     def open(self):
         print "Invoked <b>File|Open</b>"
