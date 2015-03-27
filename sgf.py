@@ -1,14 +1,14 @@
 from pyparsing import (Word, Literal, QuotedString, OneOrMore,
 		srange, Forward, ZeroOrMore, Group)
 from pprint import pprint
-#from pdb import set_trace
+# from pdb import set_trace
 import board
 import util
 
 _debug_ = False
 
 # BNF from red-bean
-# 
+#
 #  Collection = GameTree { GameTree }
 #  GameTree   = "(" Sequence { GameTree } ")"
 #  Sequence   = Node { Node }
@@ -18,19 +18,20 @@ _debug_ = False
 #  PropValue  = "[" CValueType "]"
 #  CValueType = (ValueType | Compose)
 #  ValueType  = (None | Number | Real | Double | Color | SimpleText |
-#		Text | Point  | Move | Stone)
+# _	            Text | Point  | Move | Stone)
+
 
 class Node(object):
 	"""this class assumes that the primary property is the first one in the string.
 		So files like ;C[haha]B[ab] will not work. """
-	def __init__(self, name = ""):
+	def __init__(self, name=""):
 		self.name = name
 		self.prop = ""
 		self.children = []
 		self.parent = None
 		self.prev_br = None
 		self.next_br = None
-		self.extra = {} # extra properties, including comment
+		self.extra = {}  # extra properties, including comment
 
 	def set_name(self, name):
 		self.name = name
@@ -48,7 +49,7 @@ class Node(object):
 			return ""
 
 	def has_comment(self):
-		return self.extra.has_key("C")
+		return "C" in self.extra
 
 	def add_child(self, child):
 		if self.num_child() > 0:
@@ -83,17 +84,20 @@ class Node(object):
 	def __str__(self):
 		return "%s[%s]" % (self.name, self.prop)
 
+
 class SGFError(Exception):
 	pass
+
 
 class SGFNoMoreNode(SGFError):
 	pass
 
+
 class SGF(object):
 	def __init__(self, filename):
-		#BNF
+		# BNF
 		start = Literal(";")
-		text = QuotedString(quoteChar="[", 
+		text = QuotedString(quoteChar="[",
 				escChar="\\",
 				multiline=True,
 				unquoteResults=True,
@@ -114,7 +118,7 @@ class SGF(object):
 	def next_token(self):
 		tok = self.moves[self.current]
 		self.current += 1
-		if _debug_:	
+		if _debug_:
 			print "SGF: ", tok
 		return tok
 
@@ -124,6 +128,7 @@ class SGF(object):
 	def show(self):
 		print "All moves in %s" % self.sgf_content
 		pprint(self.moves)
+
 
 class Game(object):
 	def __init__(self, sgf_content):
@@ -156,7 +161,7 @@ class Game(object):
 			self.stack.append(self.current)
 		else:
 			self.current = self.stack.pop()
-	
+
 	def on_node(self, n):
 		"n is alwasy ';'"
 		node = Node()
@@ -240,7 +245,7 @@ class Game(object):
 
 	def __getattr__(self, name):
 		"Gurantteed no exception"
-		if self.info.has_key(name):
+		if name in self.info:
 			return self.info[name]
 		else:
 			return ""
@@ -256,7 +261,7 @@ class GameGui(Game):
 		while node.has_child():
 			if node.name == "B" or node.name == "W":
 				self.goban.place_stone_pos(
-					node.prop, board.str2color(node.name) ) 
+					node.prop, board.str2color(node.name))
 			node = node.children[0]
 
 # EoF

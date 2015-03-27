@@ -6,7 +6,7 @@ import functools
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 
-#TODO:
+# TODO:
 # once the board is resize, everything is in a mess
 # needs a bit of edge for the board.
 # Stop hard-coding stone size, etc.
@@ -17,10 +17,11 @@ import board
 import adapter
 from wq_rc import *
 
+
 class Bitmap:
 	@staticmethod
 	def get_bitmap_for_stone(color):
-		if ( color == util.BLACK ):
+		if (color == util.BLACK):
 			return ":res/b22.png"
 		else:
 			return ":res/208.png"
@@ -29,11 +30,12 @@ class Bitmap:
 	def get_bg_bitmap():
 		return "background.png"
 
+
 class Stone:
 	"""TODO: make this a child of QGraphicsPixmapItem"""
 	def __init__(self, color):
 		self.color = color
-		self.bitmap = QPixmap( Bitmap.get_bitmap_for_stone(color) )
+		self.bitmap = QPixmap(Bitmap.get_bitmap_for_stone(color))
 		self.bitmap = self.bitmap.scaledToHeight(38, mode=1)
 
 	@staticmethod
@@ -49,6 +51,7 @@ class Stone:
 	def get_pos(self):
 		return self.pos
 
+
 class Cross(QGraphicsItem):
 	"Indicator of the current stone"
 	Type = QGraphicsItem.UserType + 2
@@ -62,7 +65,7 @@ class Cross(QGraphicsItem):
 		self.topLeft = QPointF(point.x() - size, point.y() - size)
 
 		self.setAcceptedMouseButtons(Qt.NoButton)
-		#self.adjust() TODO: Do I need this?
+		# self.adjust() TODO: Do I need this?
 
 	def x(self):
 		return self.point.x()
@@ -75,7 +78,7 @@ class Cross(QGraphicsItem):
 
 	def boundingRect(self):
 		return QRectF(self.x() - self.size, self.y() - self.size,
-			2.0*self.size, 2.0*self.size)
+			2.0 * self.size, 2.0 * self.size)
 
 	def paint(self, painter, option, widget):
 		if self.size <= 0:
@@ -99,8 +102,9 @@ class Cross(QGraphicsItem):
 			return
 
 		painter.setPen(QPen(Qt.red, 3, Qt.SolidLine,
-				Qt.RoundCap, Qt.RoundJoin))
+			Qt.RoundCap, Qt.RoundJoin))
 		painter.drawLine(line)
+
 
 class Square(QGraphicsItem):
 	"square mark"
@@ -115,7 +119,7 @@ class Square(QGraphicsItem):
 		self.topLeft = QPointF(point.x() - size, point.y() - size)
 
 		self.setAcceptedMouseButtons(Qt.NoButton)
-		#self.adjust() TODO: Do I need this?
+		# self.adjust() TODO: Do I need this?
 
 	def x(self):
 		return self.point.x()
@@ -128,7 +132,7 @@ class Square(QGraphicsItem):
 
 	def boundingRect(self):
 		return QRectF(self.x() - self.size, self.y() - self.size,
-			2.0*self.size, 2.0*self.size)
+			2.0 * self.size, 2.0 * self.size)
 
 	def paint(self, painter, option, widget):
 		if self.size <= 0:
@@ -144,7 +148,7 @@ class Square(QGraphicsItem):
 		painter.setPen(QPen(Qt.red, 3, Qt.SolidLine,
 			Qt.RoundCap, Qt.RoundJoin))
 		painter.drawLine(line)
-	
+
 		line = QLineF(x1, y1, x2, y1)
 		painter.setPen(QPen(Qt.red, 3, Qt.SolidLine,
 			Qt.RoundCap, Qt.RoundJoin))
@@ -154,11 +158,12 @@ class Square(QGraphicsItem):
 		painter.setPen(QPen(Qt.red, 3, Qt.SolidLine,
 			Qt.RoundCap, Qt.RoundJoin))
 		painter.drawLine(line)
-	
+
 		line = QLineF(x2, y2, x1, y2)
 		painter.setPen(QPen(Qt.red, 3, Qt.SolidLine,
 			Qt.RoundCap, Qt.RoundJoin))
 		painter.drawLine(line)
+
 
 class Triangle(QGraphicsItem):
 	"trangle mark"
@@ -172,7 +177,7 @@ class Triangle(QGraphicsItem):
 		self.point = point
 
 		self.setAcceptedMouseButtons(Qt.NoButton)
-		#self.adjust() TODO: Do I need this?
+		# self.adjust() TODO: Do I need this?
 
 	def x(self):
 		return self.point.x()
@@ -185,7 +190,7 @@ class Triangle(QGraphicsItem):
 
 	def boundingRect(self):
 		return QRectF(self.x() - self.size, self.y() - self.size,
-			2.0*self.size, 2.0*self.size)
+			2.0 * self.size, 2.0 * self.size)
 
 	def paint(self, painter, option, widget):
 		if self.size <= 0:
@@ -194,15 +199,15 @@ class Triangle(QGraphicsItem):
 		# Draw the line itself.
 		x1 = self.point.x()
 		y1 = self.point.y() - self.size
-		x2 = self.point.x() - abs(self.size*math.sin(30))
-		y2 = self.point.y() + self.size*math.cos(30)
-		x3 = self.point.x() + abs(self.size*math.sin(30))
+		x2 = self.point.x() - abs(self.size * math.sin(30))
+		y2 = self.point.y() + self.size * math.cos(30)
+		x3 = self.point.x() + abs(self.size * math.sin(30))
 
 		line = QLineF(x1, y1, x2, y2)
 		painter.setPen(QPen(Qt.red, 3, Qt.SolidLine,
 			Qt.RoundCap, Qt.RoundJoin))
 		painter.drawLine(line)
-	
+
 		line = QLineF(x2, y2, x3, y2)
 		painter.setPen(QPen(Qt.red, 3, Qt.SolidLine,
 			Qt.RoundCap, Qt.RoundJoin))
@@ -212,6 +217,7 @@ class Triangle(QGraphicsItem):
 		painter.setPen(QPen(Qt.red, 3, Qt.SolidLine,
 			Qt.RoundCap, Qt.RoundJoin))
 		painter.drawLine(line)
+
 
 class Circle(QGraphicsItem):
 	"circle mark"
@@ -225,7 +231,7 @@ class Circle(QGraphicsItem):
 		self.point = point
 
 		self.setAcceptedMouseButtons(Qt.NoButton)
-		#self.adjust() TODO: Do I need this?
+		# self.adjust() TODO: Do I need this?
 
 	def x(self):
 		return self.point.x()
@@ -238,7 +244,7 @@ class Circle(QGraphicsItem):
 
 	def boundingRect(self):
 		return QRectF(self.x() - self.size, self.y() - self.size,
-			2.0*self.size, 2.0*self.size)
+			2.0 * self.size, 2.0 * self.size)
 
 	def paint(self, painter, option, widget):
 		if self.size <= 0:
@@ -248,6 +254,7 @@ class Circle(QGraphicsItem):
 		painter.setPen(QPen(Qt.red, 3, Qt.SolidLine,
 			Qt.RoundCap, Qt.RoundJoin))
 		painter.drawEllipse(self.point, self.size, self.size)
+
 
 class Mark(QGraphicsItem):
 	"generic mark"
@@ -261,7 +268,7 @@ class Mark(QGraphicsItem):
 		self.point = point
 
 		self.setAcceptedMouseButtons(Qt.NoButton)
-		#self.adjust() TODO: Do I need this?
+		# self.adjust() TODO: Do I need this?
 
 	def x(self):
 		return self.point.x()
@@ -274,7 +281,7 @@ class Mark(QGraphicsItem):
 
 	def boundingRect(self):
 		return QRectF(self.x() - self.size, self.y() - self.size,
-			2.0*self.size, 2.0*self.size)
+			2.0 * self.size, 2.0 * self.size)
 
 	def paint(self, painter, option, widget):
 		if self.size <= 0:
@@ -287,8 +294,8 @@ class Mark(QGraphicsItem):
 
 
 class GoBoard(board.Board, QGraphicsView):
-	def __init__(self, parent = None, size = 19):
-		#TODO: how does it know to use board.Board or QGraphicsView?
+	def __init__(self, parent=None, size=19):
+		# TODO: how does it know to use board.Board or QGraphicsView?
 		super(GoBoard, self).__init__(size)
 		self.size = size
 		self.w = 40
@@ -296,13 +303,13 @@ class GoBoard(board.Board, QGraphicsView):
 		self.edge = 30
 		self.x0 = 0 + self.edge
 		self.y0 = 0 + self.edge
-		self.width = (self.size-1)*self.w
-		self.height = (self.size-1)*self.h
-		self.x1 = (self.size-1)*self.w + self.edge
-		self.y1 = (self.size-1)*self.h + self.edge
+		self.width = (self.size - 1) * self.w
+		self.height = (self.size - 1) * self.h
+		self.x1 = (self.size - 1) * self.w + self.edge
+		self.y1 = (self.size - 1) * self.h + self.edge
 		self.game = None
-		self.stones = [] # 2D array for holding stones (QGraphicsPixmapItem)
-		self.marks = [] # 2D array for hodling various marks
+		self.stones = []  # 2D array for holding stones (QGraphicsPixmapItem)
+		self.marks = []  # 2D array for hodling various marks
 		self.cross = None
 		for i in range(19):
 			self.stones.append([None] * 19)
@@ -312,9 +319,9 @@ class GoBoard(board.Board, QGraphicsView):
 				self.height + 2 * self.edge)
 		super(QGraphicsView, self).__init__(self.scene, parent)
 
-		self.scene.setSceneRect( 0, 0,
+		self.scene.setSceneRect(0, 0,
 				self.width + 2 * self.edge,
-				self.height + 2 * self.edge )
+				self.height + 2 * self.edge)
 
 	def set_game(self, game):
 		self.game = game
@@ -366,7 +373,7 @@ class GoBoard(board.Board, QGraphicsView):
 			try:
 				node.undo()
 			except AttributeError:
-				pass # Allow node with no undo
+				pass  # Allow node with no undo
 
 		if util.is_stone(node.name):
 			added.extend(self.handle_stone(node))
@@ -374,7 +381,7 @@ class GoBoard(board.Board, QGraphicsView):
 		elif util.is_move(node.name):
 			if not back:
 				removed.extend(self.handle_move(node))
-			if not node.prop == "": # PASS
+			if not node.prop == "":  # PASS
 				self.refresh_cross(node)
 
 		# Closure magic
@@ -396,8 +403,8 @@ class GoBoard(board.Board, QGraphicsView):
 				self._handle_MA(node.extra[e])
 
 	def clear_marks(self):
-		"""Assuming that marks are only relavant for a particular move and ALL should be
-		cleared from board"""
+		"""Assuming that marks are only relavant for a particular move and ALL
+		should be cleared from board"""
 		while True:
 			try:
 				self.scene.removeItem(self.marks.pop())
@@ -427,7 +434,7 @@ class GoBoard(board.Board, QGraphicsView):
 		for l in node.prop:
 			print "Placing stone at %s" % l
 			x, y = util.pos2xy(l)
-			add.append((x,y))
+			add.append((x, y))
 			self.add_stone(x, y, util.str2color(node.name))
 
 	def _handle_LB(self, labels):
@@ -461,7 +468,7 @@ class GoBoard(board.Board, QGraphicsView):
 		for prop in group:
 			x, y = util.pos2xy(prop)
 			self.remove_stone(x, y)
-			remove.append((x,y))
+			remove.append((x, y))
 		super(GoBoard, self).remove_stones(remove)
 
 	def go_up(self):
@@ -499,7 +506,7 @@ class GoBoard(board.Board, QGraphicsView):
 
 	def mouseReleaseEvent(self, event):
 		pass
-		#print "mouse released ", event.button(), event.pos()
+		# print "mouse released ", event.button(), event.pos()
 
 	def out_of_board(self, pix):
 		x, y = pix
@@ -509,13 +516,13 @@ class GoBoard(board.Board, QGraphicsView):
 			return False
 
 	def convert_pixel_coord(self, pix):
-		if self.out_of_board( pix ):
+		if self.out_of_board(pix):
 			return (-1, -1)
 
 		px, py = pix
 		px -= self.edge
 		py -= self.edge
-		return  ( (px + self.w/2 )/self.w + 1, (py+self.h/2)/self.h + 1)
+		return ((px + self.w / 2) / self.w + 1, (py + self.h / 2) / self.h + 1)
 
 	def convert_coord(self, go):
 		"convert stone logical position into pixel postion"
@@ -523,22 +530,23 @@ class GoBoard(board.Board, QGraphicsView):
 		if gx > 19 or gy > 19 or gx < 0 or gy < 0:
 			return (-1, -1)
 
-		return ((gx-1)*self.w +  self.edge, 
-				(gy-1)*self.w + self.edge )
-	
+		return ((gx - 1) * self.w + self.edge,
+				(gy - 1) * self.w + self.edge)
+
 	def draw_stars(self):
-		stars = [ (4, 4), (4, 10), (4, 16), (10, 4), (10, 16), (16, 4), (16, 10), (16, 16), (10, 10) ]
+		stars = [(4, 4), (4, 10), (4, 16), (10, 4), (10, 16),
+			(16, 4), (16, 10), (16, 16), (10, 10)]
 		for x, y in stars:
 			sx, sy = self.convert_coord((x, y))
 			sx -= 5
 			sy -= 5
-			self.scene.addEllipse(sx, sy, 10, 10, brush = QBrush(Qt.black))
+			self.scene.addEllipse(sx, sy, 10, 10, brush=QBrush(Qt.black))
 
 	def draw_board(self):
 		pen = QPen()
 		pen.setWidth(2)
 
-		# Draw background 
+		# Draw background
 		bg_color = QColor(0xcb, 0x91, 0x43)
 		self.scene.setBackgroundBrush(QBrush(bg_color))
 		# self.scene.addPixmap(QPixmap("res/wood.jpg"))
@@ -546,25 +554,23 @@ class GoBoard(board.Board, QGraphicsView):
 		self.draw_stars()
 
 		# Draw frame
-		rect = QRectF(self.x0, self.y0, self.x1 - self.x0,  self.y1 - self.y0)
+		rect = QRectF(self.x0, self.y0, self.x1 - self.x0, self.y1 - self.y0)
 		self.scene.addRect(rect, pen)
 
 		# Draw lines
 		for i in range(18):
-			x = self.x0 + i*self.w
-			y = self.y0 + i*self.h
+			x = self.x0 + i * self.w
+			y = self.y0 + i * self.h
 			line = QGraphicsLineItem()
-			#line.setPen( pen )
-			line.setLine( x, self.y0, x,  self.y1)
-			self.scene.addItem( line )
+			line.setLine(x, self.y0, x, self.y1)
+			self.scene.addItem(line)
 
 		for i in range(18):
-			x = self.x0 + i*self.w
-			y = self.y0 + i*self.h
+			x = self.x0 + i * self.w
+			y = self.y0 + i * self.h
 			line = QGraphicsLineItem()
-			#line.setPen( pen )
 			line.setLine(self.x0, y, self.x1, y)
-			self.scene.addItem( line )
+			self.scene.addItem(line)
 
 		self.setRenderHint(QPainter.Antialiasing)
 		self.show()
@@ -573,12 +579,11 @@ class GoBoard(board.Board, QGraphicsView):
 		""" Doesn't change model """
 		stone = Stone(color)
 		gi = QGraphicsPixmapItem(stone.get_bitmap())
-		self.stones[x-1][y-1] = gi
+		self.stones[x - 1][y - 1] = gi
 		x, y = self.convert_coord((x, y))
-		x -= 0.5*self.w # FIXME: somehow, this is in the middle
-		y -= 0.5*self.w
+		x -= 0.5 * self.w  # FIXME: somehow, this is in the middle
+		y -= 0.5 * self.w
 		gi.setPos(x, y)
-		#gi.setZValue(5)
 
 		effect = QGraphicsDropShadowEffect(self)
 		effect.setBlurRadius(1)
@@ -599,7 +604,7 @@ class GoBoard(board.Board, QGraphicsView):
 		tx.setDefaultTextColor(QColor("yellow"))
 		tx.setFont(font)
 		self.scene.addItem(tx)
-		self.marks.append(tx) # overwriting previous one. should be GCed automatically
+		self.marks.append(tx)  # overwriting previous one. should be GCed
 		x, y = self.convert_coord((x, y))
 		x -= 10
 		y -= 20
@@ -635,7 +640,7 @@ class GoBoard(board.Board, QGraphicsView):
 		self.scene.addItem(ma)
 
 	def remove_stone(self, x, y):
-		gi = self.stones[x-1][y-1]
+		gi = self.stones[x - 1][y - 1]
 		self.scene.removeItem(gi)
 
 	def play_xy(self, x, y, color):
@@ -652,22 +657,23 @@ class GoBoard(board.Board, QGraphicsView):
 			pass
 
 	def _clear(self):
-		#TODO: remove existing stones
-		#TODO: might need a modified flag
-		#print "GoBoard: number of stones on board: ", len( self.stones_gi )
-		
+		# TODO: remove existing stones
+		# TODO: might need a modified flag
+		# print "GoBoard: number of stones on board: ", len( self.stones_gi )
+
 		# Clearing all current stuff TODO: refresh the board instead.
-		#set_trace()
-		#for gi in self.scene.items():
-			#self.scene.removeItem(gi)
+		# set_trace()
+		# for gi in self.scene.items():
+			# self.scene.removeItem(gi)
 
 		self.draw_board()
 
 	def setup(self):
 		self.clear()
 
+
 class MyWidget(QWidget):
-	def __init__(self, fn, parent = None):
+	def __init__(self, fn, parent=None):
 		super(MyWidget, self).__init__(parent)
 
 		self.goban = GoBoard(self)
@@ -680,7 +686,7 @@ class MyWidget(QWidget):
 			print "Adapter: %s" % e
 		except IOError:
 			print "Unable to get adapter"
-			
+
 		self.game.build_tree()
 
 		self.goban.set_game(self.game)
@@ -689,6 +695,7 @@ class MyWidget(QWidget):
 		layout = QVBoxLayout()
 		layout.addWidget(self.goban)
 		self.setLayout(layout)
+
 
 class MainWindow(QMainWindow):
 	def __init__(self):
@@ -708,7 +715,7 @@ class MainWindow(QMainWindow):
 			self.resize(200, 200)
 
 	def open(self):
-		fn = QFileDialog.getOpenFileName(caption = "Open File", filter = "(*.sgf *.gib)");
+		fn = QFileDialog.getOpenFileName(caption="Open File", filter="(*.sgf *.gib)")
 		self.widget = MyWidget(str(fn))
 		self.setCentralWidget(self.widget)
 		self.createDockWindows()
@@ -785,7 +792,8 @@ class MainWindow(QMainWindow):
 		dock.setWidget(self.commentEdit)
 		self.addDockWidget(Qt.RightDockWidgetArea, dock)
 
-		self.connect(self.widget.goban, SIGNAL("newComment(PyQt_PyObject)"), self.displayComment)
+		self.connect(self.widget.goban, SIGNAL("newComment(PyQt_PyObject)"),
+			self.displayComment)
 
 # MAIN MAIN MAIN ######################################
 app = QApplication(sys.argv)
@@ -793,3 +801,4 @@ w = MainWindow()
 w.show()
 sys.exit(app.exec_())
 
+# Eof
