@@ -3,8 +3,8 @@
 import sys
 import math
 import functools
-from PyQt4.QtCore import *
-from PyQt4.QtGui import *
+from PyQt4 import QtCore
+from PyQt4 import QtGui
 
 # TODO:
 # once the board is resize, everything is in a mess
@@ -35,7 +35,7 @@ class Stone:
 	"""TODO: make this a child of QGraphicsPixmapItem"""
 	def __init__(self, color):
 		self.color = color
-		self.bitmap = QPixmap(Bitmap.get_bitmap_for_stone(color))
+		self.bitmap = QtGui.QPixmap(Bitmap.get_bitmap_for_stone(color))
 		self.bitmap = self.bitmap.scaledToHeight(38, mode=1)
 
 	@staticmethod
@@ -52,9 +52,9 @@ class Stone:
 		return self.pos
 
 
-class Cross(QGraphicsItem):
+class Cross(QtGui.QGraphicsItem):
 	"Indicator of the current stone"
-	Type = QGraphicsItem.UserType + 2
+	Type = QtGui.QGraphicsItem.UserType + 2
 
 	def __init__(self, point, size):
 		"point: QPointF object as I don't know the board"
@@ -62,9 +62,9 @@ class Cross(QGraphicsItem):
 
 		self.size = size
 		self.point = point
-		self.topLeft = QPointF(point.x() - size, point.y() - size)
+		self.topLeft = QtCore.QPointF(point.x() - size, point.y() - size)
 
-		self.setAcceptedMouseButtons(Qt.NoButton)
+		self.setAcceptedMouseButtons(QtCore.Qt.NoButton)
 		# self.adjust() TODO: Do I need this?
 
 	def x(self):
@@ -77,7 +77,7 @@ class Cross(QGraphicsItem):
 		return Cross.Type
 
 	def boundingRect(self):
-		return QRectF(self.x() - self.size, self.y() - self.size,
+		return QtCore.QRectF(self.x() - self.size, self.y() - self.size,
 			2.0 * self.size, 2.0 * self.size)
 
 	def paint(self, painter, option, widget):
@@ -85,30 +85,30 @@ class Cross(QGraphicsItem):
 			return
 
 		# Draw the line itself.
-		line = QLineF(self.point.x() - self.size, self.point.y(),
+		line = QtCore.QLineF(self.point.x() - self.size, self.point.y(),
 			self.point.x() + self.size, self.point.y())
 
 		if line.length() == 0.0:
 			return
 
-		painter.setPen(QPen(Qt.red, 3, Qt.SolidLine,
-			Qt.RoundCap, Qt.RoundJoin))
+		painter.setPen(QtGui.QPen(QtCore.Qt.red, 3, QtCore.Qt.SolidLine,
+			QtCore.Qt.RoundCap, QtCore.Qt.RoundJoin))
 		painter.drawLine(line)
 
-		line = QLineF(self.point.x(), self.point.y() + self.size,
+		line = QtCore.QLineF(self.point.x(), self.point.y() + self.size,
 			self.point.x(), self.point.y() - self.size)
 
 		if line.length() == 0.0:
 			return
 
-		painter.setPen(QPen(Qt.red, 3, Qt.SolidLine,
-			Qt.RoundCap, Qt.RoundJoin))
+		painter.setPen(QtGui.QPen(QtCore.Qt.red, 3, QtCore.Qt.SolidLine,
+			QtCore.Qt.RoundCap, QtCore.Qt.RoundJoin))
 		painter.drawLine(line)
 
 
-class Square(QGraphicsItem):
+class Square(QtGui.QGraphicsItem):
 	"square mark"
-	Type = QGraphicsItem.UserType + 3
+	Type = QtGui.QGraphicsItem.UserType + 3
 
 	def __init__(self, point, size):
 		"point: QPointF object as I don't know the board"
@@ -116,9 +116,9 @@ class Square(QGraphicsItem):
 
 		self.size = size
 		self.point = point
-		self.topLeft = QPointF(point.x() - size, point.y() - size)
+		self.topLeft = QtGui.QPointF(point.x() - size, point.y() - size)
 
-		self.setAcceptedMouseButtons(Qt.NoButton)
+		self.setAcceptedMouseButtons(QtCore.Qt.NoButton)
 		# self.adjust() TODO: Do I need this?
 
 	def x(self):
@@ -131,7 +131,7 @@ class Square(QGraphicsItem):
 		return Square.Type
 
 	def boundingRect(self):
-		return QRectF(self.x() - self.size, self.y() - self.size,
+		return QtGui.QRectF(self.x() - self.size, self.y() - self.size,
 			2.0 * self.size, 2.0 * self.size)
 
 	def paint(self, painter, option, widget):
@@ -144,30 +144,30 @@ class Square(QGraphicsItem):
 		y1 = self.point.y() - self.size
 		y2 = self.point.y() + self.size
 
-		line = QLineF(x1, y1, x1, y2)
-		painter.setPen(QPen(Qt.red, 3, Qt.SolidLine,
+		line = QtGui.QLineF(x1, y1, x1, y2)
+		painter.setPen(QtGui.QPen(Qt.red, 3, Qt.SolidLine,
 			Qt.RoundCap, Qt.RoundJoin))
 		painter.drawLine(line)
 
-		line = QLineF(x1, y1, x2, y1)
-		painter.setPen(QPen(Qt.red, 3, Qt.SolidLine,
+		line = QtGui.QLineF(x1, y1, x2, y1)
+		painter.setPen(QtGui.QPen(Qt.red, 3, Qt.SolidLine,
 			Qt.RoundCap, Qt.RoundJoin))
 		painter.drawLine(line)
 
-		line = QLineF(x2, y1, x2, y2)
-		painter.setPen(QPen(Qt.red, 3, Qt.SolidLine,
+		line = QtGui.QLineF(x2, y1, x2, y2)
+		painter.setPen(QtGui.QPen(Qt.red, 3, Qt.SolidLine,
 			Qt.RoundCap, Qt.RoundJoin))
 		painter.drawLine(line)
 
-		line = QLineF(x2, y2, x1, y2)
-		painter.setPen(QPen(Qt.red, 3, Qt.SolidLine,
+		line = QtGui.QLineF(x2, y2, x1, y2)
+		painter.setPen(QtGui.QPen(Qt.red, 3, Qt.SolidLine,
 			Qt.RoundCap, Qt.RoundJoin))
 		painter.drawLine(line)
 
 
-class Triangle(QGraphicsItem):
+class Triangle(QtGui.QGraphicsItem):
 	"trangle mark"
-	Type = QGraphicsItem.UserType + 4
+	Type = QtGui.QGraphicsItem.UserType + 4
 
 	def __init__(self, point, size):
 		"point: QPointF object as I don't know the board"
@@ -203,25 +203,25 @@ class Triangle(QGraphicsItem):
 		y2 = self.point.y() + self.size * math.cos(30)
 		x3 = self.point.x() + abs(self.size * math.sin(30))
 
-		line = QLineF(x1, y1, x2, y2)
-		painter.setPen(QPen(Qt.red, 3, Qt.SolidLine,
-			Qt.RoundCap, Qt.RoundJoin))
+		line = QtGui.QLineF(x1, y1, x2, y2)
+		painter.setPen(QtGui.QPen(Qt.red, 3, QtCore.Qt.SolidLine,
+			QtCore.Qt.RoundCap, QtCore.Qt.RoundJoin))
 		painter.drawLine(line)
 
-		line = QLineF(x2, y2, x3, y2)
-		painter.setPen(QPen(Qt.red, 3, Qt.SolidLine,
-			Qt.RoundCap, Qt.RoundJoin))
+		line = QtGui.QLineF(x2, y2, x3, y2)
+		painter.setPen(QtGui.QPen(Qt.red, 3, QtCore.Qt.SolidLine,
+			QtCore.Qt.RoundCap, QtCore.Qt.RoundJoin))
 		painter.drawLine(line)
 
-		line = QLineF(x1, y1, x3, y2)
-		painter.setPen(QPen(Qt.red, 3, Qt.SolidLine,
-			Qt.RoundCap, Qt.RoundJoin))
+		line = QtGui.QLineF(x1, y1, x3, y2)
+		painter.setPen(QtGui.QPen(QtCore.Qt.red, 3, QtCore.Qt.SolidLine,
+			QtCore.Qt.RoundCap, QtCore.Qt.RoundJoin))
 		painter.drawLine(line)
 
 
-class Circle(QGraphicsItem):
+class Circle(QtGui.QGraphicsItem):
 	"circle mark"
-	Type = QGraphicsItem.UserType + 5
+	Type = QtGui.QGraphicsItem.UserType + 5
 
 	def __init__(self, point, size):
 		"point: QPointF object as I don't know the board"
@@ -243,7 +243,7 @@ class Circle(QGraphicsItem):
 		return Circle.Type
 
 	def boundingRect(self):
-		return QRectF(self.x() - self.size, self.y() - self.size,
+		return QtGui.QRectF(self.x() - self.size, self.y() - self.size,
 			2.0 * self.size, 2.0 * self.size)
 
 	def paint(self, painter, option, widget):
@@ -251,14 +251,14 @@ class Circle(QGraphicsItem):
 			return
 
 		# Draw the line itself.
-		painter.setPen(QPen(Qt.red, 3, Qt.SolidLine,
+		painter.setPen(QtCore.QPen(Qt.red, 3, Qt.SolidLine,
 			Qt.RoundCap, Qt.RoundJoin))
 		painter.drawEllipse(self.point, self.size, self.size)
 
 
-class Mark(QGraphicsItem):
+class Mark(QtGui.QGraphicsItem):
 	"generic mark"
-	Type = QGraphicsItem.UserType + 6
+	Type = QtGui.QGraphicsItem.UserType + 6
 
 	def __init__(self, point, size):
 		"point: QPointF object as I don't know the board"
@@ -280,7 +280,7 @@ class Mark(QGraphicsItem):
 		return Circle.Type
 
 	def boundingRect(self):
-		return QRectF(self.x() - self.size, self.y() - self.size,
+		return QtGui.QRectF(self.x() - self.size, self.y() - self.size,
 			2.0 * self.size, 2.0 * self.size)
 
 	def paint(self, painter, option, widget):
@@ -288,12 +288,12 @@ class Mark(QGraphicsItem):
 			return
 
 		# Draw the line itself.
-		painter.setPen(QPen(Qt.red, 3, Qt.SolidLine,
+		painter.setPen(QtCore.QPen(Qt.red, 3, Qt.SolidLine,
 			Qt.RoundCap, Qt.RoundJoin))
 		painter.drawEllipse(self.point, self.size, self.size)
 
 
-class GoBoard(board.Board, QGraphicsView):
+class GoBoard(board.Board, QtGui.QGraphicsView):
 	def __init__(self, parent=None, size=19):
 		# TODO: how does it know to use board.Board or QGraphicsView?
 		super(GoBoard, self).__init__(size)
@@ -314,10 +314,10 @@ class GoBoard(board.Board, QGraphicsView):
 		for i in range(19):
 			self.stones.append([None] * 19)
 
-		self.scene = QGraphicsScene(0, 0,
+		self.scene = QtGui.QGraphicsScene(0, 0,
 				self.width + 2 * self.edge,
 				self.height + 2 * self.edge)
-		super(QGraphicsView, self).__init__(self.scene, parent)
+		super(QtGui.QGraphicsView, self).__init__(self.scene, parent)
 
 		self.scene.setSceneRect(0, 0,
 				self.width + 2 * self.edge,
@@ -354,14 +354,14 @@ class GoBoard(board.Board, QGraphicsView):
 			for x, y in added:
 				self.remove_stone(x, y)
 			for x, y in removed:
-				cl = str2color(node.name)
-				self.add_stone(x, y, enemy(cl))
-				self.place_stone_xy(x, y, enemy(cl))
+				cl = util.str2color(node.name)
+				self.add_stone(x, y, util.enemy(cl))
+				self.place_stone_xy(x, y, util.enemy(cl))
 		return _undo
 
 	def handle_node(self, prev, node, back=0):
 		"Handle a node, like mark, comment, etc. dead stone is not handled here"
-		self.emit(SIGNAL("newComment(PyQt_PyObject)"), "")
+		self.emit(QtCore.SIGNAL("newComment(PyQt_PyObject)"), "")
 		self.clear_marks()
 		added = []
 		removed = []
@@ -390,7 +390,7 @@ class GoBoard(board.Board, QGraphicsView):
 		for e in node.extra:
 			print "Handling %s..." % e, node.extra[e]
 			if util.is_comment(e):
-				self.emit(SIGNAL("newComment(PyQt_PyObject)"), node.get_comment())
+				self.emit(QtCore.SIGNAL("newComment(PyQt_PyObject)"), node.get_comment())
 			elif e == "LB":
 				self._handle_LB(node.extra[e])
 			elif e == "CR":
@@ -414,7 +414,7 @@ class GoBoard(board.Board, QGraphicsView):
 	def refresh_cross(self, node):
 		x, y = util.pos2xy(self.game.where().prop)
 		cx, cy = self.convert_coord((x, y))
-		cross = Cross(QPointF(cx, cy), 10)
+		cross = Cross(QtCore.QPointF(cx, cy), 10)
 		cross.setZValue(10)
 		self.scene.addItem(cross)
 		self.marks.append(cross)
@@ -423,7 +423,7 @@ class GoBoard(board.Board, QGraphicsView):
 		"Handle a move. Deal with dead stone, etc. Assuming it's a play node"
 		if node.prop == "":
 			print "PASS"
-			self.emit(SIGNAL("newComment(PyQt_PyObject)"), "PASS")
+			self.emit(QtCore.SIGNAL("newComment(PyQt_PyObject)"), "PASS")
 			return []
 		else:
 			x, y = util.pos2xy(self.game.where().prop)
@@ -490,18 +490,18 @@ class GoBoard(board.Board, QGraphicsView):
 		self.handle_node(prev, self.game.where())
 
 	def mousePressEvent(self, event):
-		if event.button() != Qt.LeftButton:
+		if event.button() != QtCore.Qt.LeftButton:
 			return
 		self.go_next()
 
 	def keyPressEvent(self, event):
-		if event.key() == Qt.Key_Right:
+		if event.key() == QtCore.Qt.Key_Right:
 			self.go_next()
-		elif event.key() == Qt.Key_Left:
+		elif event.key() == QtCore.Qt.Key_Left:
 			self.go_prev()
-		elif event.key() == Qt.Key_Up:
+		elif event.key() == QtCore.Qt.Key_Up:
 			self.go_up()
-		elif event.key() == Qt.Key_Down:
+		elif event.key() == QtCore.Qt.Key_Down:
 			self.go_down()
 
 	def mouseReleaseEvent(self, event):
@@ -540,52 +540,52 @@ class GoBoard(board.Board, QGraphicsView):
 			sx, sy = self.convert_coord((x, y))
 			sx -= 5
 			sy -= 5
-			self.scene.addEllipse(sx, sy, 10, 10, brush=QBrush(Qt.black))
+			self.scene.addEllipse(sx, sy, 10, 10, brush=QtGui.QBrush(QtCore.Qt.black))
 
 	def draw_board(self):
-		pen = QPen()
+		pen = QtGui.QPen()
 		pen.setWidth(2)
 
 		# Draw background
-		bg_color = QColor(0xcb, 0x91, 0x43)
-		self.scene.setBackgroundBrush(QBrush(bg_color))
+		bg_color = QtGui.QColor(0xcb, 0x91, 0x43)
+		self.scene.setBackgroundBrush(QtGui.QBrush(bg_color))
 		# self.scene.addPixmap(QPixmap("res/wood.jpg"))
 
 		self.draw_stars()
 
 		# Draw frame
-		rect = QRectF(self.x0, self.y0, self.x1 - self.x0, self.y1 - self.y0)
+		rect = QtCore.QRectF(self.x0, self.y0, self.x1 - self.x0, self.y1 - self.y0)
 		self.scene.addRect(rect, pen)
 
 		# Draw lines
 		for i in range(18):
 			x = self.x0 + i * self.w
 			y = self.y0 + i * self.h
-			line = QGraphicsLineItem()
+			line = QtGui.QGraphicsLineItem()
 			line.setLine(x, self.y0, x, self.y1)
 			self.scene.addItem(line)
 
 		for i in range(18):
 			x = self.x0 + i * self.w
 			y = self.y0 + i * self.h
-			line = QGraphicsLineItem()
+			line = QtGui.QGraphicsLineItem()
 			line.setLine(self.x0, y, self.x1, y)
 			self.scene.addItem(line)
 
-		self.setRenderHint(QPainter.Antialiasing)
+		self.setRenderHint(QtGui.QPainter.Antialiasing)
 		self.show()
 
 	def add_stone(self, x, y, color):
 		""" Doesn't change model """
 		stone = Stone(color)
-		gi = QGraphicsPixmapItem(stone.get_bitmap())
+		gi = QtGui.QGraphicsPixmapItem(stone.get_bitmap())
 		self.stones[x - 1][y - 1] = gi
 		x, y = self.convert_coord((x, y))
 		x -= 0.5 * self.w  # FIXME: somehow, this is in the middle
 		y -= 0.5 * self.w
 		gi.setPos(x, y)
 
-		effect = QGraphicsDropShadowEffect(self)
+		effect = QtGui.QGraphicsDropShadowEffect(self)
 		effect.setBlurRadius(1)
 		effect.setOffset(3.0)
 		gi.setGraphicsEffect(effect)
@@ -596,10 +596,10 @@ class GoBoard(board.Board, QGraphicsView):
 
 	def add_label(self, x, y, char):
 		""" Doesn't change model """
-		font = QFont()
+		font = QtGui.QFont()
 		font.setPixelSize(20)
 
-		tx = QGraphicsTextItem()
+		tx = QtGui.QGraphicsTextItem()
 		tx.setPlainText(char)
 		tx.setDefaultTextColor(QColor("yellow"))
 		tx.setFont(font)
@@ -672,7 +672,7 @@ class GoBoard(board.Board, QGraphicsView):
 		self.clear()
 
 
-class MyWidget(QWidget):
+class MyWidget(QtGui.QWidget):
 	def __init__(self, fn, parent=None):
 		super(MyWidget, self).__init__(parent)
 
@@ -692,19 +692,19 @@ class MyWidget(QWidget):
 		self.goban.set_game(self.game)
 		self.goban.setup()
 
-		layout = QVBoxLayout()
+		layout = QtGui.QVBoxLayout()
 		layout.addWidget(self.goban)
 		self.setLayout(layout)
 
 
-class MainWindow(QMainWindow):
+class MainWindow(QtGui.QMainWindow):
 	def __init__(self):
 		super(MainWindow, self).__init__()
 
 		self.createActions()
 		self.createMenus()
 		self.setWindowTitle("WQ")
-		self.setWindowIcon(QIcon(':res/icon320x320.png'))
+		self.setWindowIcon(QtGui.QIcon(':res/icon320x320.png'))
 
 		if len(sys.argv) > 1:
 			self.widget = MyWidget(sys.argv[1])
@@ -715,7 +715,8 @@ class MainWindow(QMainWindow):
 			self.resize(200, 200)
 
 	def open(self):
-		fn = QFileDialog.getOpenFileName(caption="Open File", filter="(*.sgf *.gib)")
+		fn = QtGui.QFileDialog.getOpenFileName(caption="Open File",
+			filter="(*.sgf *.gib)")
 		self.widget = MyWidget(str(fn))
 		self.setCentralWidget(self.widget)
 		self.createDockWindows()
@@ -731,28 +732,28 @@ class MainWindow(QMainWindow):
 		self.widget.goban.clear()
 
 	def about(self):
-		QMessageBox.about(self, "WQ",
+		QtGui.QMessageBox.about(self, "WQ",
 				"Cross platform weiqi game replayer.")
 
 	def aboutQt(self):
 		print "Invoked <b>Help|About Qt</b>"
 
 	def createActions(self):
-		self.openAct = QAction("&Open...", self,
-				shortcut=QKeySequence.Open,
+		self.openAct = QtGui.QAction("&Open...", self,
+				shortcut=QtGui.QKeySequence.Open,
 				statusTip="Open an existing file", triggered=self.open)
 
-		self.exitAct = QAction("E&xit", self, shortcut="Ctrl+Q",
+		self.exitAct = QtGui.QAction("E&xit", self, shortcut="Ctrl+Q",
 				statusTip="Exit the application", triggered=self.close)
 
-		self.aboutAct = QAction("&About", self,
+		self.aboutAct = QtGui.QAction("&About", self,
 				statusTip="Show the application's About box",
 				triggered=self.about)
 
-		self.aboutQtAct = QAction("About &Qt", self,
+		self.aboutQtAct = QtGui.QAction("About &Qt", self,
 				statusTip="Show the Qt library's About box",
 				triggered=self.aboutQt)
-		self.aboutQtAct.triggered.connect(qApp.aboutQt)
+		self.aboutQtAct.triggered.connect(QtGui.qApp.aboutQt)
 
 	def createMenus(self):
 		self.fileMenu = self.menuBar().addMenu("&File")
@@ -777,26 +778,27 @@ class MainWindow(QMainWindow):
 		self.commentEdit.append(comment.decode("euc-cn"))
 
 	def createDockWindows(self):
-		dock = QDockWidget("Game Info", self)
-		dock.setAllowedAreas(Qt.LeftDockWidgetArea | Qt.RightDockWidgetArea)
-		self.gameInfoEdit = QTextEdit()
+		dock = QtGui.QDockWidget("Game Info", self)
+		dock.setAllowedAreas(QtCore.Qt.LeftDockWidgetArea |
+			QtCore.Qt.RightDockWidgetArea)
+		self.gameInfoEdit = QtGui.QTextEdit()
 		self.gameInfoEdit.setReadOnly(True)
 		self.gameInfoEdit.setFixedHeight(100)
 		dock.setWidget(self.gameInfoEdit)
-		self.addDockWidget(Qt.RightDockWidgetArea, dock)
+		self.addDockWidget(QtCore.Qt.RightDockWidgetArea, dock)
 		self.populateGameInfo()
 
-		dock = QDockWidget("Comment", self)
-		self.commentEdit = QTextEdit()
+		dock = QtGui.QDockWidget("Comment", self)
+		self.commentEdit = QtGui.QTextEdit()
 		self.commentEdit.setReadOnly(True)
 		dock.setWidget(self.commentEdit)
-		self.addDockWidget(Qt.RightDockWidgetArea, dock)
+		self.addDockWidget(QtCore.Qt.RightDockWidgetArea, dock)
 
-		self.connect(self.widget.goban, SIGNAL("newComment(PyQt_PyObject)"),
+		self.connect(self.widget.goban, QtCore.SIGNAL("newComment(PyQt_PyObject)"),
 			self.displayComment)
 
 # MAIN MAIN MAIN ######################################
-app = QApplication(sys.argv)
+app = QtGui.QApplication(sys.argv)
 w = MainWindow()
 w.show()
 sys.exit(app.exec_())
