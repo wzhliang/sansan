@@ -1,5 +1,4 @@
 - FET: add support for UGI format, which is used by pandago
-- BUG: going backwords should put the removed stone back
 - BUG: utf8 doesn't work.
 - BUG: When there is a very long comment, the doc window is scrolled to the bottom
 - BUG: If there is markers node between move nodes, reverse navigation wouldn't work
