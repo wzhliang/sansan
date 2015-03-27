@@ -776,21 +776,18 @@ class MainWindow(QMainWindow):
 		dock = QDockWidget("Game Info", self)
 		dock.setAllowedAreas(Qt.LeftDockWidgetArea | Qt.RightDockWidgetArea)
 		self.gameInfoEdit = QTextEdit()
+		self.gameInfoEdit.setReadOnly(True)
 		dock.setWidget(self.gameInfoEdit)
 		self.addDockWidget(Qt.RightDockWidgetArea, dock)
 		self.populateGameInfo()
-		#self.viewMenu.addAction(dock.toggleViewAction())
 
 		dock = QDockWidget("Comment", self)
 		self.commentEdit = QTextEdit()
+		self.commentEdit.setReadOnly(True)
 		dock.setWidget(self.commentEdit)
 		self.addDockWidget(Qt.RightDockWidgetArea, dock)
-		#self.viewMenu.addAction(dock.toggleViewAction())
-
 
 		self.connect(self.widget.goban, SIGNAL("newComment(PyQt_PyObject)"), self.displayComment)
-		#self.customerList.currentTextChanged.connect(self.insertCustomer)
-		#self.paragraphsList.currentTextChanged.connect(self.addParagraph)
 
 # MAIN MAIN MAIN ######################################
 app = QApplication(sys.argv)

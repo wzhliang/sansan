@@ -5,4 +5,3 @@
 - BUG: If there is markers node between move nodes, reverse navigation wouldn't work
 - FET: Display move number
 - FET: Support SGF from goproblems. They include AB, AW in the first node.
-- BUG: gameinfo and comments should be readonly
