@@ -777,6 +777,7 @@ class MainWindow(QMainWindow):
 		dock.setAllowedAreas(Qt.LeftDockWidgetArea | Qt.RightDockWidgetArea)
 		self.gameInfoEdit = QTextEdit()
 		self.gameInfoEdit.setReadOnly(True)
+		self.gameInfoEdit.setFixedHeight(100)
 		dock.setWidget(self.gameInfoEdit)
 		self.addDockWidget(Qt.RightDockWidgetArea, dock)
 		self.populateGameInfo()
