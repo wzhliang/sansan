@@ -5,8 +5,10 @@ from util import which
 import subprocess
 import re
 
+
 class AdapterError(Exception):
 	pass
+
 
 class Adapter(object):
 	def __init__(self, source):
@@ -14,6 +16,7 @@ class Adapter(object):
 
 	def adapt():
 		return ""
+
 
 class ExternalAdapter(Adapter):
 	def __init__(self, source, exe):
@@ -32,6 +35,7 @@ class ExternalAdapter(Adapter):
 
 		return output
 
+
 class HttpAdapter(Adapter):
 	def __init__(self, source):
 		super(HttpAdapter, self).__init__(source)
@@ -40,8 +44,9 @@ class HttpAdapter(Adapter):
 		resp = urllib2.urlopen(self.src, data=None, timeout=20)
 		return resp.read()
 
+
 class SinaAdapter(HttpAdapter):
-	"""javascript:gibo_load('http://duiyi.sina.com.cn/cgibo/20153/gjdjp2015-0323.sgf')"""
+	"""javascript:gibo_load('http://duiyi.sina.com.cn/cgibo/foo.sgf')"""
 	def __init__(self, source):
 		pat = re.compile("gibo_load\('(.*)'\)")
 		matobj = pat.search(source)
@@ -49,6 +54,30 @@ class SinaAdapter(HttpAdapter):
 		if matobj is None:
 			raise AdapterError("Not a sina qipu address")
 		super(SinaAdapter, self).__init__(matobj.group(1))
+
+
+class UgiAdapter(Adapter):
+	def __init__(self, source):
+		super(UgiAdapter, self).__init__(source)
+		self.pat = re.compile("^([A-Z][A-Z]),([BW])1,\d+,\d+$")
+
+	def adapt(self):
+		with open(self.src) as f:
+			return self._adapt(f)
+
+	def convert_move(self, l):
+		matobj = self.pat.match(l)
+		if matobj is None:
+			return ""
+		return ";%s[%s]" % (matobj.group(2), matobj.group(1))
+
+	def _adapt(self, f):
+		sgf = "(;FF[4]"
+		for l in f:
+			sgf = sgf + self.convert_move(l.strip())
+		sgf = sgf + ")"
+		return sgf
+
 
 class PassthroughAdapter(Adapter):
 	def __init__(self, source):
@@ -64,6 +93,7 @@ class PassthroughAdapter(Adapter):
 		except IOError:
 			raise
 
+
 def getAdapter(fn):
 	name = fn.lower()
 	if "duiyi.sina" in name:
@@ -74,5 +104,7 @@ def getAdapter(fn):
 		return PassthroughAdapter(fn)
 	elif name.endswith(".gib"):
 		return ExternalAdapter(fn, "gib2sgf")
+	elif name.endswith(".ugi"):
+		return UgiAdapter(fn)
 	else:
 		raise AdapterError("no suitable adapter")

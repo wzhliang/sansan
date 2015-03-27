@@ -1,4 +1,4 @@
-- FET: add support for UGI format, which is used by pandago
+- BUG: FET: the adapters should be chainable.
 - BUG: utf8 doesn't work.
 - BUG: markers are a bit ugly
 - BUG: When there is a very long comment, the doc window is scrolled to the bottom
