@@ -8,7 +8,10 @@ from pprint import pprint
 
 class GameGui(Game):
 	def __init__(self, name, _goban):
-		Game.__init__(self, name)
+		f = open(name, "rt")
+		content = f.read()
+		f.close()
+		Game.__init__(self, content)
 		self.goban = _goban
 		self.build_tree()
 
@@ -53,7 +56,10 @@ class GameGui(Game):
 
 class GameGuiA(Game):
 	def __init__(self, name, _goban):
-		Game.__init__(self, name)
+		f = open(name, "rt")
+		content = f.read()
+		f.close()
+		Game.__init__(self, content)
 		self.goban = _goban
 		self.build_tree()
 
