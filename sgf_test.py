@@ -104,8 +104,6 @@ class BoardTest(unittest.TestCase):
 		game = GameGui("sgf/branch.sgf", pan)
 		for i in range(5):
 			game.forth()
-		self.assertEqual(game.where().num_child(), 2)
-		game.forth()
 		self.assertEqual(game.where().prop, "nc")
 		game.branch_down()
 		self.assertEqual(game.where().prop, "nd")
@@ -180,7 +178,6 @@ class BoardTest(unittest.TestCase):
 		print "Test support for PB, PW nodes."
 		pan = Board()
 		game = GameGui("sgf/place.sgf", pan)
-		game.forth() # Skip the first node
 		game.forth()
 		self.assertEqual(game.where().name, "AB")
 		pprint(game.where().prop)
