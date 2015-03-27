@@ -10,7 +10,6 @@ from PyQt4.QtGui import *
 # once the board is resize, everything is in a mess
 # needs a bit of edge for the board.
 # Stop hard-coding stone size, etc.
-# Draw star, tianyuan, etc
 
 import util
 import sgf
@@ -333,7 +332,7 @@ class GoBoard(board.Board, QGraphicsView):
 	def go_prev(self):
 		prev = self.game.where()
 		if not prev.prop == "":
-			x, y = pos2xy(self.game.where().prop)
+			x, y = util.pos2xy(self.game.where().prop)
 			self.remove_stone(x, y)
 			super(GoBoard, self).remove_stones([(x, y)])
 		try:
@@ -528,12 +527,12 @@ class GoBoard(board.Board, QGraphicsView):
 				(gy-1)*self.w + self.edge )
 	
 	def draw_stars(self):
-		stars = [ (4, 4), (4, 16), (16, 4), (16, 16), (10, 10) ]
+		stars = [ (4, 4), (4, 10), (4, 16), (10, 4), (10, 16), (16, 4), (16, 10), (16, 16), (10, 10) ]
 		for x, y in stars:
 			sx, sy = self.convert_coord((x, y))
-			sx -= 4
-			sy -= 4
-			self.scene.addEllipse(sx, sy, 8, 8, brush = QBrush(Qt.black))
+			sx -= 5
+			sy -= 5
+			self.scene.addEllipse(sx, sy, 10, 10, brush = QBrush(Qt.black))
 
 	def draw_board(self):
 		pen = QPen()
