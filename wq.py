@@ -12,7 +12,7 @@ from PyQt4.QtGui import *
 # Stop hard-coding stone size, etc.
 # Draw star, tianyuan, etc
 
-from util import *
+import util
 import sgf
 import board
 import adapter
@@ -21,7 +21,7 @@ from wq_rc import *
 class Bitmap:
 	@staticmethod
 	def get_bitmap_for_stone(color):
-		if ( color == BLACK ):
+		if ( color == util.BLACK ):
 			return ":res/b22.png"
 		else:
 			return ":res/208.png"
@@ -369,10 +369,10 @@ class GoBoard(board.Board, QGraphicsView):
 			except AttributeError:
 				pass # Allow node with no undo
 
-		if is_stone(node.name):
+		if util.is_stone(node.name):
 			added.extend(self.handle_stone(node))
 		# When going back, the stone is already there
-		elif is_move(node.name):
+		elif util.is_move(node.name):
 			if not back:
 				removed.extend(self.handle_move(node))
 			if not node.prop == "": # PASS
@@ -383,7 +383,7 @@ class GoBoard(board.Board, QGraphicsView):
 
 		for e in node.extra:
 			print "Handling %s..." % e, node.extra[e]
-			if is_comment(e):
+			if util.is_comment(e):
 				self.emit(SIGNAL("newComment(PyQt_PyObject)"), node.get_comment())
 			elif e == "LB":
 				self._handle_LB(node.extra[e])
@@ -406,7 +406,7 @@ class GoBoard(board.Board, QGraphicsView):
 				break
 
 	def refresh_cross(self, node):
-		x, y = pos2xy(self.game.where().prop)
+		x, y = util.pos2xy(self.game.where().prop)
 		cx, cy = self.convert_coord((x, y))
 		cross = Cross(QPointF(cx, cy), 10)
 		cross.setZValue(10)
@@ -420,47 +420,47 @@ class GoBoard(board.Board, QGraphicsView):
 			self.emit(SIGNAL("newComment(PyQt_PyObject)"), "PASS")
 			return []
 		else:
-			x, y = pos2xy(self.game.where().prop)
-			return self.play_xy(x, y, str2color(self.game.where().name))
+			x, y = util.pos2xy(self.game.where().prop)
+			return self.play_xy(x, y, util.str2color(self.game.where().name))
 
 	def handle_stone(self, node):
 		add = []
 		for l in node.prop:
 			print "Placing stone at %s" % l
-			x, y = pos2xy(l)
+			x, y = util.pos2xy(l)
 			add.append((x,y))
-			self.add_stone(x, y, str2color(node.name))
+			self.add_stone(x, y, util.str2color(node.name))
 
 	def _handle_LB(self, labels):
 		for l in labels:
 			pos, char = l.split(":")
-			x, y = pos2xy(pos)
+			x, y = util.pos2xy(pos)
 			self.add_label(x, y, char)
 
 	def _handle_CR(self, locs):
 		for l in locs:
-			x, y = pos2xy(l)
+			x, y = util.pos2xy(l)
 			self.add_circle(x, y, 10)
 
 	def _handle_TR(self, locs):
 		for l in locs:
-			x, y = pos2xy(l)
+			x, y = util.pos2xy(l)
 			self.add_triangle(x, y, 10)
 
 	def _handle_SQ(self, locs):
 		for l in locs:
-			x, y = pos2xy(l)
+			x, y = util.pos2xy(l)
 			self.add_square(x, y, 10)
 
 	def _handle_MA(self, locs):
 		for l in locs:
-			x, y = pos2xy(l)
-			self.add_mark(x, y, 10)
+			x, y = util.pos2xy(l)
+			self.add_mark(x, y, 2)
 
 	def _remove_stones(self, group):
 		remove = []
 		for prop in group:
-			x, y = pos2xy(prop)
+			x, y = util.pos2xy(prop)
 			self.remove_stone(x, y)
 			remove.append((x,y))
 		super(GoBoard, self).remove_stones(remove)
@@ -593,19 +593,17 @@ class GoBoard(board.Board, QGraphicsView):
 	def add_label(self, x, y, char):
 		""" Doesn't change model """
 		font = QFont()
-		font.setBold(True)
-		font.setItalic(True)
-		font.setPixelSize(30)
+		font.setPixelSize(20)
 
 		tx = QGraphicsTextItem()
 		tx.setPlainText(char)
-		tx.setDefaultTextColor(QColor("green"))
+		tx.setDefaultTextColor(QColor("yellow"))
 		tx.setFont(font)
 		self.scene.addItem(tx)
 		self.marks.append(tx) # overwriting previous one. should be GCed automatically
 		x, y = self.convert_coord((x, y))
-		x -= 15
-		y -= 15
+		x -= 10
+		y -= 20
 		tx.setPos(x, y)
 		tx.setZValue(5)
 

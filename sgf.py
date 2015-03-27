@@ -3,7 +3,7 @@ from pyparsing import (Word, Literal, QuotedString, OneOrMore,
 from pprint import pprint
 #from pdb import set_trace
 import board
-from util import *
+import util
 
 _debug_ = False
 
@@ -69,10 +69,10 @@ class Node(object):
 			- move
 			- comment
 			- or marks"""
-		if not self.name == "":
+		if util.is_stone(self.name) or util.is_move(self.name):
 			return True
 		for e in self.extra:
-			if not is_meta(e):
+			if util.is_extra(e):
 				return True
 
 		return False
@@ -170,17 +170,17 @@ class Game(object):
 
 				if not type(current) is str:
 					continue
-				if is_move(current):
+				if util.is_move(current):
 					self.on_move(current)
-				elif is_stone(current):
+				elif util.is_stone(current):
 					self.on_stone(current)
-				elif is_meta(current):
+				elif util.is_meta(current):
 					self.on_meta(current)
-				elif is_extra(current):
+				elif util.is_extra(current):
 					self.on_extra(current)
-				elif is_branch(current):
+				elif util.is_branch(current):
 					self.on_branch(current)
-				elif is_node(current):
+				elif util.is_node(current):
 					self.on_node(current)
 				else:
 					pass
