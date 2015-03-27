@@ -4,7 +4,8 @@ from pprint import pprint
 #from pdb import set_trace
 import board
 from util import *
-from pdb import set_trace
+
+_debug_ = False
 
 # BNF from red-bean
 # 
@@ -41,10 +42,13 @@ class Node(object):
 		self.extra[name] = value
 
 	def get_comment(self):
-		if self.extra.has_key("C"):
+		try:
 			return self.extra["C"]
-		else:
+		except KeyError:
 			return ""
+
+	def has_comment(self):
+		return self.extra.has_key("C")
 
 	def add_child(self, child):
 		if self.num_child() > 0:
@@ -110,7 +114,8 @@ class SGF(object):
 	def next_token(self):
 		tok = self.moves[self.current]
 		self.current += 1
-		print "SGF: ", tok
+		if _debug_:	
+			print "SGF: ", tok
 		return tok
 
 	def __parse(self):
@@ -190,6 +195,8 @@ class Game(object):
 	def forth(self, branch=0):
 		try:
 			self.current = self.current.children[branch]
+			while not self.current.presentable():
+				self.current = self.current.children[branch]
 		except IndexError:
 			raise SGFNoMoreNode
 
