@@ -387,10 +387,11 @@ class GoBoard(board.Board, QtGui.QGraphicsView):
 		# Closure magic
 		prev.undo = functools.partial(self.attach_undo, node, added, removed)()
 
+		comment = ""
 		for e in node.extra:
 			print "Handling %s..." % e, node.extra[e]
 			if util.is_comment(e):
-				self.emit(QtCore.SIGNAL("newComment(PyQt_PyObject)"), node.get_comment())
+				comment = node.get_comment()
 			elif e == "LB":
 				self._handle_LB(node.extra[e])
 			elif e == "CR":
@@ -401,6 +402,7 @@ class GoBoard(board.Board, QtGui.QGraphicsView):
 				self._handle_TR(node.extra[e])
 			elif e == "MA":
 				self._handle_MA(node.extra[e])
+		self.emit(QtCore.SIGNAL("newComment(PyQt_PyObject)"), comment)
 
 	def clear_marks(self):
 		"""Assuming that marks are only relavant for a particular move and ALL
