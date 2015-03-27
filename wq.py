@@ -727,9 +727,8 @@ class MainWindow(QMainWindow):
 		self.widget.goban.clear()
 
 	def about(self):
-		QMessageBox.about(self, "About Menu",
-				"The <b>Menu</b> example shows how to create menu-bar menus "
-				"and context menus.")
+		QMessageBox.about(self, "WQ",
+				"Cross platform weiqi game replayer.")
 
 	def aboutQt(self):
 		print "Invoked <b>Help|About Qt</b>"

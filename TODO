@@ -6,4 +6,3 @@
 - FET: Display move number
 - FET: Support SGF from goproblems. They include AB, AW in the first node.
 - BUG: gameinfo and comments should be readonly
-- BUG: fix help about
