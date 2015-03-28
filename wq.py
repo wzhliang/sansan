@@ -799,10 +799,15 @@ class MainWindow(QtGui.QMainWindow):
 		self.connect(self.widget.goban, QtCore.SIGNAL("newComment(PyQt_PyObject)"),
 			self.displayComment)
 
+
 # MAIN MAIN MAIN ######################################
-app = QtGui.QApplication(sys.argv)
-w = MainWindow()
-w.show()
-sys.exit(app.exec_())
+def main():
+	app = QtGui.QApplication(sys.argv)
+	w = MainWindow()
+	w.show()
+	sys.exit(app.exec_())
+
+if __name__ == '__main__':
+	main()
 
 # Eof

@@ -7,3 +7,4 @@
 - BUG: open sgf, do nothing but closing the window -> segfault
 - FET: Display move number
 - FET: Support SGF from goproblems. They include AB, AW in the first node.
+- FET: editor
