@@ -79,6 +79,19 @@ class UgiAdapter(Adapter):
 		return sgf
 
 
+class HttpUgiAdapter(UgiAdapter):
+	def __init__(self, source):
+		super(HttpUgiAdapter, self).__init__(source)
+
+	def adapt(self):
+		sgf = "(;FF[4]"
+		resp = urllib2.urlopen(self.src, data=None, timeout=20)
+		for l in resp.readlines():
+			sgf = sgf + self.convert_move(l.strip())
+		sgf = sgf + ")"
+		return sgf
+
+
 class PassthroughAdapter(Adapter):
 	def __init__(self, source):
 		super(PassthroughAdapter, self).__init__(source)
@@ -98,6 +111,8 @@ def getAdapter(fn):
 	name = fn.lower()
 	if "duiyi.sina" in name:
 		return SinaAdapter(fn)
+	if name.startswith("http://") and name.endswith(".ugi"):
+		return HttpUgiAdapter(fn)
 	if name.startswith("http://"):
 		return HttpAdapter(fn)
 	if name.endswith(".sgf"):
