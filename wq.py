@@ -116,7 +116,7 @@ class Square(QtGui.QGraphicsItem):
 
 		self.size = size
 		self.point = point
-		self.topLeft = QtGui.QPointF(point.x() - size, point.y() - size)
+		self.topLeft = QtCore.QPointF(point.x() - size, point.y() - size)
 
 		self.setAcceptedMouseButtons(QtCore.Qt.NoButton)
 		# self.adjust() TODO: Do I need this?
@@ -131,7 +131,7 @@ class Square(QtGui.QGraphicsItem):
 		return Square.Type
 
 	def boundingRect(self):
-		return QtGui.QRectF(self.x() - self.size, self.y() - self.size,
+		return QtCore.QRectF(self.x() - self.size, self.y() - self.size,
 			2.0 * self.size, 2.0 * self.size)
 
 	def paint(self, painter, option, widget):
@@ -144,24 +144,24 @@ class Square(QtGui.QGraphicsItem):
 		y1 = self.point.y() - self.size
 		y2 = self.point.y() + self.size
 
-		line = QtGui.QLineF(x1, y1, x1, y2)
-		painter.setPen(QtGui.QPen(Qt.red, 3, Qt.SolidLine,
-			Qt.RoundCap, Qt.RoundJoin))
+		line = QtCore.QLineF(x1, y1, x1, y2)
+		painter.setPen(QtGui.QPen(QtCore.Qt.red, 3, QtCore.Qt.SolidLine,
+			QtCore.Qt.RoundCap, QtCore.Qt.RoundJoin))
 		painter.drawLine(line)
 
-		line = QtGui.QLineF(x1, y1, x2, y1)
-		painter.setPen(QtGui.QPen(Qt.red, 3, Qt.SolidLine,
-			Qt.RoundCap, Qt.RoundJoin))
+		line = QtCore.QLineF(x1, y1, x2, y1)
+		painter.setPen(QtGui.QPen(QtCore.Qt.red, 3, QtCore.Qt.SolidLine,
+			QtCore.Qt.RoundCap, QtCore.Qt.RoundJoin))
 		painter.drawLine(line)
 
-		line = QtGui.QLineF(x2, y1, x2, y2)
-		painter.setPen(QtGui.QPen(Qt.red, 3, Qt.SolidLine,
-			Qt.RoundCap, Qt.RoundJoin))
+		line = QtCore.QLineF(x2, y1, x2, y2)
+		painter.setPen(QtGui.QPen(QtCore.Qt.red, 3, QtCore.Qt.SolidLine,
+			QtCore.Qt.RoundCap, QtCore.Qt.RoundJoin))
 		painter.drawLine(line)
 
-		line = QtGui.QLineF(x2, y2, x1, y2)
-		painter.setPen(QtGui.QPen(Qt.red, 3, Qt.SolidLine,
-			Qt.RoundCap, Qt.RoundJoin))
+		line = QtCore.QLineF(x2, y2, x1, y2)
+		painter.setPen(QtGui.QPen(QtCore.Qt.red, 3, QtCore.Qt.SolidLine,
+			QtCore.Qt.RoundCap, QtCore.Qt.RoundJoin))
 		painter.drawLine(line)
 
 
@@ -176,7 +176,7 @@ class Triangle(QtGui.QGraphicsItem):
 		self.size = size
 		self.point = point
 
-		self.setAcceptedMouseButtons(Qt.NoButton)
+		self.setAcceptedMouseButtons(QtCore.Qt.NoButton)
 		# self.adjust() TODO: Do I need this?
 
 	def x(self):
@@ -189,7 +189,7 @@ class Triangle(QtGui.QGraphicsItem):
 		return Triangle.Type
 
 	def boundingRect(self):
-		return QRectF(self.x() - self.size, self.y() - self.size,
+		return QtCore.QRectF(self.x() - self.size, self.y() - self.size,
 			2.0 * self.size, 2.0 * self.size)
 
 	def paint(self, painter, option, widget):
@@ -203,17 +203,17 @@ class Triangle(QtGui.QGraphicsItem):
 		y2 = self.point.y() + self.size * math.cos(30)
 		x3 = self.point.x() + abs(self.size * math.sin(30))
 
-		line = QtGui.QLineF(x1, y1, x2, y2)
-		painter.setPen(QtGui.QPen(Qt.red, 3, QtCore.Qt.SolidLine,
+		line = QtCore.QLineF(x1, y1, x2, y2)
+		painter.setPen(QtGui.QPen(QtCore.Qt.red, 3, QtCore.Qt.SolidLine,
 			QtCore.Qt.RoundCap, QtCore.Qt.RoundJoin))
 		painter.drawLine(line)
 
-		line = QtGui.QLineF(x2, y2, x3, y2)
-		painter.setPen(QtGui.QPen(Qt.red, 3, QtCore.Qt.SolidLine,
+		line = QtCore.QLineF(x2, y2, x3, y2)
+		painter.setPen(QtGui.QPen(QtCore.Qt.red, 3, QtCore.Qt.SolidLine,
 			QtCore.Qt.RoundCap, QtCore.Qt.RoundJoin))
 		painter.drawLine(line)
 
-		line = QtGui.QLineF(x1, y1, x3, y2)
+		line = QtCore.QLineF(x1, y1, x3, y2)
 		painter.setPen(QtGui.QPen(QtCore.Qt.red, 3, QtCore.Qt.SolidLine,
 			QtCore.Qt.RoundCap, QtCore.Qt.RoundJoin))
 		painter.drawLine(line)
@@ -230,7 +230,7 @@ class Circle(QtGui.QGraphicsItem):
 		self.size = size
 		self.point = point
 
-		self.setAcceptedMouseButtons(Qt.NoButton)
+		self.setAcceptedMouseButtons(QtCore.Qt.NoButton)
 		# self.adjust() TODO: Do I need this?
 
 	def x(self):
@@ -243,7 +243,7 @@ class Circle(QtGui.QGraphicsItem):
 		return Circle.Type
 
 	def boundingRect(self):
-		return QtGui.QRectF(self.x() - self.size, self.y() - self.size,
+		return QtCore.QRectF(self.x() - self.size, self.y() - self.size,
 			2.0 * self.size, 2.0 * self.size)
 
 	def paint(self, painter, option, widget):
@@ -251,8 +251,8 @@ class Circle(QtGui.QGraphicsItem):
 			return
 
 		# Draw the line itself.
-		painter.setPen(QtCore.QPen(Qt.red, 3, Qt.SolidLine,
-			Qt.RoundCap, Qt.RoundJoin))
+		painter.setPen(QtGui.QPen(QtCore.Qt.red, 3, QtCore.Qt.SolidLine,
+			QtCore.Qt.RoundCap, QtCore.Qt.RoundJoin))
 		painter.drawEllipse(self.point, self.size, self.size)
 
 
@@ -267,7 +267,7 @@ class Mark(QtGui.QGraphicsItem):
 		self.size = size
 		self.point = point
 
-		self.setAcceptedMouseButtons(Qt.NoButton)
+		self.setAcceptedMouseButtons(QtCore.Qt.NoButton)
 		# self.adjust() TODO: Do I need this?
 
 	def x(self):
@@ -280,7 +280,7 @@ class Mark(QtGui.QGraphicsItem):
 		return Circle.Type
 
 	def boundingRect(self):
-		return QtGui.QRectF(self.x() - self.size, self.y() - self.size,
+		return QtCore.QRectF(self.x() - self.size, self.y() - self.size,
 			2.0 * self.size, 2.0 * self.size)
 
 	def paint(self, painter, option, widget):
@@ -288,8 +288,8 @@ class Mark(QtGui.QGraphicsItem):
 			return
 
 		# Draw the line itself.
-		painter.setPen(QtCore.QPen(Qt.red, 3, Qt.SolidLine,
-			Qt.RoundCap, Qt.RoundJoin))
+		painter.setPen(QtGui.QPen(QtCore.Qt.red, 3, QtCore.Qt.SolidLine,
+			QtCore.Qt.RoundCap, QtCore.Qt.RoundJoin))
 		painter.drawEllipse(self.point, self.size, self.size)
 
 
@@ -615,28 +615,28 @@ class GoBoard(board.Board, QtGui.QGraphicsView):
 
 	def add_circle(self, x, y, size):
 		x, y = self.convert_coord((x, y))
-		cr = Circle(QPointF(x, y), size)
+		cr = Circle(QtCore.QPointF(x, y), size)
 		cr.setZValue(5)
 		self.marks.append(cr)
 		self.scene.addItem(cr)
 
 	def add_triangle(self, x, y, size):
 		x, y = self.convert_coord((x, y))
-		tr = Triangle(QPointF(x, y), size)
+		tr = Triangle(QtCore.QPointF(x, y), size)
 		tr.setZValue(5)
 		self.marks.append(tr)
 		self.scene.addItem(tr)
 
 	def add_square(self, x, y, size):
 		x, y = self.convert_coord((x, y))
-		sq = Square(QPointF(x, y), size)
+		sq = Square(QtCore.QPointF(x, y), size)
 		sq.setZValue(5)
 		self.marks.append(sq)
 		self.scene.addItem(sq)
 
 	def add_mark(self, x, y, size):
 		x, y = self.convert_coord((x, y))
-		ma = Mark(QPointF(x, y), size)
+		ma = Mark(QtCore.QPointF(x, y), size)
 		ma.setZValue(5)
 		self.marks.append(ma)
 		self.scene.addItem(ma)
