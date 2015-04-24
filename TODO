@@ -7,6 +7,7 @@
 - BUG: problem with place.sgf
 - BUG: open sgf, do nothing but closing the window -> segfault
 - BUG: often crashes on closing.
+- BUG: rangziqi problem
 - FET: Display move number
 - FET: Support SGF from goproblems. They include AB, AW in the first node.
 - FET: editor

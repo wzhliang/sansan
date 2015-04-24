@@ -603,7 +603,7 @@ class GoBoard(board.Board, QtGui.QGraphicsView):
 
 		tx = QtGui.QGraphicsTextItem()
 		tx.setPlainText(char)
-		tx.setDefaultTextColor(QColor("yellow"))
+		tx.setDefaultTextColor(QtGui.QColor("yellow"))
 		tx.setFont(font)
 		self.scene.addItem(tx)
 		self.marks.append(tx)  # overwriting previous one. should be GCed
