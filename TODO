@@ -1,6 +1,5 @@
 - FET: have nice graphic background instead of the current solid color
 - BUG: FET: the adapters should be chainable.
-- BUG: utf8 doesn't work.
 - BUG: markers are a bit ugly
 - BUG: When there is a very long comment, the doc window is scrolled to the bottom
 - BUG: If there is markers node between move nodes, reverse navigation wouldn't work
