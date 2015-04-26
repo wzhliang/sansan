@@ -17,6 +17,8 @@ import board
 import adapter
 from wq_rc import *
 
+__decoders__ = ['euc-cn', 'utf-8', 'big5']
+
 
 class Bitmap:
 	@staticmethod
@@ -707,6 +709,7 @@ class MainWindow(QtGui.QMainWindow):
 		self.createMenus()
 		self.setWindowTitle("WQ")
 		self.setWindowIcon(QtGui.QIcon(':res/icon320x320.png'))
+		self.enc = None
 
 		if len(sys.argv) > 1:
 			self.widget = MyWidget(sys.argv[1])
@@ -724,6 +727,21 @@ class MainWindow(QtGui.QMainWindow):
 		self.createDockWindows()
 		self.resize(1200, 900)
 		self.widget.setFocus()
+
+	def decode(self, text):
+		if self.enc:
+			return text.decode(self.enc)
+
+		for d in __decoders__:
+			try:
+				r = text.decode(d)
+				self.enc = d
+				return r
+			except UnicodeDecodeError:
+				continue
+
+		if self.enc is None:
+			raise UnicodeDecodeError
 
 	def next(self):
 		print 'Move to next'
@@ -769,15 +787,15 @@ class MainWindow(QtGui.QMainWindow):
 
 	def populateGameInfo(self):
 		meta = self.widget.game
-		self.gameInfoEdit.append("BLACK: " + meta.PB.decode("euc-cn")
-			+ " " + meta.BR.decode("euc-cn"))
-		self.gameInfoEdit.append("WHITE: " + meta.PW.decode("euc-cn")
-			+ " " + meta.WR.decode("euc-cn"))
-		self.gameInfoEdit.append("RESULT: " + meta.RE.decode("euc-cn"))
+		self.gameInfoEdit.append("BLACK: " + self.decode(meta.PB)
+			+ " " + self.decode(meta.BR))
+		self.gameInfoEdit.append("WHITE: " + self.decode(meta.PW)
+			+ " " + self.decode(meta.WR))
+		self.gameInfoEdit.append("RESULT: " + self.decode(meta.RE))
 
 	def displayComment(self, comment):
 		self.commentEdit.clear()
-		self.commentEdit.append(comment.decode("euc-cn"))
+		self.commentEdit.append(self.decode(comment))
 
 	def createDockWindows(self):
 		dock = QtGui.QDockWidget("Game Info", self)
