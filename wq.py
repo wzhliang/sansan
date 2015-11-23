@@ -611,7 +611,7 @@ class GoBoard(board.Board, QtGui.QGraphicsView):
 		self.marks.append(tx)  # overwriting previous one. should be GCed
 		x, y = self.convert_coord((x, y))
 		x -= 10
-		y -= 20
+		y -= 15
 		tx.setPos(x, y)
 		tx.setZValue(5)
 
