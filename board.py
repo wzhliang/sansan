@@ -1,5 +1,5 @@
 #!/usr/bin/python
-from util import *
+from util import *  # flake8: NOQA
 
 
 class BoardError(Exception):
@@ -22,16 +22,9 @@ class Board(object):
 			self.data[i][0] = WALL
 			self.data[i][20] = WALL
 
-	def valid_id(self, _id):
-		# FIXME obsolete
-		return True
-
 	def valid_xy(self, x, y):
 		"This only verifies the valid x, y for a stone"
-		if x > 0 and x <= self.size and y > 0 and y <= self.size:
-			return True
-		else:
-			return False
+		return x > 0 and x <= self.size and y > 0 and y <= self.size
 
 	def place_stone_pos(self, pos, color):
 		if pos == "":  # Allow pass
@@ -42,7 +35,7 @@ class Board(object):
 
 	def place_stone_id(self, _id, color):
 		"obsolete"
-		if not valid_color(color) or not self.valid_id(_id):
+		if not valid_color(color):
 			raise BoardError("Invalid color.")
 
 		if self.data[_id] != EMPTY:
@@ -60,13 +53,10 @@ class Board(object):
 		self.data[x][y] = color
 
 	def has_liberty(self, x, y):
-		if (self.data[x - 1][y] == EMPTY or
+		return (self.data[x - 1][y] == EMPTY or
 			self.data[x + 1][y] == EMPTY or
 			self.data[x][y - 1] == EMPTY or
-			self.data[x][y + 1] == EMPTY):
-			return True
-		else:
-			return False
+			self.data[x][y + 1] == EMPTY)
 
 	def is_alive(self, x, y, color, cluster):
 		""" Decide if a cluster of stones is alive. x, y is a seed inside the

@@ -15,7 +15,7 @@ import util
 import sgf
 import board
 import adapter
-from wq_rc import *
+from wq_rc import *  # flake8: NOQA
 
 __decoders__ = ['utf-8', 'euc-cn', 'big5']
 

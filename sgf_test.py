@@ -1,8 +1,8 @@
 #!/usr/bin/python
 
 import unittest
-from board import *
-from sgf import *
+from board import *  # flake8: NOQA
+from sgf import *  # flake8: NOQA
 from pprint import pprint
 
 

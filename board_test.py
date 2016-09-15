@@ -1,8 +1,7 @@
 #!/usr/bin/python
 
 import unittest
-from board import *
-from pprint import pprint
+from board import *  # flake8: NOQA from pprint import pprint
 
 
 class BoardTest(unittest.TestCase):
