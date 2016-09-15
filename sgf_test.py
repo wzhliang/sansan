@@ -5,6 +5,7 @@ from board import *
 from sgf import *
 from pprint import pprint
 
+
 class GameGui(Game):
 	def __init__(self, name, _goban):
 		f = open(name, "rt")
@@ -19,7 +20,7 @@ class GameGui(Game):
 		while node:
 			if node.name == "B" or node.name == "W":
 				print "##############################################"
-				self.goban.play_pos( node.prop, board.str2color(node.name) ) 
+				self.goban.play_pos(node.prop, board.str2color(node.name))
 				pprint(self.goban.data)
 			else:
 				print "Non stone node:", node
@@ -29,16 +30,13 @@ class GameGui(Game):
 				print "Node has no child"
 				break
 
-	#def __getattr__(self, name):
-		#return super(GameGui, self).__getattr__(name)
-
 	def navigate_back(self):
 		node = None
 		while True:
 			self.forth()
 			node = self.where()
 			if is_stone(node.name):
-				self.goban.play_pos( node.prop, board.str2color(node.name) ) 
+				self.goban.play_pos(node.prop, board.str2color(node.name))
 				print "##############################################"
 				pprint(self.goban.data)
 			if not node.has_child():
@@ -47,11 +45,12 @@ class GameGui(Game):
 		while node:
 			if is_stone(node.name):
 				x, y = pos2xy(node.prop)
-				self.goban.remove_stones([(x, y)]) 
+				self.goban.remove_stones([(x, y)])
 				print "##############################################"
 				print node.get_comment().decode("euc-cn")
 				pprint(self.goban.data)
 			node = self.back()
+
 
 class GameGuiA(Game):
 	def __init__(self, name, _goban):
@@ -66,7 +65,7 @@ class GameGuiA(Game):
 		"Assuming no branch"
 		node = self.root
 		while node:
-			if node.extra.has_key(name):
+			if name in node.extra:
 				print "Found ", name
 				pprint(node.extra[name])
 				return node

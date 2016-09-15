@@ -1,3 +1,12 @@
+- FET: hide cross when displaying marker
+- BUG: after branching, the current stone marker isn't removed
+- BUG: I think it doesn't work with A-A game 1 properly
+- BUG: multi-digit numbers are not positioned correctly
+        * See Alphago-Alphago game 1
+- FET: using yellow color for marking is not very nice
+- FET: Add branching hint
+- BUG: hard-coded board size
+- FET: automatically detect comment encoding
 - FET: have nice graphic background instead of the current solid color
 - BUG: FET: the adapters should be chainable.
 - BUG: markers are a bit ugly

@@ -2,8 +2,8 @@
 
 import unittest
 from board import *
-from pdb import set_trace
 from pprint import pprint
+
 
 class BoardTest(unittest.TestCase):
 	def test_a(self):

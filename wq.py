@@ -17,7 +17,7 @@ import board
 import adapter
 from wq_rc import *
 
-__decoders__ = ['euc-cn', 'utf-8', 'big5']
+__decoders__ = ['utf-8', 'euc-cn', 'big5']
 
 
 class Bitmap:
@@ -605,7 +605,7 @@ class GoBoard(board.Board, QtGui.QGraphicsView):
 
 		tx = QtGui.QGraphicsTextItem()
 		tx.setPlainText(char)
-		tx.setDefaultTextColor(QtGui.QColor("yellow"))
+		tx.setDefaultTextColor(QtGui.QColor("green"))
 		tx.setFont(font)
 		self.scene.addItem(tx)
 		self.marks.append(tx)  # overwriting previous one. should be GCed

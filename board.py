@@ -1,16 +1,15 @@
 #!/usr/bin/python
-#from pdb import set_trace
-from debug import debug_trace
 from util import *
-from pprint import pprint
+
 
 class BoardError(Exception):
 	pass
 
+
 class Board(object):
-	def __init__(self, size = 19):
+	def __init__(self, size=19):
 		self.size = size
-		self.points = (size+2)*(size+2)
+		self.points = (size + 2) * (size + 2)
 		self.data = []
 		self.data.append([WALL] * 21)
 		for i in range(1, 20):
@@ -24,7 +23,7 @@ class Board(object):
 			self.data[i][20] = WALL
 
 	def valid_id(self, _id):
-		#FIXME obsolete
+		# FIXME obsolete
 		return True
 
 	def valid_xy(self, x, y):
@@ -35,7 +34,7 @@ class Board(object):
 			return False
 
 	def place_stone_pos(self, pos, color):
-		if pos == "": # Allow pass
+		if pos == "":  # Allow pass
 			print "PASS"
 		else:
 			x, y = pos2xy(pos)
@@ -48,7 +47,7 @@ class Board(object):
 
 		if self.data[_id] != EMPTY:
 			print "Warning: remove when removing stone is implemented"
-			#raise BoardError
+			# raise BoardError
 
 		self.data[_id] = color
 
@@ -61,18 +60,18 @@ class Board(object):
 		self.data[x][y] = color
 
 	def has_liberty(self, x, y):
-		if (self.data[x-1][y] == EMPTY or
-			self.data[x+1][y] == EMPTY or
-			self.data[x][y-1] == EMPTY or
-			self.data[x][y+1] == EMPTY):
+		if (self.data[x - 1][y] == EMPTY or
+			self.data[x + 1][y] == EMPTY or
+			self.data[x][y - 1] == EMPTY or
+			self.data[x][y + 1] == EMPTY):
 			return True
 		else:
 			return False
 
 	def is_alive(self, x, y, color, cluster):
-		""" Decide if a cluster of stones is alive. x, y is a seed inside the cluster.
-			cluster will hold all the stones that are NOT alive when this method finishes.
-		"""
+		""" Decide if a cluster of stones is alive. x, y is a seed inside the
+			cluster.  cluster will hold all the stones that are NOT alive when this
+			method finishes.  """
 		if self.data[x][y] != color:
 			return False
 
@@ -85,13 +84,13 @@ class Board(object):
 		cluster.append((x, y))
 
 		# Check neighbours
-		if self.is_alive(x-1, y, color, cluster):
+		if self.is_alive(x - 1, y, color, cluster):
 			return True
-		if self.is_alive(x+1, y, color, cluster):
+		if self.is_alive(x + 1, y, color, cluster):
 			return True
-		if self.is_alive(x, y-1, color, cluster):
+		if self.is_alive(x, y - 1, color, cluster):
 			return True
-		if self.is_alive(x, y+1, color, cluster):
+		if self.is_alive(x, y + 1, color, cluster):
 			return True
 
 		return False
@@ -104,14 +103,14 @@ class Board(object):
 	def neighbours_xy(self, x, y):
 		"returns a list of positions that's neighbour to (x,y)"
 		nb = []
-		if self.valid_xy(x-1, y):
-			nb.append((x-1, y))
-		if self.valid_xy(x+1, y):
-			nb.append((x+1, y))
-		if self.valid_xy(x, y-1):
-			nb.append((x, y-1))
-		if self.valid_xy(x, y+1):
-			nb.append((x, y+1))
+		if self.valid_xy(x - 1, y):
+			nb.append((x - 1, y))
+		if self.valid_xy(x + 1, y):
+			nb.append((x + 1, y))
+		if self.valid_xy(x, y - 1):
+			nb.append((x, y - 1))
+		if self.valid_xy(x, y + 1):
+			nb.append((x, y + 1))
 
 		return nb
 
@@ -127,7 +126,7 @@ class Board(object):
 		if not self.valid_xy(x, y) or not valid_color(color):
 			raise BoardError("Invalid stone color.")
 		if self.data[x][y] != EMPTY:
-			raise BoardError("Position occupied.");
+			raise BoardError("Position occupied.")
 
 		self.data[x][y] = color
 
@@ -142,7 +141,7 @@ class Board(object):
 
 		if len(all_dead) == 0 and not self.is_alive(x, y, color, []):
 			self.data[x][y] = EMPTY
-			raise BoardError("Suicide not allowed") # Scuicide not allowed
+			raise BoardError("Suicide not allowed")  # Scuicide not allowed
 
 		if len(all_dead) > 0:
 			self.remove_stones(all_dead)
