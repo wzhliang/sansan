@@ -35,14 +35,15 @@ class Bitmap:
 
 class Stone:
 	"""TODO: make this a child of QGraphicsPixmapItem"""
-	def __init__(self, color):
+	def __init__(self, color, size=38, gap=2):
 		self.color = color
+		self.size = size
+		self.gap = gap
 		self.bitmap = QtGui.QPixmap(Bitmap.get_bitmap_for_stone(color))
-		self.bitmap = self.bitmap.scaledToHeight(38, mode=1)
+		self.bitmap = self.bitmap.scaledToHeight(size, mode=1)
 
-	@staticmethod
-	def get_width():
-		return 40
+	def get_width(self):
+		return self.size + self.gap
 
 	def get_bitmap(self):
 		return self.bitmap
@@ -55,13 +56,13 @@ class Stone:
 
 
 class GoBoard(board.Board, QtGui.QGraphicsView):
-	def __init__(self, parent=None, size=19):
+	def __init__(self, parent=None, size=19, stone_size=40, edge=30):
 		# TODO: how does it know to use board.Board or QGraphicsView?
 		super(GoBoard, self).__init__(size)
 		self.size = size
-		self.w = 40
-		self.h = 40
-		self.edge = 30
+		self.w = stone_size
+		self.h = stone_size
+		self.edge = edge
 		self.x0 = 0 + self.edge
 		self.y0 = 0 + self.edge
 		self.width = (self.size - 1) * self.w
