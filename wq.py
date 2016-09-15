@@ -1,7 +1,6 @@
 #!/usr/bin/python
 
 import sys
-import math
 import functools
 from PyQt4 import QtCore
 from PyQt4 import QtGui
