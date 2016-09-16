@@ -3,9 +3,18 @@ from PyQt4 import QtCore
 from PyQt4 import QtGui
 
 
+__type = QtGui.QGraphicsItem.UserType + 1
+
+
+def new_type():
+	global __type
+	__type += 1
+	return __type
+
+
 class Cross(QtGui.QGraphicsItem):
 	"Indicator of the current stone"
-	Type = QtGui.QGraphicsItem.UserType + 2
+	Type = new_type()
 
 	def __init__(self, point, size, mask):
 		"point: QPointF object as I don't know the board"
@@ -60,7 +69,7 @@ class Cross(QtGui.QGraphicsItem):
 
 class Square(QtGui.QGraphicsItem):
 	"square mark"
-	Type = QtGui.QGraphicsItem.UserType + 3
+	Type = new_type()
 
 	def __init__(self, point, size, mask):
 		"point: QPointF object as I don't know the board"
@@ -122,7 +131,7 @@ class Square(QtGui.QGraphicsItem):
 
 class Triangle(QtGui.QGraphicsItem):
 	"trangle mark"
-	Type = QtGui.QGraphicsItem.UserType + 4
+	Type = new_type()
 
 	def __init__(self, point, size, mask):
 		"point: QPointF object as I don't know the board"
