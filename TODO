@@ -5,7 +5,6 @@
 - FET: automatically detect comment encoding
 - BUG: When there is a very long comment, the doc window is scrolled to the bottom
 - BUG: If there is markers node between move nodes, reverse navigation wouldn't work
-- BUG: problem with place.sgf
 - BUG: open sgf, do nothing but closing the window -> segfault
 - BUG: often crashes on closing.
 - FET: Display move number
@@ -16,3 +15,4 @@
 - BUG: after branching, the current stone marker isn't removed
 - BUG: FET: the adapters should be chainable.
 - BUG: rangziqi problem
+- BUG: problem with place.sgf

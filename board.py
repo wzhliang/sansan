@@ -50,7 +50,6 @@ class Board(object):
 		self.data[x][y] = color
 
 	def has_stone(self, x, y):
-		print x, y
 		return self.data[x][y] != EMPTY
 
 	def has_liberty(self, x, y):
@@ -61,8 +60,8 @@ class Board(object):
 
 	def is_alive(self, x, y, color, cluster):
 		""" Decide if a cluster of stones is alive. x, y is a seed inside the
-			cluster.  cluster will hold all the stones that are NOT alive when this
-			method finishes.  """
+			cluster.  cluster will hold all the stones that are NOT alive when
+			this method finishes.  """
 		if self.data[x][y] != color:
 			return False
 		if self.has_liberty(x, y):
@@ -104,8 +103,8 @@ class Board(object):
 		return self.neighbours_xy(pos2xy(pos))
 
 	def play_xy(self, x, y, color):
-		"""Play a stone at the position. Update board data when stones are captured.
-		Returns the captures stone. """
+		"""Play a stone at the position. Update board data when stones are
+		captured. Returns the captures stone. """
 		print "play_xy(%d,%d,%d)" % (x, y, color)
 		if not self.valid_xy(x, y) or not valid_color(color):
 			raise BoardError("Invalid stone color.")
@@ -125,7 +124,7 @@ class Board(object):
 
 		if len(all_dead) == 0 and not self.is_alive(x, y, color, []):
 			self.data[x][y] = EMPTY
-			raise BoardError("Suicide not allowed")  # Scuicide not allowed
+			raise BoardError("Suicide not allowed")  # Suicide not allowed
 
 		if len(all_dead) > 0:
 			self.remove_stones(all_dead)
