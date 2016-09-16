@@ -75,7 +75,6 @@ class Node(object):
 		for e in self.extra:
 			if util.is_extra(e):
 				return True
-
 		return False
 
 	def is_root(self):
@@ -191,7 +190,6 @@ class Game(object):
 					pass
 			except IndexError:
 				break
-
 		self.reset()
 
 	def reset(self):
@@ -223,10 +221,7 @@ class Game(object):
 				self.current = node.prev_br
 				break
 			node = node.parent
-		if node:
-			return remove
-		else:
-			return []
+		return remove if node else []
 
 	def branch_down(self):
 		"Try move up to the previous branch"
@@ -238,17 +233,11 @@ class Game(object):
 				self.current = node.next_br
 				break
 			node = node.parent
-		if node:
-			return remove
-		else:
-			return []
+		return remove if node else []
 
 	def __getattr__(self, name):
 		"Gurantteed no exception"
-		if name in self.info:
-			return self.info[name]
-		else:
-			return ""
+		return self.info[name] if name in self.info else ""
 
 
 class GameGui(Game):

@@ -35,15 +35,11 @@ class Bitmap:
 
 class Stone:
 	"""TODO: make this a child of QGraphicsPixmapItem"""
-	def __init__(self, color, size=38, gap=2):
+	def __init__(self, color, size=34, gap=2):
 		self.color = color
 		self.size = size
-		self.gap = gap
 		self.bitmap = QtGui.QPixmap(Bitmap.get_bitmap_for_stone(color))
 		self.bitmap = self.bitmap.scaledToHeight(size, mode=1)
-
-	def get_width(self):
-		return self.size + self.gap
 
 	def get_bitmap(self):
 		return self.bitmap
@@ -56,7 +52,7 @@ class Stone:
 
 
 class GoBoard(board.Board, QtGui.QGraphicsView):
-	def __init__(self, parent=None, size=19, stone_size=40, edge=30):
+	def __init__(self, parent=None, size=19, stone_size=36, edge=26):
 		# TODO: how does it know to use board.Board or QGraphicsView?
 		super(GoBoard, self).__init__(size)
 		self.size = size
@@ -475,7 +471,7 @@ class MainWindow(QtGui.QMainWindow):
 			self.widget = MyWidget(sys.argv[1])
 			self.setCentralWidget(self.widget)
 			self.createDockWindows()
-			self.resize(1200, 900)
+			self.resize(1000, 720)
 		else:
 			self.resize(200, 200)
 
@@ -485,7 +481,7 @@ class MainWindow(QtGui.QMainWindow):
 		self.widget = MyWidget(str(fn))
 		self.setCentralWidget(self.widget)
 		self.createDockWindows()
-		self.resize(1200, 900)
+		self.resize(1000, 800)
 		self.widget.setFocus()
 
 	def decode(self, text):
@@ -581,6 +577,8 @@ class MainWindow(QtGui.QMainWindow):
 # MAIN MAIN MAIN ######################################
 def main():
 	app = QtGui.QApplication(sys.argv)
+
+	print app.desktop().screenGeometry()
 	w = MainWindow()
 	w.show()
 	sys.exit(app.exec_())

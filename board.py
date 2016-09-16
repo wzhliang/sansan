@@ -37,11 +37,9 @@ class Board(object):
 		"obsolete"
 		if not valid_color(color):
 			raise BoardError("Invalid color.")
-
 		if self.data[_id] != EMPTY:
 			print "Warning: remove when removing stone is implemented"
 			# raise BoardError
-
 		self.data[_id] = color
 
 	def place_stone_xy(self, x, y, color):
@@ -49,7 +47,6 @@ class Board(object):
 			raise BoardError("Invalid position.")
 		if not valid_color(color):
 			raise BoardError("Invalid color.")
-
 		self.data[x][y] = color
 
 	def has_liberty(self, x, y):
@@ -64,15 +61,11 @@ class Board(object):
 			method finishes.  """
 		if self.data[x][y] != color:
 			return False
-
 		if self.has_liberty(x, y):
 			return True
-
 		if (x, y) in cluster:
 			return False
-
 		cluster.append((x, y))
-
 		# Check neighbours
 		if self.is_alive(x - 1, y, color, cluster):
 			return True
@@ -82,7 +75,6 @@ class Board(object):
 			return True
 		if self.is_alive(x, y + 1, color, cluster):
 			return True
-
 		return False
 
 	def remove_stones(self, cluster):
@@ -101,13 +93,11 @@ class Board(object):
 			nb.append((x, y - 1))
 		if self.valid_xy(x, y + 1):
 			nb.append((x, y + 1))
-
 		return nb
 
 	def neighbours_pos(self, pos):
 		"handy wrapper of neighbours_xy() that takes in 'ab' like pos"
-		x, y = pos2xy(pos)
-		return self.neighbours_xy(x, y)
+		return self.neighbours_xy(pos2xy(pos))
 
 	def play_xy(self, x, y, color):
 		"""Play a stone at the position. Update board data when stones are captured.
