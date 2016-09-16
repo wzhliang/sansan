@@ -69,6 +69,8 @@ class GoBoard(board.Board, QtGui.QGraphicsView):
 		self.stones = []  # 2D array for holding stones (QGraphicsPixmapItem)
 		self.marks = []  # 2D array for hodling various marks
 		self.cross = None
+		self.brush = None  # mask out the cross for marker
+		self.mask = None
 		for i in range(19):
 			self.stones.append([None] * 19)
 
@@ -174,7 +176,7 @@ class GoBoard(board.Board, QtGui.QGraphicsView):
 	def refresh_cross(self, node):
 		x, y = util.pos2xy(self.game.where().prop)
 		cx, cy = self.convert_coord((x, y))
-		cross = Cross(QtCore.QPointF(cx, cy), 10)
+		cross = Cross(QtCore.QPointF(cx, cy), 10, self.mask)
 		cross.setZValue(10)
 		self.scene.addItem(cross)
 		self.marks.append(cross)
@@ -308,9 +310,9 @@ class GoBoard(board.Board, QtGui.QGraphicsView):
 
 		# Draw background
 		bg_color = QtGui.QColor(0xcb, 0x91, 0x43)
-		self.scene.setBackgroundBrush(
-			QtGui.QBrush(bg_color, QtGui.QPixmap("res/wood.jpg")))
-		# self.scene.addPixmap(QPixmap("res/wood.jpg"))
+		self.brush = QtGui.QBrush(bg_color, QtGui.QPixmap("res/wood.jpg"))
+		self.scene.setBackgroundBrush(self.brush)
+		self.mask = QtGui.QPixmap("res/wood.jpg")
 
 		self.draw_stars()
 
@@ -373,29 +375,33 @@ class GoBoard(board.Board, QtGui.QGraphicsView):
 		tx.setZValue(5)
 
 	def add_circle(self, x, y, size):
+		mask = self.mask if not self.has_stone(x, y) else None
 		x, y = self.convert_coord((x, y))
-		cr = Circle(QtCore.QPointF(x, y), size)
+		cr = Circle(QtCore.QPointF(x, y), size, mask)
 		cr.setZValue(5)
 		self.marks.append(cr)
 		self.scene.addItem(cr)
 
 	def add_triangle(self, x, y, size):
+		mask = self.mask if not self.has_stone(x, y) else None
 		x, y = self.convert_coord((x, y))
-		tr = Triangle(QtCore.QPointF(x, y), size)
+		tr = Triangle(QtCore.QPointF(x, y), size, mask)
 		tr.setZValue(5)
 		self.marks.append(tr)
 		self.scene.addItem(tr)
 
 	def add_square(self, x, y, size):
+		mask = self.mask if not self.has_stone(x, y) else None
 		x, y = self.convert_coord((x, y))
-		sq = Square(QtCore.QPointF(x, y), size)
+		sq = Square(QtCore.QPointF(x, y), size, mask)
 		sq.setZValue(5)
 		self.marks.append(sq)
 		self.scene.addItem(sq)
 
 	def add_mark(self, x, y, size):
+		mask = self.mask if not self.has_stone(x, y) else None
 		x, y = self.convert_coord((x, y))
-		ma = Mark(QtCore.QPointF(x, y), size)
+		ma = Mark(QtCore.QPointF(x, y), size, mask)
 		ma.setZValue(5)
 		self.marks.append(ma)
 		self.scene.addItem(ma)

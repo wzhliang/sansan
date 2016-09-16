@@ -49,6 +49,10 @@ class Board(object):
 			raise BoardError("Invalid color.")
 		self.data[x][y] = color
 
+	def has_stone(self, x, y):
+		print x, y
+		return self.data[x][y] != EMPTY
+
 	def has_liberty(self, x, y):
 		return (self.data[x - 1][y] == EMPTY or
 			self.data[x + 1][y] == EMPTY or
