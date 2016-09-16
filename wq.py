@@ -68,6 +68,7 @@ class GoBoard(board.Board, QtGui.QGraphicsView):
 		self.game = None
 		self.stones = []  # 2D array for holding stones (QGraphicsPixmapItem)
 		self.marks = []  # 2D array for hodling various marks
+		self.marks_pos = []  # array of (x, y) tuple for position of marks
 		self.cross = None
 		self.brush = None  # mask out the cross for marker
 		self.mask = None
@@ -135,18 +136,6 @@ class GoBoard(board.Board, QtGui.QGraphicsView):
 			except AttributeError:
 				pass  # Allow node with no undo
 
-		if util.is_stone(node.name):
-			added.extend(self.handle_stone(node))
-		# When going back, the stone is already there
-		elif util.is_move(node.name):
-			if not back:
-				removed.extend(self.handle_move(node))
-			if not node.prop == "":  # PASS
-				self.refresh_cross(node)
-
-		# Closure magic
-		prev.undo = functools.partial(self.attach_undo, node, added, removed)()
-
 		comment = ""
 		for e in node.extra:
 			print "Handling %s..." % e, node.extra[e]
@@ -164,6 +153,18 @@ class GoBoard(board.Board, QtGui.QGraphicsView):
 				self._handle_MA(node.extra[e])
 		self.emit(QtCore.SIGNAL("newComment(PyQt_PyObject)"), comment)
 
+		if util.is_stone(node.name):
+			added.extend(self.handle_stone(node))
+		# When going back, the stone is already there
+		elif util.is_move(node.name):
+			if not back:
+				removed.extend(self.handle_move(node))
+			if not node.prop == "":  # PASS
+				self.refresh_cross(node)
+
+		# Closure magic
+		prev.undo = functools.partial(self.attach_undo, node, added, removed)()
+
 	def clear_marks(self):
 		"""Assuming that marks are only relavant for a particular move and ALL
 		should be cleared from board"""
@@ -172,14 +173,18 @@ class GoBoard(board.Board, QtGui.QGraphicsView):
 				self.scene.removeItem(self.marks.pop())
 			except IndexError:
 				break
+		self.marks_pos = []
 
 	def refresh_cross(self, node):
 		x, y = util.pos2xy(self.game.where().prop)
+		if (x, y) in self.marks_pos:
+			return
 		cx, cy = self.convert_coord((x, y))
 		cross = Cross(QtCore.QPointF(cx, cy), 10, self.mask)
 		cross.setZValue(10)
 		self.scene.addItem(cross)
 		self.marks.append(cross)
+		self.marks_pos.append((x, y))
 
 	def handle_move(self, node):
 		"Handle a move. Deal with dead stone, etc. Assuming it's a play node"
@@ -368,6 +373,7 @@ class GoBoard(board.Board, QtGui.QGraphicsView):
 		tx.setFont(font)
 		self.scene.addItem(tx)
 		self.marks.append(tx)  # overwriting previous one. should be GCed
+		self.marks_pos.append((x, y))
 		x, y = self.convert_coord((x, y))
 		x -= tx.boundingRect().width() / 2
 		y -= tx.boundingRect().height() / 2
@@ -376,34 +382,38 @@ class GoBoard(board.Board, QtGui.QGraphicsView):
 
 	def add_circle(self, x, y, size):
 		mask = self.mask if not self.has_stone(x, y) else None
-		x, y = self.convert_coord((x, y))
-		cr = Circle(QtCore.QPointF(x, y), size, mask)
+		cx, cy = self.convert_coord((x, y))
+		cr = Circle(QtCore.QPointF(cx, cy), size, mask)
 		cr.setZValue(5)
 		self.marks.append(cr)
+		self.marks_pos.append((x, y))
 		self.scene.addItem(cr)
 
 	def add_triangle(self, x, y, size):
 		mask = self.mask if not self.has_stone(x, y) else None
-		x, y = self.convert_coord((x, y))
-		tr = Triangle(QtCore.QPointF(x, y), size, mask)
+		tx, ty = self.convert_coord((x, y))
+		tr = Triangle(QtCore.QPointF(tx, ty), size, mask)
 		tr.setZValue(5)
 		self.marks.append(tr)
+		self.marks_pos.append((x, y))
 		self.scene.addItem(tr)
 
 	def add_square(self, x, y, size):
 		mask = self.mask if not self.has_stone(x, y) else None
-		x, y = self.convert_coord((x, y))
-		sq = Square(QtCore.QPointF(x, y), size, mask)
+		sx, sy = self.convert_coord((x, y))
+		sq = Square(QtCore.QPointF(sx, sy), size, mask)
 		sq.setZValue(5)
 		self.marks.append(sq)
+		self.marks_pos.append((x, y))
 		self.scene.addItem(sq)
 
 	def add_mark(self, x, y, size):
 		mask = self.mask if not self.has_stone(x, y) else None
-		x, y = self.convert_coord((x, y))
-		ma = Mark(QtCore.QPointF(x, y), size, mask)
+		mx, my = self.convert_coord((x, y))
+		ma = Mark(QtCore.QPointF(mx, my), size, mask)
 		ma.setZValue(5)
 		self.marks.append(ma)
+		self.marks_pos.append((x, y))
 		self.scene.addItem(ma)
 
 	def remove_stone(self, x, y):
