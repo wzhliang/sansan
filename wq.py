@@ -366,8 +366,8 @@ class GoBoard(board.Board, QtGui.QGraphicsView):
 		self.scene.addItem(tx)
 		self.marks.append(tx)  # overwriting previous one. should be GCed
 		x, y = self.convert_coord((x, y))
-		x -= 10
-		y -= 15
+		x -= tx.boundingRect().width() / 2
+		y -= tx.boundingRect().height() / 2
 		tx.setPos(x, y)
 		tx.setZValue(5)
 

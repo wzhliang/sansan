@@ -2,6 +2,7 @@ import math
 from PyQt4 import QtCore
 from PyQt4 import QtGui
 
+
 class Cross(QtGui.QGraphicsItem):
 	"Indicator of the current stone"
 	Type = QtGui.QGraphicsItem.UserType + 2

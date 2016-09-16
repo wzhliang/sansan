@@ -1,13 +1,11 @@
+- BUG: mark is mixed with current stone mark
 - FET: hide cross when displaying marker
 - BUG: I think it doesn't work with A-A game 1 properly
-- BUG: multi-digit numbers are not positioned correctly
-        * See Alphago-Alphago game 1
 - FET: using yellow color for marking is not very nice
 - FET: Add branching hint
 - BUG: hard-coded board size
 - FET: automatically detect comment encoding
 - FET: have nice graphic background instead of the current solid color
-- BUG: FET: the adapters should be chainable.
 - BUG: markers are a bit ugly
 - BUG: When there is a very long comment, the doc window is scrolled to the bottom
 - BUG: If there is markers node between move nodes, reverse navigation wouldn't work
@@ -23,3 +21,4 @@
 - BUG: after branching, the current stone marker isn't removed
 - FET GUI: texture
     - http://www.dir3d.com/library/maplibrary_wood-43.html
+- BUG: FET: the adapters should be chainable.
