@@ -164,9 +164,9 @@ class Triangle(QtGui.QGraphicsItem):
 		# Draw the line itself.
 		x1 = self.point.x()
 		y1 = self.point.y() - self.size
-		x2 = self.point.x() - abs(self.size * math.sin(30))
-		y2 = self.point.y() + self.size * math.cos(30)
-		x3 = self.point.x() + abs(self.size * math.sin(30))
+		x2 = self.point.x() - abs(self.size * math.sin(45))
+		y2 = self.point.y() + self.size * math.cos(45)
+		x3 = self.point.x() + abs(self.size * math.sin(45))
 		if self.mask:
 			painter.drawPixmap(self.point.x() - self.size,
 				self.point.y() - self.size,
