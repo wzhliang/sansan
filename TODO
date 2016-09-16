@@ -12,13 +12,11 @@
 - BUG: problem with place.sgf
 - BUG: open sgf, do nothing but closing the window -> segfault
 - BUG: often crashes on closing.
-- BUG: rangziqi problem
 - FET: Display move number
 - FET: Support SGF from goproblems. They include AB, AW in the first node.
 - FET: editor
 - FET: automatically detects and display number of stone.
 - FET GUI: branch indicator
 - BUG: after branching, the current stone marker isn't removed
-- FET GUI: texture
-    - http://www.dir3d.com/library/maplibrary_wood-43.html
 - BUG: FET: the adapters should be chainable.
+- BUG: rangziqi problem
