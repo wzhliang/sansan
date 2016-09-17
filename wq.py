@@ -7,8 +7,6 @@ from PyQt4 import QtGui
 
 # TODO:
 # once the board is resize, everything is in a mess
-# needs a bit of edge for the board.
-# Stop hard-coding stone size, etc.
 
 import util
 import sgf
@@ -120,22 +118,7 @@ class GoBoard(board.Board, QtGui.QGraphicsView):
 				self.place_stone_xy(x, y, util.enemy(cl))
 		return _undo
 
-	def handle_node(self, prev, node, back=0):
-		"Handle a node, like mark, comment, etc. dead stone is not handled here"
-		self.emit(QtCore.SIGNAL("newComment(PyQt_PyObject)"), "")
-		self.clear_marks()
-		added = []
-		removed = []
-
-		if node.is_root():
-			return
-
-		if back:
-			try:
-				node.undo()
-			except AttributeError:
-				pass  # Allow node with no undo
-
+	def handle_extra(self, node):
 		comment = ""
 		for e in node.extra:
 			print "Handling %s..." % e, node.extra[e]
@@ -151,19 +134,32 @@ class GoBoard(board.Board, QtGui.QGraphicsView):
 				self._handle_TR(node.extra[e])
 			elif e == "MA":
 				self._handle_MA(node.extra[e])
+		if len(node.children) > 1:
+			s = [str(x + 1) for x in range(len(node.children))]
+			comment = "%s\n\n%s" % (comment, ", ".join(s))
 		self.emit(QtCore.SIGNAL("newComment(PyQt_PyObject)"), comment)
 
+	def handle_node(self, prev, node, back=0):
+		"Handle a node, like mark, comment, etc. dead stone is not handled here"
+		if node.is_root():
+			return
+		self.emit(QtCore.SIGNAL("newComment(PyQt_PyObject)"), "")
+		self.clear_marks()
+		added = []
+		removed = []
+		if back and hasattr(node, 'undo'):
+			node.undo()
+		# XXX Stone has to be handled before the other properties
 		if util.is_stone(node.name):
 			added.extend(self.handle_stone(node))
 		# When going back, the stone is already there
-		elif util.is_move(node.name):
-			if not back:
-				removed.extend(self.handle_move(node))
-			if not node.prop == "":  # PASS
-				self.refresh_cross(node)
-
-		# Closure magic
+		elif util.is_move(node.name) and not back:
+			removed.extend(self.handle_move(node))
+		self.handle_extra(node)
+		# Closure magic for undo
 		prev.undo = functools.partial(self.attach_undo, node, added, removed)()
+		if util.is_move(node.name) and not node.prop == "":  # PASS
+			self.refresh_cross(node)
 
 	def clear_marks(self):
 		"""Assuming that marks are only relavant for a particular move and ALL
