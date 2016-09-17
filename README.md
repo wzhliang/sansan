@@ -10,7 +10,7 @@ Tygem GIB file game records are supported as well through [gib2sgf](https://gith
 * pyparsing
 
 # Screenshot
-![](screenshot/1.png)
+![](screenshot/1.jpg)
 
 
 ^^^
