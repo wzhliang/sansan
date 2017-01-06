@@ -18,6 +18,14 @@ from wq_rc import *  # flake8: NOQA
 __decoders__ = ['utf-8', 'euc-cn', 'big5']
 
 
+def _is_ascii(s):
+	try:
+		s.decode('ascii')
+		return True
+	except UnicodeDecodeError:
+		return False
+
+
 class Bitmap:
 	@staticmethod
 	def get_bitmap_for_stone(color):
@@ -504,7 +512,8 @@ class MainWindow(QtGui.QMainWindow):
 		for d in __decoders__:
 			try:
 				r = text.decode(d)
-				self.enc = d
+				if not _is_ascii(text):
+					self.enc = d
 				return r
 			except UnicodeDecodeError:
 				continue
