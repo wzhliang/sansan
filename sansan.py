@@ -574,6 +574,7 @@ class MainWindow(QtGui.QMainWindow):
     def displayComment(self, comment):
         self.commentEdit.clear()
         self.commentEdit.append(self.decode(comment))
+        self.commentEdit.moveCursor(1)
 
     def createDockWindows(self):
         dock = QtGui.QDockWidget("Game Info", self)
