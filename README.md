@@ -7,7 +7,12 @@ Tygem GIB file game records are supported as well through [gib2sgf](https://gith
 # Dependencies
 * Python2
 * PyQt
+    * `sudo apt install python-pyqt4 python-qt4-dev`
 * pyparsing
+    * `sudo pip install pyparsing pip`
+* run `make` to build rc file before start
+* `python sansan.py <sgf_file>`
+    
 
 # Screenshot
 ![](screenshot/1.jpg)
