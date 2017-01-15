@@ -78,6 +78,8 @@ class GoBoard(board.Board, QtGui.QGraphicsView):
         self.cross = None
         self.brush = None  # mask out the cross for marker
         self.mask = None
+        self.editing = False
+        self.current = util.BLACK
         for i in range(19):
             self.stones.append([None] * 19)
 
@@ -147,6 +149,9 @@ class GoBoard(board.Board, QtGui.QGraphicsView):
             comment = "%s\n\n%s" % (comment, ", ".join(s))
         self.emit(QtCore.SIGNAL("newComment(PyQt_PyObject)"), comment)
 
+    def update_current(self, node):
+        self.current = util.str2color(node.name)
+
     def handle_node(self, prev, node, back=0):
         "Handle a node, like mark, comment, etc. dead stone is not handled here"
         if node.is_root():
@@ -160,9 +165,12 @@ class GoBoard(board.Board, QtGui.QGraphicsView):
         # XXX Stone has to be handled before the other properties
         if util.is_stone(node.name):
             added.extend(self.handle_stone(node))
+            self.update_current(node)
         # When going back, the stone is already there
         elif util.is_move(node.name) and not back:
             removed.extend(self.handle_move(node))
+            self.update_current(node)
+        # When going back, the stone is already there
         self.handle_extra(node)
         # Closure magic for undo
         prev.undo = functools.partial(self.attach_undo, node, added, removed)()
@@ -260,24 +268,53 @@ class GoBoard(board.Board, QtGui.QGraphicsView):
         self._remove_stones(remove)
         self.handle_node(prev, self.game.where())
 
+    def start_editing(self):
+        self.editing = True
+        self.editing_stones = []
+
+    def stop_editing(self):
+        self.editing = False
+        for x, y in self.editing_stones:
+            self.remove_stone(x, y)
+
     def mousePressEvent(self, event):
-        if event.button() != QtCore.Qt.LeftButton:
-            return
-        self.go_next()
+        pass
 
     def keyPressEvent(self, event):
-        if event.key() == QtCore.Qt.Key_Right:
-            self.go_next()
-        elif event.key() == QtCore.Qt.Key_Left:
-            self.go_prev()
-        elif event.key() == QtCore.Qt.Key_Up:
-            self.go_up()
-        elif event.key() == QtCore.Qt.Key_Down:
-            self.go_down()
+        funcs = None
+        funcs_normal = {
+            QtCore.Qt.Key_Right: self.go_next,
+            QtCore.Qt.Key_Left: self.go_prev,
+            QtCore.Qt.Key_Up: self.go_up,
+            QtCore.Qt.Key_Down: self.go_down,
+            QtCore.Qt.Key_C: self.start_editing,
+        }
+        funcs_editing = {
+            QtCore.Qt.Key_Escape: self.stop_editing
+        }
+        if self.editing:
+            print "editing"
+            funcs = funcs_editing
+        else:
+            print "normal"
+            funcs = funcs_normal
+        
+        try:
+            funcs[event.key()]()
+        except KeyError:
+            print "Not handling: ", event.key()
 
     def mouseReleaseEvent(self, event):
-        pass
-        # print "mouse released ", event.button(), event.pos()
+        if not self.editing or event.button() != QtCore.Qt.LeftButton:
+            return
+        self.switch_color()
+        print "mouse released ", event.button(), event.pos()
+        x, y = self.convert_pixel_coord((event.x(), event.y()))
+        try:
+            self.play_xy(x + 1, y + 1, self.current)
+            self.editing_stones.append((x + 1, y + 1))
+        except board.BoardError:
+            self.switch_color()  # switch back
 
     def out_of_board(self, pix):
         x, y = pix
@@ -293,7 +330,7 @@ class GoBoard(board.Board, QtGui.QGraphicsView):
         px, py = pix
         px -= self.edge
         py -= self.edge
-        return ((px + self.w / 2) / self.w + 1, (py + self.h / 2) / self.h + 1)
+        return ((px + self.w / 2) / self.w, (py + self.h / 2) / self.h + 1)
 
     def convert_coord(self, go):
         "convert stone logical position into pixel postion"
@@ -423,6 +460,10 @@ class GoBoard(board.Board, QtGui.QGraphicsView):
     def remove_stone(self, x, y):
         gi = self.stones[x - 1][y - 1]
         self.scene.removeItem(gi)
+
+    def switch_color(self):
+        c = self.current
+        self.current = util.BLACK if c == util.WHITE else util.WHITE
 
     def play_xy(self, x, y, color):
         try:
