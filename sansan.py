@@ -319,9 +319,9 @@ class GoBoard(board.Board, QtGui.QGraphicsView):
 
         # Draw background
         bg_color = QtGui.QColor(0xcb, 0x91, 0x43)
-        self.brush = QtGui.QBrush(bg_color, QtGui.QPixmap("res/wood.jpg"))
+        self.brush = QtGui.QBrush(bg_color, QtGui.QPixmap(":res/wood.jpg"))
         self.scene.setBackgroundBrush(self.brush)
-        self.mask = QtGui.QPixmap("res/wood.jpg")
+        self.mask = QtGui.QPixmap(":res/wood.jpg")
 
         self.draw_stars()
 
